@@ -1,8 +1,9 @@
-const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcryptjs');
-require('dotenv').config();
+import { PrismaClient } from '../node_modules/.prisma/client';
+import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
 
 const { hash } = bcrypt;
+dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -35,6 +36,9 @@ async function main() {
       firstName: 'Admin',
       lastName: 'User',
       role: 'ADMIN',
+      isActive: true,
+      emailVerified: true,
+      lastLoginAt: new Date(),
       profile: {
         create: {
           headline: 'System Administrator',

@@ -5,9 +5,13 @@ import { swagger } from '@elysiajs/swagger';
 import { createLogger, format, transports } from 'winston';
 import { config } from 'dotenv';
 import path from 'path';
-import { prismaService } from './services/prisma.service';
+import prisma, { connect, disconnect } from './services/prisma.service';
 import { errorHandler } from './middleware/error';
 import { analysisPrismaRoutes } from './routes/analysis.prisma';
+import { authRoutes } from './routes/auth.routes';
+import { verificationRoutes } from './routes/verification.routes';
+import { passwordRoutes } from './routes/password.routes';
+import { authMiddleware } from './middleware/auth';
 
 // Load environment variables
 config({
@@ -60,7 +64,7 @@ const app = new Elysia({
   prefix: '/api',
 })
   // Add Prisma context
-  .decorate('prisma', prismaService.getClient())
+  .decorate('prisma', prisma)
   .state('version', '1.0.0')
   // Add global error handler
   .use(errorHandler)
@@ -90,7 +94,12 @@ const app = new Elysia({
       ],
     },
   }))
-  // Add routes
+  // Add authentication middleware
+  .use(authMiddleware)
+  .use(analysisPrismaRoutes)
+  .use(authRoutes)
+  .use(verificationRoutes)
+  .use(passwordRoutes)
   .use(analysisPrismaRoutes)
   // Health check endpoint
   .get('/health', () => ({
@@ -104,9 +113,10 @@ const app = new Elysia({
     message: 'The requested resource was not found',
   }));
 
-// Connect to database
-prismaService.connect()
-  .then(() => {
+// Connect to database and start server
+async function startServer() {
+  try {
+    await connect();
     logger.info('✅ Connected to database');
     
     // Start server
@@ -114,11 +124,13 @@ prismaService.connect()
       logger.info(`🚀 Server is running on http://${app.server?.hostname}:${app.server?.port}`);
       logger.info(`📚 API Documentation available at http://${app.server?.hostname}:${app.server?.port}/api/docs`);
     });
-  })
-  .catch((error) => {
+  } catch (error) {
     logger.error('❌ Failed to connect to database:', error);
     process.exit(1);
-  });
+  }
+}
+
+startServer();
 
 // Handle graceful shutdown
 const shutdown = async () => {
@@ -126,7 +138,7 @@ const shutdown = async () => {
   
   try {
     // Close the Prisma client
-    await prismaService.disconnect();
+    await disconnect();
     
     // Close the server
     await app.stop();

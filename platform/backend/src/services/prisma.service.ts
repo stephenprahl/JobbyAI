@@ -1,33 +1,15 @@
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '@prisma/client/edge';
 
-class PrismaService {
-  private static instance: PrismaService;
-  public client: PrismaClient;
+// Create a single PrismaClient instance
+const prisma = new PrismaClient({
+  log: process.env.NODE_ENV === 'development' 
+    ? ['query', 'error', 'warn'] 
+    : ['error', 'warn'],
+});
 
-  private constructor() {
-    this.client = new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
-    });
-  }
+// Export connect and disconnect functions
+export const connect = () => prisma.$connect();
+export const disconnect = () => prisma.$disconnect();
 
-  public static getInstance(): PrismaService {
-    if (!PrismaService.instance) {
-      PrismaService.instance = new PrismaService();
-    }
-    return PrismaService.instance;
-  }
-
-  public async connect(): Promise<void> {
-    await this.client.$connect();
-  }
-
-  public async disconnect(): Promise<void> {
-    await this.client.$disconnect();
-  }
-
-  public getClient(): PrismaClient {
-    return this.client;
-  }
-}
-
-export const prismaService = PrismaService.getInstance();
+// Export the PrismaClient instance as default
+export default prisma;
