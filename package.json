@@ -1,0 +1,24 @@
+{
+  "name": "resume-plan-ai",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "platform/frontend",
+    "platform/backend",
+    "extension"
+  ],
+  "scripts": {
+    "dev:platform": "npm run dev -w platform/frontend",
+    "dev:extension": "npm run dev -w extension",
+    "build": "npm run build -w platform/frontend && npm run build -w extension",
+    "lint": "npm run lint -w platform/frontend && npm run lint -w extension",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

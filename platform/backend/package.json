@@ -1,0 +1,84 @@
+{
+  "name": "@resume-plan-ai/backend",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "bun run clean && tsc && bun run copy-files",
+    "start": "NODE_ENV=production node dist/index.js",
+    "dev": "bun run --hot src/index.ts",
+    "dev:watch": "bun run --watch src/index.ts",
+    "clean": "rm -rf dist && mkdir -p dist",
+    "copy-files": "cp -r src/public dist/ 2>/dev/null || : && cp -r src/views dist/ 2>/dev/null || :",
+    "lint": "bunx biome check --apply ./src",
+    "format": "bunx biome format --write ./src",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "migrate": "bunx prisma migrate dev",
+    "migrate:deploy": "bunx prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:reset": "bunx prisma migrate reset --force && bun run db:seed",
+    "docker:build": "docker build -t resume-plan-ai-backend .",
+    "docker:run": "docker run -p 3001:3001 --env-file .env resume-plan-ai-backend",
+    "docker:compose": "docker-compose up --build"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^0.7.0",
+    "@elysiajs/jwt": "^0.7.0",
+    "@elysiajs/static": "^0.2.0",
+    "@elysiajs/swagger": "^0.7.0",
+    "@prisma/client": "^6.11.1",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "dotenv-expand": "^10.0.0",
+    "elysia": "^0.7.0",
+    "puppeteer": "^21.7.0",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "zod": "^3.25.74"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.19.4",
+    "@types/node-fetch": "^2.6.11",
+    "@types/puppeteer": "^5.4.7",
+    "@types/supertest": "^6.0.2",
+    "bun": "^1.0.30",
+    "bun-types": "^1.2.18",
+    "esbuild": "^0.19.0",
+    "jest": "^30.0.4",
+    "prisma": "^6.11.1",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "src/public",
+    "src/views"
+  ],
+  "keywords": [
+    "resume",
+    "ai",
+    "job",
+    "application",
+    "elysia",
+    "bun"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/resume-plan-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/resume-plan-ai/issues"
+  },
+  "homepage": "https://github.com/yourusername/resume-plan-ai#readme"
+}

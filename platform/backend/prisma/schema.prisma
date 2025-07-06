@@ -1,0 +1,224 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// To seed your database, run: npx prisma db seed
+// The seed script is defined in prisma/seed.cjs
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto, citext]
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  TEMPORARY
+  INTERNSHIP
+  VOLUNTEER
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique @db.Citext
+  passwordHash  String
+  firstName     String?
+  lastName      String?
+  role          UserRole       @default(USER)
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  profile         UserProfile?
+  skills          UserSkill[]
+  experiences     Experience[]
+  education       Education[]
+  certifications  Certification[]
+  jobListings     JobListing[]
+  resumes         UserResume[]
+  createdTemplates ResumeTemplate[] @relation("CreatedTemplates")
+  
+  @@map("users")
+}
+
+model UserProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique @map("user_id")
+  headline    String?
+  summary     String?  @db.Text
+  location    String?
+  websiteUrl  String?  @map("website_url")
+  linkedinUrl String?  @map("linkedin_url")
+  githubUrl   String?  @map("github_url")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("user_profiles")
+}
+
+model Skill {
+  id        String      @id @default(uuid())
+  name      String      @unique @db.Citext
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  
+  // Relations
+  users     UserSkill[]
+  
+  @@map("skills")
+}
+
+model UserSkill {
+  userId             String    @map("user_id")
+  skillId            String    @map("skill_id")
+  level              SkillLevel?
+  yearsOfExperience  Int?      @map("years_of_experience")
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill             Skill     @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  
+  @@id([userId, skillId])
+  @@map("user_skills")
+}
+
+model Experience {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  title       String
+  companyName String         @map("company_name")
+  location    String?
+  startDate   DateTime       @map("start_date") @db.Date
+  endDate     DateTime?      @map("end_date") @db.Date
+  current     Boolean        @default(false)
+  description String?        @db.Text
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("experiences")
+}
+
+model Education {
+  id            String    @id @default(uuid())
+  userId        String    @map("user_id")
+  institution   String
+  degree        String
+  fieldOfStudy  String?   @map("field_of_study")
+  startDate     DateTime? @map("start_date") @db.Date
+  endDate       DateTime? @map("end_date") @db.Date
+  gpa           Float?
+  description   String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("education")
+}
+
+model Certification {
+  id                    String    @id @default(uuid())
+  userId                String    @map("user_id")
+  name                  String
+  issuingOrganization   String    @map("issuing_organization")
+  issueDate             DateTime  @map("issue_date") @db.Date
+  expirationDate        DateTime? @map("expiration_date") @db.Date
+  credentialId          String?   @map("credential_id")
+  credentialUrl         String?   @map("credential_url") @db.VarChar(512)
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("certifications")
+}
+
+model JobListing {
+  id              String         @id @default(uuid())
+  userId          String         @map("user_id")
+  title           String
+  companyName     String         @map("company_name")
+  location        String?
+  description     String?        @db.Text
+  requirements    String[]
+  employmentType  EmploymentType? @map("employment_type")
+  source          String?
+  url             String?        @db.VarChar(512)
+  applied         Boolean        @default(false)
+  applicationDate DateTime?      @map("application_date") @db.Date
+  status          String?
+  notes           String?        @db.Text
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("job_listings")
+}
+
+model ResumeTemplate {
+  id          String      @id @default(uuid())
+  name        String
+  description String?     @db.Text
+  templateHtml String     @map("template_html") @db.Text
+  templateCss String?     @map("template_css") @db.Text
+  isPublic    Boolean     @default(false) @map("is_public")
+  createdById String?     @map("created_by")
+  createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  createdBy   User?       @relation("CreatedTemplates", fields: [createdById], references: [id], onDelete: SetNull)
+  resumes     UserResume[]
+  
+  @@map("resume_templates")
+}
+
+model UserResume {
+  id          String         @id @default(uuid())
+  userId      String         @map("user_id")
+  templateId  String?        @map("template_id")
+  title       String
+  content     Json           @db.JsonB
+  isPublic    Boolean        @default(false) @map("is_public")
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template    ResumeTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  
+  @@map("user_resumes")
+}
