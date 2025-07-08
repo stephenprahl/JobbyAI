@@ -1,69 +1,163 @@
-# React + TypeScript + Vite
+# Resume Plan AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack application for intelligent resume generation and job analysis, built with Elysia.js backend and React frontend.
 
-Currently, two official plugins are available:
+## 🏗️ Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+resume-plan-ai/
+├── src/
+│   ├── client/          # React frontend
+│   │   ├── components/  # Reusable UI components
+│   │   ├── pages/       # Page components
+│   │   ├── services/    # API services
+│   │   ├── contexts/    # React contexts
+│   │   └── types/       # TypeScript types
+│   └── server/          # Elysia.js backend
+│       ├── routes/      # API routes
+│       ├── services/    # Business logic
+│       ├── middleware/  # Express middleware
+│       └── utils/       # Utility functions
+├── prisma/              # Database schema and migrations
+├── docker-compose.yml   # Docker services
+└── package.json         # Unified dependencies
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Quick Start
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+
+- Bun runtime
+- Docker (for database)
+
+### Installation
+
+1. **Clone and install dependencies:**
+
+   ```bash
+   git clone <repository-url>
+   cd resume-plan-ai
+   bun install
+   ```
+
+2. **Start the database:**
+
+   ```bash
+   bun run docker:up
+   ```
+
+3. **Run database migrations:**
+
+   ```bash
+   bun run db:migrate
+   ```
+
+4. **Start the development servers:**
+
+   ```bash
+   bun run dev
+   ```
+
+This starts both:
+
+- **Backend (Elysia.js)**: <http://localhost:3001>
+- **Frontend (React/Vite)**: <http://localhost:5173>
+
+## 📝 Available Scripts
+
+### Development
+
+- `bun run dev` - Start both frontend and backend
+- `bun run dev:server` - Start only backend
+- `bun run dev:client` - Start only frontend
+
+### Database
+
+- `bun run db:migrate` - Run Prisma migrations
+- `bun run db:seed` - Seed the database
+- `bun run db:reset` - Reset database and seed
+- `bun run db:studio` - Open Prisma Studio
+
+### Build & Deploy
+
+- `bun run build` - Build both frontend and backend
+- `bun run start` - Start production server
+- `bun run preview` - Preview built frontend
+
+### Docker
+
+- `bun run docker:up` - Start PostgreSQL database
+- `bun run docker:down` - Stop all Docker services
+
+### Utilities
+
+- `bun run lint` - Lint code
+- `bun run format` - Format code with Prettier
+- `bun run clean` - Clean build artifacts
+
+## 🛠️ Technology Stack
+
+### Backend (Elysia.js)
+
+- **Runtime**: Bun
+- **Framework**: Elysia.js
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: JWT
+- **Validation**: Zod schemas
+
+### Frontend (React)
+
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **UI Library**: Chakra UI
+- **State Management**: React Query
+- **Routing**: React Router
+- **Forms**: React Hook Form
+
+### Infrastructure
+
+- **Database**: PostgreSQL (Docker)
+- **Containerization**: Docker & Docker Compose
+- **Process Management**: Concurrently
+
+## 🌟 Features
+
+- **Resume Generation**: AI-powered resume creation
+- **Job Analysis**: Intelligent job posting analysis
+- **User Authentication**: Secure login and registration
+- **Profile Management**: User profile and preferences
+- **Real-time Updates**: Live development with hot reload
+
+## 🔧 Configuration
+
+Environment variables are managed in `.env`:
+
+```env
+# Frontend
+VITE_API_BASE_URL=http://localhost:3001/api
+
+# Backend
+PORT=3001
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/resume_plan_ai
+
+# CORS
+CORS_ORIGIN=http://localhost:5173
 ```
+
+## 📚 API Documentation
+
+When running in development, API documentation is available at:
+<http://localhost:3001/api/docs>
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License.
