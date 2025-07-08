@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
   previewFeatures = ["postgresqlExtensions"]
 }
 
@@ -54,7 +53,7 @@ model User {
   isActive      Boolean        @default(true) @map("is_active")
   emailVerified Boolean        @default(false) @map("email_verified")
   verificationTokens VerificationToken[]
-  
+
   // Relations
   profile         UserProfile?
   skills          UserSkill[]
@@ -64,7 +63,7 @@ model User {
   jobListings     JobListing[]
   resumes         UserResume[]
   createdTemplates ResumeTemplate[] @relation("CreatedTemplates")
-  
+
   @@map("users")
 }
 
@@ -75,7 +74,7 @@ model VerificationToken {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expires    DateTime
   createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  
+
   @@map("verification_tokens")
 }
 
@@ -105,10 +104,10 @@ model UserProfile {
   githubUrl   String?  @map("github_url")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
   // Relations
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@map("user_profiles")
 }
 
@@ -116,10 +115,10 @@ model Skill {
   id        String      @id @default(uuid())
   name      String      @unique @db.Citext
   createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  
+
   // Relations
   users     UserSkill[]
-  
+
   @@map("skills")
 }
 
@@ -130,11 +129,11 @@ model UserSkill {
   yearsOfExperience  Int?      @map("years_of_experience")
   createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
   // Relations
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   skill             Skill     @relation(fields: [skillId], references: [id], onDelete: Cascade)
-  
+
   @@id([userId, skillId])
   @@map("user_skills")
 }
@@ -151,10 +150,10 @@ model Experience {
   description String?        @db.Text
   createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
   // Relations
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@map("experiences")
 }
 
@@ -170,10 +169,10 @@ model Education {
   description   String?   @db.Text
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
   // Relations
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@map("education")
 }
 
@@ -188,10 +187,10 @@ model Certification {
   credentialUrl         String?   @map("credential_url") @db.VarChar(512)
   createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
   // Relations
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@map("certifications")
 }
 
@@ -212,10 +211,10 @@ model JobListing {
   notes           String?        @db.Text
   createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
   // Relations
   user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   @@map("job_listings")
 }
 
@@ -229,11 +228,11 @@ model ResumeTemplate {
   createdById String?     @map("created_by")
   createdAt   DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
   // Relations
   createdBy   User?       @relation("CreatedTemplates", fields: [createdById], references: [id], onDelete: SetNull)
   resumes     UserResume[]
-  
+
   @@map("resume_templates")
 }
 
@@ -246,10 +245,10 @@ model UserResume {
   isPublic    Boolean        @default(false) @map("is_public")
   createdAt   DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
   // Relations
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   template    ResumeTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
-  
+
   @@map("user_resumes")
 }

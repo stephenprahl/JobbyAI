@@ -1,17 +1,10 @@
 import { cors } from '@elysiajs/cors';
-import { swagger } from '@elysiajs/swagger';
 import { config } from 'dotenv';
 import { Elysia } from 'elysia';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
-import { authMiddleware } from './middleware/auth';
-import { errorHandler } from './middleware/error';
-import { rateLimit } from './middleware/rateLimiter';
 import { authRoutes } from './routes/auth.routes';
-import { passwordRoutes } from './routes/password.routes';
 import { resumeRoutes } from './routes/resume.routes';
-import { userRoutes } from './routes/user.routes';
-import { verificationRoutes } from './routes/verification.routes';
 import prisma, { connect, disconnect } from './services/prisma.service';
 
 // Load environment variables
@@ -19,7 +12,6 @@ config({
   path: path.resolve(process.cwd(), `.env.${process.env.NODE_ENV || 'development'}`)
 });
 
-// Get environment variables
 const PORT = parseInt(process.env.PORT || '3001', 10);
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const isProduction = NODE_ENV === 'production';
@@ -44,18 +36,9 @@ const logger = createLogger({
   ]
 });
 
-// Log unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
+console.log('Starting full Elysia server...');
 
-// Log uncaught exceptions
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught Exception:', error);
-  process.exit(1);
-});
-
-// Create Elysia app with proper typing
+// Create Elysia app with minimal middleware first
 const app = new Elysia({
   name: 'resume-plan-ai-backend',
   serve: {
@@ -64,54 +47,22 @@ const app = new Elysia({
   },
   prefix: '/api',
 })
-  // Add Prisma context
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
-  // Add global error handler
-  .use(errorHandler)
-  // Add CORS
   .use(cors({
-    origin: process.env.FRONTEND_URL || '*',
+    origin: process.env.CORS_ORIGIN || '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   }))
-  // Add rate limiting
-  .use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-  }))
-  // Add Swagger documentation
-  .use(swagger({
-    path: '/docs',
-    documentation: {
-      info: {
-        title: 'Resume Plan AI API',
-        version: '1.0.0',
-        description: 'API for Resume Plan AI',
-      },
-      tags: [
-        { name: 'Analysis', description: 'Job analysis endpoints' },
-        { name: 'Resume', description: 'Resume generation endpoints' },
-        { name: 'Auth', description: 'Authentication endpoints' },
-        { name: 'Users', description: 'User management endpoints' },
-      ],
-    },
-  }))
-  // Add authentication middleware
-  .use(authMiddleware)
-  // .use(analysisPrismaRoutes)  // Temporarily disabled to identify schema issue
-  .use(authRoutes)
-  .use(verificationRoutes)
-  .use(passwordRoutes)
-  .use(resumeRoutes)
-  .use(userRoutes)
-  // Health check endpoint
   .get('/health', () => ({
     status: 'ok',
     timestamp: new Date().toISOString(),
+    environment: NODE_ENV,
   }))
-  // 404 handler
+  // Add core routes
+  .use(resumeRoutes)
+  .use(authRoutes)
   .all('*', () => ({
     success: false,
     error: 'Not Found',
@@ -124,10 +75,12 @@ async function startServer() {
     await connect();
     logger.info('✅ Connected to database');
 
-    // Start server
     app.listen(PORT, () => {
       logger.info(`🚀 Server is running on http://${app.server?.hostname}:${app.server?.port}`);
       logger.info(`📚 API Documentation available at http://${app.server?.hostname}:${app.server?.port}/api/docs`);
+      logger.info(`🏥 Health check: http://${app.server?.hostname}:${app.server?.port}/api/health`);
+      logger.info(`📋 Resume API: http://${app.server?.hostname}:${app.server?.port}/api/resume`);
+      logger.info(`🔐 Auth API: http://${app.server?.hostname}:${app.server?.port}/api/auth`);
     });
   } catch (error) {
     logger.error('❌ Failed to connect to database:', error);
@@ -142,12 +95,8 @@ const shutdown = async () => {
   logger.info('Shutting down server...');
 
   try {
-    // Close the Prisma client
     await disconnect();
-
-    // Close the server
     await app.stop();
-
     logger.info('Server has been shut down');
     process.exit(0);
   } catch (error) {
