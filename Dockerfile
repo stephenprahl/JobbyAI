@@ -1,12 +1,13 @@
 # Use the official Bun image
-FROM oven/bun:1.0.30-slim as base
+FROM oven/bun:1.0.30-slim AS base
 
 # Set working directory
 WORKDIR /app
 
 # Install dependencies first for better caching
-COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+COPY package.json ./
+COPY bun.lock* ./
+RUN bun install --production
 
 # Copy the rest of the application
 COPY . .

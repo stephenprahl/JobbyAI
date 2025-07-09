@@ -11,10 +11,17 @@ import prisma, { connect, disconnect } from './services/prisma.service';
 config({
   path: path.resolve(process.cwd(), `.env.${process.env.NODE_ENV || 'development'}`)
 });
+config(); // Also load .env file
 
 const PORT = parseInt(process.env.PORT || '3001', 10);
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const isProduction = NODE_ENV === 'production';
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
+
+console.log('🔧 Environment Configuration:');
+console.log('- NODE_ENV:', NODE_ENV);
+console.log('- PORT:', PORT);
+console.log('- CORS_ORIGIN:', CORS_ORIGIN);
 
 // Configure logger
 const logger = createLogger({
@@ -50,9 +57,9 @@ const app = new Elysia({
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
   .use(cors({
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: isProduction ? CORS_ORIGIN : true, // Strict in production, permissive in development
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true,
   }))
   .get('/health', () => ({

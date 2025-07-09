@@ -131,9 +131,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAuthenticated: !!user && !!tokens?.accessToken,
     login: async (credentials: LoginRequest) => {
       await loginMutation.mutateAsync(credentials)
+      // Wait for user query to complete after login
+      await queryClient.refetchQueries(['user'])
     },
     register: async (data: RegisterRequest) => {
       await registerMutation.mutateAsync(data)
+      // Wait for user query to complete after registration
+      await queryClient.refetchQueries(['user'])
     },
     logout,
     refreshToken,

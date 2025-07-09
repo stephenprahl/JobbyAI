@@ -11,6 +11,7 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  useColorModeValue,
   VStack,
 } from '@chakra-ui/react'
 import React from 'react'
@@ -18,46 +19,66 @@ import { FiBriefcase, FiFileText, FiStar, FiTarget, FiTrendingUp, FiZap } from '
 import { Link as RouterLink } from 'react-router-dom'
 
 const LandingPage: React.FC = () => {
+  const cardBg = useColorModeValue('white', 'gray.800')
+  const borderColor = useColorModeValue('gray.200', 'gray.600')
+  const headerBg = useColorModeValue('white', 'gray.800')
   const features = [
     {
       icon: FiFileText,
       title: 'AI-Powered Resume Builder',
       description: 'Create tailored resumes that match job requirements using advanced AI technology.',
+      color: 'brand',
+      bgGradient: 'linear(135deg, brand.400, brand.600)',
     },
     {
       icon: FiBriefcase,
       title: 'Job Analysis',
       description: 'Analyze job postings and get insights on how well your profile matches the requirements.',
+      color: 'purple',
+      bgGradient: 'linear(135deg, purple.400, purple.600)',
     },
     {
       icon: FiZap,
       title: 'Quick Generation',
       description: 'Generate professional resumes in seconds, not hours.',
+      color: 'green',
+      bgGradient: 'linear(135deg, green.400, green.600)',
     },
     {
       icon: FiTarget,
       title: 'Targeted Content',
       description: 'Every resume is customized to highlight the most relevant skills and experiences.',
+      color: 'orange',
+      bgGradient: 'linear(135deg, orange.400, orange.600)',
     },
     {
       icon: FiStar,
       title: 'Multiple Formats',
       description: 'Export your resume in various formats including PDF, HTML, and Markdown.',
+      color: 'accent',
+      bgGradient: 'linear(135deg, accent.400, accent.600)',
     },
     {
       icon: FiTrendingUp,
       title: 'Improve Match Score',
       description: 'Get suggestions to improve your resume and increase your job match score.',
+      color: 'purple',
+      bgGradient: 'linear(135deg, purple.400, purple.600)',
     },
   ]
 
   return (
     <Box>
       {/* Header */}
-      <Box bg="white" boxShadow="sm">
+      <Box bg={headerBg} boxShadow="xl" borderBottom="1px" borderColor={borderColor}>
         <Container maxW="7xl">
           <Flex h={16} alignItems="center" justifyContent="space-between">
-            <Text fontSize="xl" fontWeight="bold" color="brand.500">
+            <Text
+              fontSize="xl"
+              fontWeight="bold"
+              bgGradient="linear(to-r, brand.400, purple.400)"
+              bgClip="text"
+            >
               Resume Plan AI
             </Text>
             <HStack spacing={4}>
@@ -73,7 +94,23 @@ const LandingPage: React.FC = () => {
       </Box>
 
       {/* Hero Section */}
-      <Box bg="gradient-to-r from-brand.500 to-accent.500" color="white" py={20}>
+      <Box
+        bgGradient="linear(135deg, brand.500, purple.500, accent.500)"
+        color="white"
+        py={20}
+        position="relative"
+        overflow="hidden"
+        _before={{
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          bgGradient: 'linear(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%)',
+          animation: 'shimmer 3s ease-in-out infinite',
+        }}
+      >
         <Container maxW="7xl">
           <VStack spacing={8} textAlign="center">
             <Heading as="h1" size="2xl" maxW="4xl">
@@ -96,7 +133,7 @@ const LandingPage: React.FC = () => {
       </Box>
 
       {/* Features Section */}
-      <Box py={20}>
+      <Box py={20} bg={cardBg}>
         <Container maxW="7xl">
           <VStack spacing={16}>
             <VStack spacing={4} textAlign="center">
@@ -110,7 +147,18 @@ const LandingPage: React.FC = () => {
 
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
               {features.map((feature, index) => (
-                <Card key={index} variant="outline" h="full">
+                <Card
+                  key={index}
+                  bg={cardBg}
+                  borderColor={borderColor}
+                  _hover={{
+                    transform: 'translateY(-4px)',
+                    boxShadow: 'xl',
+                    borderColor: `${feature.color}.300`
+                  }}
+                  transition="all 0.3s"
+                  h="full"
+                >
                   <CardBody>
                     <VStack spacing={4} align="start" h="full">
                       <Icon as={feature.icon} w={8} h={8} color="brand.500" />
