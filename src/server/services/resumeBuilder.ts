@@ -116,7 +116,7 @@ function createResumePrompt(
     maxLength = 1000,
   } = options;
 
-  const sections = [];
+  const sections: string[] = [];
 
   if (includeSummary) {
     sections.push(`Professional Summary: Highlight the candidate's most relevant qualifications for the ${jobListing.title} position at ${jobListing.company}.`);

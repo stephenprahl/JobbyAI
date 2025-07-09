@@ -1,4 +1,4 @@
-import { PrismaClient } from '../node_modules/.prisma/client';
+import { PrismaClient, SkillLevel } from '../node_modules/.prisma/client';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 
@@ -107,14 +107,14 @@ async function main() {
         yearsOfExperience: 7,
       },
     }),
-    
+
     // User skills
-    ...skills.map((skill, index) => 
+    ...skills.map((skill, index) =>
       prisma.userSkill.create({
         data: {
           userId: user.id,
           skillId: skill.id,
-          level: ['ADVANCED', 'EXPERT', 'INTERMEDIATE'][index % 3],
+          level: [SkillLevel.ADVANCED, SkillLevel.EXPERT, SkillLevel.INTERMEDIATE][index % 3],
           yearsOfExperience: [3, 5, 4, 6, 4, 2, 3, 1][index],
         },
       })

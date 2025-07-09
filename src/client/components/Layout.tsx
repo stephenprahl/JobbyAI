@@ -38,7 +38,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: FiUser },
     { name: 'Profile', href: '/profile', icon: FiUser },
-    { name: 'Resume Builder', href: '/resume', icon: FiFileText },
+    { name: 'Resume Builder', href: '/resume/builder', icon: FiFileText },
+    { name: 'My Resumes', href: '/resume', icon: FiFileText },
     { name: 'Job Analysis', href: '/jobs', icon: FiBriefcase },
   ]
 

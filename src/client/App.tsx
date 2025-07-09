@@ -3,14 +3,15 @@ import React from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 
-// Import pages (we'll create these)
+// Import pages
 import DashboardPage from './pages/DashboardPage'
-import JobAnalysisPage from './pages/JobAnalysisPage'
+import JobAnalysisPage from './pages/JobAnalysisPageEnhanced'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
 import RegisterPage from './pages/RegisterPage'
+import ResumeBuilderPage from './pages/ResumeBuilderPage'
 import ResumePage from './pages/ResumePage'
 
 // Import layout
@@ -111,6 +112,16 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <Layout>
                 <ResumePage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/resume/builder"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ResumeBuilderPage />
               </Layout>
             </ProtectedRoute>
           }

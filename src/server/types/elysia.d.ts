@@ -1,5 +1,3 @@
-import { AuthPayload } from '../services/auth.service';
-
 declare module 'elysia' {
   interface Context {
     user?: {
@@ -8,7 +6,7 @@ declare module 'elysia' {
       role: string;
       emailVerified: boolean;
     };
-    isAdmin: boolean;
-    isVerified: boolean;
+    isAdmin?: boolean;
+    isVerified?: boolean;
   }
 }
