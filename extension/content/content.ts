@@ -1,4 +1,5 @@
 // Enhanced Content Script for Resume Plan AI Extension
+import './content.css';
 
 interface JobData {
   title: string;

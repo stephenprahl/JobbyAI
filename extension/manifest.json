@@ -57,9 +57,6 @@
       ],
       "js": [
         "content/content.ts"
-      ],
-      "css": [
-        "content/content.css"
       ]
     }
   ],
