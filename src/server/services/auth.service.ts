@@ -1,10 +1,10 @@
 import { compare, hash } from 'bcryptjs';
+import { addHours } from 'date-fns';
 import { sign, verify } from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import { addHours } from 'date-fns';
-import prisma from './prisma.service';
 import { logger } from '../utils/logger';
 import { emailService } from './email.service';
+import prisma from './prisma.service';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
@@ -19,7 +19,7 @@ export interface AuthPayload {
 export class AuthService {
   private static instance: AuthService;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): AuthService {
     if (!AuthService.instance) {
@@ -49,7 +49,7 @@ export class AuthService {
 
     // Generate verification token
     const verificationToken = await this.createVerificationToken(user.id);
-    
+
     // Send verification email
     try {
       await emailService.sendVerificationEmail(
@@ -70,6 +70,11 @@ export class AuthService {
     });
 
     return {
+      success: true,
+      data: {
+        accessToken: token,
+        refreshToken: token // For now, using same token for both
+      },
       user: {
         id: user.id,
         email: user.email,
@@ -77,8 +82,10 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
         emailVerified: user.emailVerified,
-      },
-      token,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      }
     };
   }
 
@@ -111,6 +118,11 @@ export class AuthService {
     });
 
     return {
+      success: true,
+      data: {
+        accessToken: token,
+        refreshToken: token // For now, using same token for both
+      },
       user: {
         id: user.id,
         email: user.email,
@@ -118,8 +130,11 @@ export class AuthService {
         lastName: user.lastName,
         role: user.role,
         emailVerified: user.emailVerified,
-      },
-      token,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        lastLoginAt: user.lastLoginAt,
+      }
     };
   }
 
@@ -134,8 +149,8 @@ export class AuthService {
 
   private generateToken(payload: AuthPayload): string {
     // Use type assertion to handle the JWT sign options
-    return sign(payload, JWT_SECRET, { 
-      expiresIn: JWT_EXPIRES_IN as string | number 
+    return sign(payload, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN as string | number
     } as any);
   }
 
@@ -179,7 +194,7 @@ export class AuthService {
 
   public async resendVerificationEmail(email: string): Promise<boolean> {
     const user = await prisma.user.findUnique({ where: { email } });
-    
+
     if (!user) {
       // Don't reveal if user exists or not
       return true;
@@ -196,7 +211,7 @@ export class AuthService {
 
     // Create and send new verification token
     const verificationToken = await this.createVerificationToken(user.id);
-    
+
     try {
       await emailService.sendVerificationEmail(
         user.email,
@@ -208,6 +223,36 @@ export class AuthService {
       logger.error('Failed to resend verification email:', error);
       throw new Error('Failed to resend verification email');
     }
+  }
+
+  public async getCurrentUser(token: string) {
+    const payload = this.verifyToken(token);
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        emailVerified: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+        lastLoginAt: true,
+      }
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (!user.isActive) {
+      throw new Error('Account is deactivated');
+    }
+
+    return user;
   }
 }
 

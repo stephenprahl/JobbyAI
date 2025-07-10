@@ -14,9 +14,10 @@ export const generateResume = async (data: {
   includeEducation?: boolean
   includeCertifications?: boolean
   maxLength?: number
+  userProfile?: any // Accept user profile data
 }): Promise<ApiResponse<GeneratedResume>> => {
-  // Create mock user profile - in a real app, this would come from the user's actual profile
-  const mockUserProfile = {
+  // Use provided user profile or create a default one
+  const userProfile = data.userProfile || {
     name: 'John Doe',
     email: 'john.doe@example.com',
     phone: '(555) 123-4567',
@@ -81,7 +82,7 @@ export const generateResume = async (data: {
   }
 
   const response = await api.post('/resume/generate', {
-    userProfile: mockUserProfile,
+    userProfile: userProfile,
     jobListing,
     options
   })
@@ -96,51 +97,105 @@ export const getResumeFormats = async (): Promise<ApiResponse<any>> => {
 
 // Job analysis
 export const analyzeJob = async (data: {
+  jobUrl?: string
+  jobDescription?: string
   jobTitle: string
-  companyName: string
-  jobDescription: string
-  requirements?: string
+  company: string
+  location?: string
+  requirements?: string[]
 }): Promise<ApiResponse<JobAnalysis>> => {
-  // Create mock user profile for analysis
-  const mockUserProfile = {
-    skills: [
-      { name: 'React', level: 'EXPERT', yearsOfExperience: 4 },
-      { name: 'TypeScript', level: 'ADVANCED', yearsOfExperience: 3 },
-      { name: 'Node.js', level: 'ADVANCED', yearsOfExperience: 3 },
-      { name: 'JavaScript', level: 'EXPERT', yearsOfExperience: 5 },
-      { name: 'Python', level: 'INTERMEDIATE', yearsOfExperience: 2 }
-    ],
-    experience: [
-      {
-        title: 'Senior Software Engineer',
-        company: 'Tech Corp',
-        startDate: '2022-01-01',
-        endDate: 'Present',
-        description: 'Lead development of React applications'
+  try {
+    // Create the analysis request payload
+    const analysisPayload = {
+      job: {
+        title: data.jobTitle,
+        company: data.company,
+        description: data.jobDescription || '',
+        requirements: data.requirements || [],
+        location: data.location || '',
+        salary: '',
+        skills: [],
+        experience: 0,
+        education: '',
+        employmentType: 'Full-time',
+      },
+      userProfile: {
+        skills: [
+          { name: 'React', level: 'Advanced' },
+          { name: 'TypeScript', level: 'Advanced' },
+          { name: 'Node.js', level: 'Intermediate' },
+          { name: 'JavaScript', level: 'Advanced' },
+          { name: 'Python', level: 'Intermediate' },
+          { name: 'AWS', level: 'Beginner' },
+          { name: 'Docker', level: 'Intermediate' }
+        ],
+        experience: [
+          {
+            title: 'Senior Software Engineer',
+            company: 'Tech Corp',
+            startDate: '2022-01-01',
+            endDate: '',
+            description: 'Lead development of React-based web applications.',
+            skills: ['React', 'TypeScript', 'Node.js']
+          }
+        ],
+        education: [
+          {
+            degree: 'Bachelor of Science in Computer Science',
+            institution: 'University of Technology',
+            field: 'Computer Science',
+            startDate: '2016-09-01',
+            endDate: '2020-05-31'
+          }
+        ]
+      },
+      options: {
+        includeMissingSkills: true,
+        includeSuggestions: true,
+        detailedAnalysis: true
       }
-    ],
-    education: [
-      {
-        degree: 'Bachelor of Science',
-        institution: 'University of Technology',
-        fieldOfStudy: 'Computer Science',
-        startDate: '2016-09-01',
-        endDate: '2020-05-31'
+    }
+
+    const response = await api.post('/analyze/job', analysisPayload)
+
+    if (response.data.success) {
+      // Map backend response to frontend interface
+      const backendData = response.data.data
+      const mappedData: JobAnalysis = {
+        matchScore: backendData.matchScore || 0,
+        matchingSkills: backendData.matchingSkills || [],
+        missingSkills: backendData.missingSkills || [],
+        recommendations: backendData.suggestions || [], // Map suggestions to recommendations
+        salaryRange: {
+          min: 80000,
+          max: 120000,
+          currency: 'USD'
+        },
+        jobDetails: {
+          title: data.jobTitle,
+          company: data.company,
+          location: data.location || 'Remote',
+          type: 'Full-time',
+          experience: 'Mid-level',
+          description: data.jobDescription || '',
+          requirements: data.requirements || []
+        }
       }
-    ]
-  }
 
-  const jobListing = {
-    title: data.jobTitle,
-    company: data.companyName,
-    description: data.jobDescription,
-    requirements: data.requirements ? data.requirements.split('\n').filter(r => r.trim()) : [],
-    url: ''
+      return {
+        success: true,
+        data: mappedData,
+        message: 'Job analysis completed successfully'
+      }
+    } else {
+      throw new Error(response.data.message || 'Analysis failed')
+    }
+  } catch (error: any) {
+    console.error('Job analysis error:', error)
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to analyze job',
+      message: 'Analysis failed'
+    }
   }
-
-  const response = await api.post('/analyze', {
-    job: jobListing,
-    userProfile: mockUserProfile
-  })
-  return response.data
 }

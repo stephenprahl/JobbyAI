@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import { Elysia } from 'elysia';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
+import { analysisPrismaRoutes } from './routes/analysis.prisma';
 import { authRoutes } from './routes/auth.routes';
 import { resumeRoutes } from './routes/resume.routes';
 import prisma, { connect, disconnect } from './services/prisma.service';
@@ -70,6 +71,7 @@ const app = new Elysia({
   // Add core routes
   .use(resumeRoutes)
   .use(authRoutes)
+  .use(analysisPrismaRoutes)
   .all('*', () => ({
     success: false,
     error: 'Not Found',

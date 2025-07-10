@@ -18,7 +18,7 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
@@ -27,9 +27,16 @@ import { LoginRequest } from '../types'
 const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { login } = useAuth()
+  const { login, isAuthenticated } = useAuth()
   const navigate = useNavigate()
   const toast = useToast()
+
+  // Redirect when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const {
     register,
@@ -50,7 +57,8 @@ const LoginPage: React.FC = () => {
         duration: 3000,
         isClosable: true,
       })
-      navigate('/dashboard')
+      // Don't manually navigate - let the useEffect handle the redirect
+      // when isAuthenticated becomes true
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to log in. Please check your credentials.')
     } finally {

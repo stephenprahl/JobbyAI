@@ -1,6 +1,6 @@
 import { Box, Center, Spinner } from '@chakra-ui/react'
 import React from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 
 // Import pages
@@ -20,6 +20,7 @@ import Layout from './components/Layout'
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth()
+  const location = useLocation()
 
   if (isLoading) {
     return (
@@ -30,7 +31,8 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    // Save the current location they were trying to go to
+    return <Navigate to="/login" state={{ from: location }} replace />
   }
 
   return <>{children}</>
@@ -40,7 +42,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth()
 
+  console.log('PublicRoute render:', { isAuthenticated, isLoading })
+
   if (isLoading) {
+    console.log('PublicRoute: Showing loading spinner')
     return (
       <Center h="100vh">
         <Spinner size="xl" color="brand.500" />
@@ -49,9 +54,11 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   }
 
   if (isAuthenticated) {
+    console.log('PublicRoute: User is authenticated, redirecting to dashboard')
     return <Navigate to="/dashboard" replace />
   }
 
+  console.log('PublicRoute: User not authenticated, showing children')
   return <>{children}</>
 }
 
@@ -70,11 +77,7 @@ const App: React.FC = () => {
         />
         <Route
           path="/login"
-          element={
-            <PublicRoute>
-              <LoginPage />
-            </PublicRoute>
-          }
+          element={<LoginPage />}
         />
         <Route
           path="/register"

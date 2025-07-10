@@ -37,6 +37,7 @@ import {
   FiUpload,
   FiUsers,
 } from 'react-icons/fi'
+import { analyzeJob } from '../services/api'
 
 interface JobAnalysis {
   matchScore: number
@@ -70,7 +71,7 @@ const JobAnalysisPage: React.FC = () => {
   const cardBg = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.600')
 
-  const analyzeJob = async () => {
+  const analyzeJobListing = async () => {
     if (!jobUrl && !jobDescription) {
       toast({
         title: 'Input Required',
@@ -85,53 +86,35 @@ const JobAnalysisPage: React.FC = () => {
     setIsAnalyzing(true)
 
     try {
-      // Simulate API call - replace with actual API
-      await new Promise(resolve => setTimeout(resolve, 3000))
+      // Extract job title and company from description or URL
+      const jobTitle = extractJobTitle(jobDescription) || 'Software Engineer'
+      const company = extractCompany(jobDescription) || 'Company'
 
-      // Mock analysis result
-      const mockAnalysis: JobAnalysis = {
-        matchScore: 78,
-        missingSkills: ['Docker', 'Kubernetes', 'AWS Lambda'],
-        matchingSkills: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'PostgreSQL'],
-        recommendations: [
-          'Consider adding Docker and Kubernetes experience to strengthen your DevOps skills',
-          'Highlight your React and TypeScript expertise more prominently',
-          'Add specific examples of PostgreSQL database optimization',
-          'Include metrics and quantifiable achievements in your experience descriptions'
-        ],
-        salaryRange: {
-          min: 120000,
-          max: 160000,
-          currency: 'USD'
-        },
-        jobDetails: {
-          title: 'Senior Full Stack Developer',
-          company: 'TechCorp Inc.',
-          location: 'San Francisco, CA (Remote)',
-          type: 'Full-time',
-          experience: '5+ years',
-          description: jobDescription || 'Full stack developer position working with modern technologies...',
-          requirements: [
-            '5+ years of JavaScript/TypeScript experience',
-            'Proficiency in React and Node.js',
-            'Experience with PostgreSQL or similar databases',
-            'Knowledge of Docker and container orchestration',
-            'AWS cloud platform experience',
-            'Strong problem-solving skills'
-          ]
-        }
-      }
-
-      setAnalysis(mockAnalysis)
-      setAnalysisHistory(prev => [mockAnalysis, ...prev.slice(0, 4)]) // Keep last 5 analyses
-
-      toast({
-        title: 'Analysis Complete!',
-        description: 'Your job match analysis is ready.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
+      const result = await analyzeJob({
+        jobUrl,
+        jobDescription,
+        jobTitle,
+        company,
+        location: 'Remote',
+        requirements: extractRequirements(jobDescription)
       })
+
+      if (result.success && result.data) {
+        const analysisResult: JobAnalysis = result.data
+
+        setAnalysis(analysisResult)
+        setAnalysisHistory(prev => [analysisResult, ...prev.slice(0, 4)])
+
+        toast({
+          title: 'Analysis Complete!',
+          description: `Job match score: ${analysisResult.matchScore}%`,
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+      } else {
+        throw new Error(result.error || 'Analysis failed')
+      }
     } catch (error) {
       toast({
         title: 'Analysis Failed',
@@ -340,6 +323,59 @@ const JobAnalysisPage: React.FC = () => {
     </Card>
   )
 
+  // Helper functions to extract information from job description
+  const extractJobTitle = (description: string): string => {
+    // Simple extraction - in a real app, this would be more sophisticated
+    const lines = description.split('\n')
+    const firstLine = lines[0]?.trim()
+    if (firstLine && firstLine.length < 100) {
+      return firstLine
+    }
+    return 'Software Engineer'
+  }
+
+  const extractCompany = (description: string): string => {
+    // Look for company patterns in the description
+    const companyPatterns = [
+      /(?:at|@)\s+([A-Z][a-zA-Z\s&]+)/,
+      /Company:\s*([A-Z][a-zA-Z\s&]+)/i,
+      /([A-Z][a-zA-Z\s&]+)\s+is\s+looking/i
+    ]
+
+    for (const pattern of companyPatterns) {
+      const match = description.match(pattern)
+      if (match && match[1]) {
+        return match[1].trim()
+      }
+    }
+    return 'Company'
+  }
+
+  const extractRequirements = (description: string): string[] => {
+    // Extract bullet points or numbered lists as requirements
+    const lines = description.split('\n')
+    const requirements: string[] = []
+
+    for (const line of lines) {
+      const trimmed = line.trim()
+      if (trimmed.match(/^[-•*]\s+/) || trimmed.match(/^\d+\.\s+/)) {
+        requirements.push(trimmed.replace(/^[-•*]\s+/, '').replace(/^\d+\.\s+/, ''))
+      }
+    }
+
+    // If no structured requirements found, return some defaults
+    if (requirements.length === 0) {
+      return [
+        'Relevant experience in the field',
+        'Strong communication skills',
+        'Ability to work in a team environment',
+        'Problem-solving capabilities'
+      ]
+    }
+
+    return requirements.slice(0, 10) // Limit to 10 requirements
+  }
+
   return (
     <Container maxW="7xl" py={8}>
       <VStack spacing={8} align="stretch">
@@ -387,7 +423,7 @@ const JobAnalysisPage: React.FC = () => {
                 colorScheme="blue"
                 isLoading={isAnalyzing}
                 loadingText="Analyzing..."
-                onClick={analyzeJob}
+                onClick={analyzeJobListing}
                 size="lg"
               >
                 Analyze Job Match

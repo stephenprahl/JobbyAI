@@ -129,8 +129,21 @@ export interface JobAnalysis {
   matchScore: number
   matchingSkills: string[]
   missingSkills: string[]
-  suggestions: string[]
-  analysis: string
+  recommendations: string[]
+  salaryRange?: {
+    min: number
+    max: number
+    currency: string
+  }
+  jobDetails: {
+    title: string
+    company: string
+    location: string
+    type: string
+    experience: string
+    description: string
+    requirements: string[]
+  }
 }
 
 export interface GeneratedResume {

@@ -32,12 +32,15 @@ const DashboardPage: React.FC = () => {
   const cardBg = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.600')
 
+  // Check if this is a new user (simplified check)
+  const isNewUser = !user?.lastLoginAt || new Date(user.lastLoginAt).getTime() > Date.now() - 60000 // Less than 1 minute ago
+
   // Mock data - in a real app, this would come from API calls
   const stats = {
-    resumesGenerated: 12,
-    jobsAnalyzed: 24,
-    averageMatchScore: 78,
-    lastActivity: '2 hours ago',
+    resumesGenerated: isNewUser ? 0 : 12,
+    jobsAnalyzed: isNewUser ? 0 : 24,
+    averageMatchScore: isNewUser ? 0 : 78,
+    lastActivity: isNewUser ? 'Just now' : '2 hours ago',
   }
 
   const recentResumes = [
@@ -86,6 +89,44 @@ const DashboardPage: React.FC = () => {
           </Text>
         </Box>
 
+        {/* New User Getting Started Card */}
+        {isNewUser && (
+          <Card bg="blue.50" borderColor="blue.200" borderWidth={2}>
+            <CardBody>
+              <VStack spacing={4} align="start">
+                <HStack spacing={2}>
+                  <Icon as={FiStar} color="blue.500" />
+                  <Heading size="md" color="blue.700">
+                    Welcome to Resume Plan AI!
+                  </Heading>
+                </HStack>
+                <Text color="blue.600">
+                  Get started by creating your first AI-powered resume or analyzing a job posting to see how well you match.
+                </Text>
+                <HStack spacing={4}>
+                  <Button
+                    as={RouterLink}
+                    to="/resume/builder"
+                    colorScheme="blue"
+                    leftIcon={<Icon as={FiFileText} />}
+                  >
+                    Build Your Resume
+                  </Button>
+                  <Button
+                    as={RouterLink}
+                    to="/jobs"
+                    variant="outline"
+                    colorScheme="blue"
+                    leftIcon={<Icon as={FiBriefcase} />}
+                  >
+                    Analyze a Job
+                  </Button>
+                </HStack>
+              </VStack>
+            </CardBody>
+          </Card>
+        )}
+
         {/* Stats Overview */}
         <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
           <Card bg={cardBg} borderColor={borderColor}>
@@ -95,7 +136,7 @@ const DashboardPage: React.FC = () => {
                 <StatNumber>{stats.resumesGenerated}</StatNumber>
                 <StatHelpText>
                   <Icon as={FiTrendingUp} mr={1} />
-                  +3 this week
+                  {isNewUser ? 'Start creating!' : '+3 this week'}
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -108,7 +149,7 @@ const DashboardPage: React.FC = () => {
                 <StatNumber>{stats.jobsAnalyzed}</StatNumber>
                 <StatHelpText>
                   <Icon as={FiTrendingUp} mr={1} />
-                  +7 this week
+                  {isNewUser ? 'Analyze jobs!' : '+7 this week'}
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -118,10 +159,10 @@ const DashboardPage: React.FC = () => {
             <CardBody>
               <Stat>
                 <StatLabel>Avg. Match Score</StatLabel>
-                <StatNumber>{stats.averageMatchScore}%</StatNumber>
+                <StatNumber>{stats.averageMatchScore}{isNewUser ? '' : '%'}</StatNumber>
                 <StatHelpText>
                   <Icon as={FiStar} mr={1} />
-                  Excellent
+                  {isNewUser ? 'Start analyzing!' : 'Excellent'}
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -132,7 +173,7 @@ const DashboardPage: React.FC = () => {
               <Stat>
                 <StatLabel>Last Activity</StatLabel>
                 <StatNumber fontSize="lg">{stats.lastActivity}</StatNumber>
-                <StatHelpText>Resume generated</StatHelpText>
+                <StatHelpText>{isNewUser ? 'Welcome!' : 'Resume generated'}</StatHelpText>
               </Stat>
             </CardBody>
           </Card>

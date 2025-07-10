@@ -39,12 +39,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     ['user'],
     () => authService.getCurrentUser(),
     {
-      enabled: !!tokens?.accessToken,
+      enabled: !!tokens?.accessToken && tokens.accessToken.length > 0,
       retry: false,
-      onError: () => {
-        // If user query fails, clear tokens
-        setTokens(null)
-        localStorage.removeItem('auth_tokens')
+      staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+      onError: (error: any) => {
+        // Only clear tokens if it's an authentication error (401, 403)
+        // Don't clear on network errors or other issues
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+          setTokens(null)
+          localStorage.removeItem('auth_tokens')
+          authService.removeAuthToken()
+        }
       },
     }
   )
@@ -56,11 +61,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       onSuccess: (response) => {
         const newTokens = response.data
         if (newTokens) {
-          setTokens(newTokens ?? null)
+          setTokens(newTokens)
           localStorage.setItem('auth_tokens', JSON.stringify(newTokens))
+
+          // Force the auth token to be set immediately
+          authService.setAuthToken(newTokens.accessToken)
+
+          // Immediately invalidate and refetch user query
           queryClient.invalidateQueries(['user'])
+          queryClient.refetchQueries(['user'])
         }
       },
+      onError: (error: any) => {
+        console.error('Login failed:', error)
+      }
     }
   )
 
@@ -71,8 +85,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       onSuccess: (response) => {
         const newTokens = response.data
         if (newTokens) {
-          setTokens(newTokens ?? null)
+          setTokens(newTokens)
           localStorage.setItem('auth_tokens', JSON.stringify(newTokens))
+          // Immediately invalidate and refetch user query
           queryClient.invalidateQueries(['user'])
         }
       },
@@ -104,6 +119,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (tokens?.accessToken) {
       authService.setAuthToken(tokens.accessToken)
+    } else {
+      authService.removeAuthToken()
     }
   }, [tokens])
 
@@ -125,19 +142,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => clearTimeout(refreshTimer)
   }, [tokens])
 
+  // Debug effect to track authentication state changes
+  useEffect(() => {
+    console.log('Auth state changed:', {
+      hasTokens: !!tokens?.accessToken,
+      hasUser: !!user,
+      isAuthenticated: !!user && !!tokens?.accessToken,
+      isLoading: isLoading || loginMutation.isLoading || registerMutation.isLoading
+    })
+  }, [user, tokens, isLoading, loginMutation.isLoading, registerMutation.isLoading])
+
   const value: AuthContextType = {
     user: user || null,
-    isLoading: isLoading && !!tokens?.accessToken,
+    isLoading: isLoading || loginMutation.isLoading || registerMutation.isLoading,
     isAuthenticated: !!user && !!tokens?.accessToken,
     login: async (credentials: LoginRequest) => {
-      await loginMutation.mutateAsync(credentials)
-      // Wait for user query to complete after login
-      await queryClient.refetchQueries(['user'])
+      try {
+        await loginMutation.mutateAsync(credentials)
+        // Wait a moment for the query to update
+        await new Promise(resolve => setTimeout(resolve, 200))
+      } catch (error) {
+        console.error('Login failed:', error)
+        throw error
+      }
     },
     register: async (data: RegisterRequest) => {
       await registerMutation.mutateAsync(data)
-      // Wait for user query to complete after registration
-      await queryClient.refetchQueries(['user'])
+      // Wait a moment for the query to update
+      await new Promise(resolve => setTimeout(resolve, 200))
     },
     logout,
     refreshToken,

@@ -32,6 +32,7 @@ export const register = async (data: RegisterRequest): Promise<ApiResponse<AuthT
 
 export const getCurrentUser = async (): Promise<User> => {
   const response: AxiosResponse<ApiResponse<User>> = await api.get('/auth/me')
+
   if (!response.data.success || !response.data.data) {
     throw new Error(response.data.error || 'Failed to get user')
   }

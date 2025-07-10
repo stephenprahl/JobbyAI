@@ -111,4 +111,69 @@ export const authRoutes = (app: Elysia) =>
           },
         }
       )
+      .get(
+        '/me',
+        async ({ headers, set }) => {
+          try {
+            const authHeader = headers.authorization;
+            if (!authHeader || !authHeader.startsWith('Bearer ')) {
+              set.status = 401;
+              return { error: 'Authorization header required' };
+            }
+
+            const token = authHeader.substring(7);
+            const user = await authService.getCurrentUser(token);
+
+            return {
+              success: true,
+              data: user
+            };
+          } catch (error: any) {
+            logger.error('Get current user failed:', error);
+            set.status = 401;
+            return {
+              success: false,
+              error: error.message || 'Unauthorized'
+            };
+          }
+        },
+        {
+          detail: {
+            tags: ['Authentication'],
+            description: 'Get current user information',
+            security: [{ bearerAuth: [] }],
+            responses: {
+              200: {
+                description: 'Current user information',
+                content: {
+                  'application/json': {
+                    schema: {
+                      type: 'object',
+                      properties: {
+                        success: { type: 'boolean' },
+                        data: {
+                          type: 'object',
+                          properties: {
+                            id: { type: 'string' },
+                            email: { type: 'string' },
+                            firstName: { type: 'string', nullable: true },
+                            lastName: { type: 'string', nullable: true },
+                            role: { type: 'string' },
+                            emailVerified: { type: 'boolean' },
+                            createdAt: { type: 'string' },
+                            updatedAt: { type: 'string' },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              401: {
+                description: 'Unauthorized - Invalid or missing token',
+              },
+            },
+          },
+        }
+      )
   );
