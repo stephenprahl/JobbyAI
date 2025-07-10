@@ -1,17 +1,32 @@
 {
   "manifest_version": 3,
-  "name": "Resume Plan AI",
-  "version": "0.1.0",
-  "description": "Analyze job listings and generate tailored resumes with AI",
+  "name": "Resume Plan AI - Advanced Job Assistant",
+  "version": "1.0.0",
+  "description": "Complete job search assistant: analyze listings, track applications, build resumes, and prepare for interviews with AI",
   "permissions": [
     "activeTab",
     "storage",
-    "scripting"
+    "scripting",
+    "tabs",
+    "cookies",
+    "notifications"
   ],
   "host_permissions": [
     "*://*.linkedin.com/*",
     "*://*.indeed.com/*",
-    "*://*.glassdoor.com/*"
+    "*://*.glassdoor.com/*",
+    "*://*.dice.com/*",
+    "*://*.monster.com/*",
+    "*://*.ziprecruiter.com/*",
+    "*://*.careerbuilder.com/*",
+    "*://*.simplyhired.com/*",
+    "*://*.stackoverflow.com/jobs/*",
+    "*://*.angel.co/*",
+    "*://*.wellfound.com/*",
+    "*://*.remote.co/*",
+    "*://*.flexjobs.com/*",
+    "*://*.workremotely.io/*",
+    "*://localhost:*/*"
   ],
   "action": {
     "default_popup": "popup/index.html",
@@ -30,10 +45,21 @@
       "matches": [
         "*://*.linkedin.com/jobs/*",
         "*://*.indeed.com/viewjob*",
-        "*://*.glassdoor.com/job-listing/*"
+        "*://*.glassdoor.com/job-listing/*",
+        "*://*.dice.com/jobs/detail/*",
+        "*://*.monster.com/job-openings/*",
+        "*://*.ziprecruiter.com/jobs/*",
+        "*://*.careerbuilder.com/job/*",
+        "*://*.simplyhired.com/job/*",
+        "*://*.stackoverflow.com/jobs/*",
+        "*://*.angel.co/company/*/jobs/*",
+        "*://*.wellfound.com/company/*/jobs/*"
       ],
       "js": [
         "content/content.ts"
+      ],
+      "css": [
+        "content/content.css"
       ]
     }
   ],
@@ -41,5 +67,16 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/*",
+        "assets/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
 }

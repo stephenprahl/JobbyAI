@@ -284,7 +284,7 @@ function getMockAnalysis() {
     interviewQuestions: [
       'Tell me about a challenging project you worked on',
       'How do you handle debugging complex issues?',
-      'What is your experience with modern JavaScript frameworks?',
+      'What's your experience with modern JavaScript frameworks?',
       'How do you stay updated with new technologies?'
     ]
   };
