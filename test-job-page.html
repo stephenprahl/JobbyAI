@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkedIn Job: Senior Software Engineer at TechCorp</title>
+  </head>
+
+  <body>
+    <div class="top-card-layout__title">Senior Software Engineer</div>
+    <div class="topcard__org-name-link">TechCorp Inc.</div>
+    <div class="topcard__flavor--bullet">San Francisco, CA</div>
+
+    <div class="show-more-less-html__markup">
+      <h3>About the role</h3>
+      <p>We are looking for a Senior Software Engineer to join our dynamic team. You will be responsible for developing
+        scalable web applications using modern technologies.</p>
+
+      <h3>Requirements</h3>
+      <ul>
+        <li>5+ years of experience in software development</li>
+        <li>Strong proficiency in JavaScript, TypeScript, and React</li>
+        <li>Experience with Node.js and Express</li>
+        <li>Knowledge of Docker and Kubernetes</li>
+        <li>AWS cloud experience</li>
+        <li>Understanding of REST APIs and GraphQL</li>
+        <li>Experience with Git version control</li>
+        <li>Bachelor's degree in Computer Science or related field</li>
+      </ul>
+
+      <h3>Nice to have</h3>
+      <ul>
+        <li>Experience with Python</li>
+        <li>Knowledge of microservices architecture</li>
+        <li>CI/CD pipeline experience</li>
+        <li>Database design and optimization</li>
+      </ul>
+
+      <h3>What we offer</h3>
+      <p>Competitive salary, health benefits, flexible working hours, and opportunities for professional growth.</p>
+    </div>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      .top-card-layout__title {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .topcard__org-name-link {
+        font-size: 20px;
+        color: #0073b1;
+        margin-bottom: 5px;
+      }
+
+      .topcard__flavor--bullet {
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .show-more-less-html__markup {
+        margin-top: 20px;
+      }
+
+      h3 {
+        color: #333;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+
+      ul {
+        margin: 10px 0;
+      }
+
+      li {
+        margin: 5px 0;
+      }
+    </style>
+
+    <script>
+      // Simulate being on LinkedIn
+      console.log('Test LinkedIn job page loaded');
+      // Change the URL to include linkedin.com/jobs/ so the extension detects it
+      if (window.location.href.indexOf('linkedin.com/jobs/') === -1) {
+        window.history.replaceState({}, '', window.location.href.replace(window.location.pathname, '/jobs/view/test-job-123'));
+      }
+    </script>
+  </body>
+
+</html>

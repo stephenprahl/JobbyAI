@@ -9,19 +9,27 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "skipLibCheck": true,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
     ],
-    "types": ["chrome", "node"],
-    "typescript.extension.autoImportSuggest.enabled": true
+    "types": [
+      "chrome",
+      "node"
+    ]
   },
   "include": [
     "src/**/*",
@@ -31,5 +39,7 @@
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

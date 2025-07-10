@@ -1,16 +1,36 @@
 // Content script for Resume Plan AI extension
 
-// Listen for messages from the background script
+// Listen for messages from the background script and popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'JOB_ANALYSIS_RESULT') {
     displayAnalysisResults(message.data);
+    sendResponse({ success: true });
+  } else if (message.type === 'GET_CURRENT_ANALYSIS') {
+    // Return the current analysis if available
+    const container = document.getElementById('resume-plan-ai-container');
+    if (container && currentAnalysis) {
+      sendResponse({ success: true, data: currentAnalysis });
+    } else {
+      // Trigger a new analysis
+      analyzeJobListing().then(() => {
+        sendResponse({ success: true, data: currentAnalysis });
+      });
+    }
+    return true; // Will respond asynchronously
+  } else if (message.type === 'GET_JOB_DATA') {
+    // Extract and return job data from the current page
+    const jobData = extractJobData();
+    sendResponse({ success: true, data: jobData });
   }
 });
+
+// Store current analysis results
+let currentAnalysis: any = null;
 
 // Main function to analyze the current job listing
 async function analyzeJobListing() {
   const jobData = extractJobData();
-  
+
   // Send the job data to the background script for analysis
   const response = await chrome.runtime.sendMessage({
     type: 'ANALYZE_JOB_LISTING',
@@ -68,6 +88,9 @@ function extractJobData() {
 
 // Display analysis results on the page
 function displayAnalysisResults(analysis: any) {
+  // Store the analysis for later use
+  currentAnalysis = analysis;
+
   // Create or update the analysis container
   let container = document.getElementById('resume-plan-ai-container');
   if (!container) {
@@ -97,8 +120,8 @@ function displayAnalysisResults(analysis: any) {
     </div>
     <div style="margin-bottom: 16px;">
       <div style="display: flex; align-items: center; margin-bottom: 8px;">
-        <div style="width: 48px; height: 48px; border-radius: 50%; background: #4299e1; 
-                  display: flex; align-items: center; justify-content: center; color: white; 
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: #4299e1;
+                  display: flex; align-items: center; justify-content: center; color: white;
                   font-weight: bold; font-size: 18px; margin-right: 12px;">
           ${analysis.matchScore}%
         </div>
@@ -111,24 +134,24 @@ function displayAnalysisResults(analysis: any) {
     <div style="margin-bottom: 16px;">
       <div style="font-weight: 500; margin-bottom: 8px; color: #2d3748;">Matching Skills</div>
       <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;">
-        ${analysis.matchingSkills.map((skill: string) => 
-          `<span style="background: #ebf8ff; color: #2b6cb0; padding: 4px 8px; 
+        ${analysis.matchingSkills.map((skill: string) =>
+    `<span style="background: #ebf8ff; color: #2b6cb0; padding: 4px 8px;
                      border-radius: 4px; font-size: 13px;">${skill}</span>`
-        ).join('')}
+  ).join('')}
       </div>
-      
+
       ${analysis.missingSkills.length > 0 ? `
         <div style="font-weight: 500; margin: 12px 0 8px 0; color: #2d3748;">Missing Skills</div>
         <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;">
-          ${analysis.missingSkills.map((skill: string) => 
-            `<span style="background: #fff5f5; color: #c53030; padding: 4px 8px; 
+          ${analysis.missingSkills.map((skill: string) =>
+    `<span style="background: #fff5f5; color: #c53030; padding: 4px 8px;
                        border-radius: 4px; font-size: 13px;">${skill}</span>`
-          ).join('')}
+  ).join('')}
         </div>
       ` : ''}
-      
+
       <div style="margin-top: 16px;">
-        <button id="generate-resume" style="background: #4299e1; color: white; border: none; 
+        <button id="generate-resume" style="background: #4299e1; color: white; border: none;
                   padding: 8px 16px; border-radius: 4px; cursor: pointer; width: 100%;
                   font-weight: 500;">
           Generate Tailored Resume
@@ -143,8 +166,23 @@ function displayAnalysisResults(analysis: any) {
   });
 
   document.getElementById('generate-resume')?.addEventListener('click', () => {
-    // TODO: Implement resume generation
-    alert('Resume generation will be implemented in the next phase!');
+    // Send message to background script to generate resume
+    chrome.runtime.sendMessage({
+      type: 'GENERATE_RESUME',
+      data: { tabId: null, analysis: currentAnalysis }
+    }).then((response) => {
+      if (response?.success) {
+        // Open the Resume Plan AI app with the generated resume
+        const resumeUrl = `${chrome.runtime.getURL('').replace('chrome-extension://', 'http://localhost:5173')}/resume-builder?resumeId=${response.resumeId}`;
+        window.open(resumeUrl, '_blank');
+      } else {
+        // Fallback: open the resume builder directly
+        window.open('http://localhost:5173/resume-builder', '_blank');
+      }
+    }).catch(() => {
+      // Fallback: open the main app
+      window.open('http://localhost:5173/', '_blank');
+    });
   });
 }
 

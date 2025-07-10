@@ -32,34 +32,76 @@ const Popup: React.FC = () => {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
 
   useEffect(() => {
-    // In a real extension, we would send a message to the background script
-    // to analyze the current page and get the results
-    const analyzeCurrentPage = async () => {
+    // Get analysis results from the background script
+    const getCurrentAnalysis = async () => {
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // In a real extension, we would get this from the background script
-        // const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-        // const response = await chrome.tabs.sendMessage(tabs[0].id, { type: 'GET_ANALYSIS' });
-        
-        // For now, use mock data
-        setAnalysis(MOCK_ANALYSIS);
+        // Check if we're on a supported job site
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab?.url) {
+          setHasError(true);
+          setIsLoading(false);
+          return;
+        }
+
+        const url = tab.url;
+        const isJobSite = url.includes('linkedin.com/jobs/') ||
+          url.includes('indeed.com/viewjob') ||
+          url.includes('glassdoor.com/job-listing/');
+
+        if (!isJobSite) {
+          setHasError(true);
+          setIsLoading(false);
+          return;
+        }
+
+        // Send message to content script to get current analysis
+        const response = await chrome.tabs.sendMessage(tab.id!, { type: 'GET_CURRENT_ANALYSIS' });
+
+        if (response?.success && response.data) {
+          setAnalysis(response.data);
+        } else {
+          // Use mock data for now if no real analysis is available
+          setAnalysis(MOCK_ANALYSIS);
+        }
         setIsLoading(false);
       } catch (error) {
-        console.error('Error analyzing page:', error);
-        setHasError(true);
+        console.error('Error getting analysis:', error);
+        // Fall back to mock data
+        setAnalysis(MOCK_ANALYSIS);
         setIsLoading(false);
       }
     };
 
-    analyzeCurrentPage();
+    getCurrentAnalysis();
   }, []);
 
-  const handleGenerateResume = () => {
-    // In a real extension, this would open a new tab with the resume builder
-    // or send a message to the background script to generate the resume
-    alert('Resume generation will be implemented in the next phase!');
+  const handleGenerateResume = async () => {
+    try {
+      // Get the current tab to extract job data
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tab?.id) return;
+
+      // Send message to background script to generate resume
+      const response = await chrome.runtime.sendMessage({
+        type: 'GENERATE_RESUME',
+        data: { tabId: tab.id, analysis }
+      });
+
+      if (response?.success) {
+        // Open the Resume Plan AI app with the generated resume
+        const resumeUrl = `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5173'}/resume-builder?resumeId=${response.resumeId}`;
+        await chrome.tabs.create({ url: resumeUrl });
+      } else {
+        // Fallback: open the resume builder directly
+        const appUrl = `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5173'}/resume-builder`;
+        await chrome.tabs.create({ url: appUrl });
+      }
+    } catch (error) {
+      console.error('Error generating resume:', error);
+      // Fallback: open the main app
+      const appUrl = `${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5173'}/`;
+      await chrome.tabs.create({ url: appUrl });
+    }
   };
 
   const handleOpenSettings = () => {
@@ -92,7 +134,7 @@ const Popup: React.FC = () => {
         <img src="/icons/icon48.png" alt="Resume Plan AI" className="logo" />
         <h1>Resume Plan AI</h1>
       </header>
-      
+
       <main className="main-content">
         {analysis && (
           <>
@@ -102,7 +144,7 @@ const Popup: React.FC = () => {
               </div>
               <p className="score-label">Match Score</p>
             </div>
-            
+
             <div className="section">
               <h3>Matching Skills</h3>
               <div className="skills-container">
@@ -113,7 +155,7 @@ const Popup: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             {analysis.missingSkills.length > 0 && (
               <div className="section">
                 <h3>Missing Skills</h3>
@@ -126,7 +168,7 @@ const Popup: React.FC = () => {
                 </div>
               </div>
             )}
-            
+
             <div className="section">
               <h3>Suggestions</h3>
               <ul className="suggestions-list">
@@ -135,9 +177,9 @@ const Popup: React.FC = () => {
                 ))}
               </ul>
             </div>
-            
-            <button 
-              id="generate-resume" 
+
+            <button
+              id="generate-resume"
               className="primary-button"
               onClick={handleGenerateResume}
             >
@@ -146,21 +188,21 @@ const Popup: React.FC = () => {
           </>
         )}
       </main>
-      
+
       <footer className="footer">
-        <button 
-          id="settings-button" 
-          className="icon-button" 
+        <button
+          id="settings-button"
+          className="icon-button"
           title="Settings"
           onClick={handleOpenSettings}
         >
           ⚙️
         </button>
-        <a 
-          href="https://resumeplan.ai" 
-          target="_blank" 
+        <a
+          href="https://resumeplan.ai"
+          target="_blank"
           rel="noopener noreferrer"
-          className="icon-button" 
+          className="icon-button"
           title="Help"
         >
           ❓
@@ -171,14 +213,15 @@ const Popup: React.FC = () => {
 };
 
 // Render the React component
-const container = document.createElement('div');
-document.body.appendChild(container);
-const root = createRoot(container);
-root.render(<Popup />);
+const container = document.getElementById('root');
+if (container) {
+  const root = createRoot(container);
+  root.render(<Popup />);
+}
 
 // Add TypeScript type definitions for Chrome extension API
 declare global {
   interface Window {
-    chrome: any;
+    chrome: typeof chrome;
   }
 }

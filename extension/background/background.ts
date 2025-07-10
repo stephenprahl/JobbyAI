@@ -4,7 +4,7 @@
 /// <reference types="@types/chrome" />
 
 // Define types for our messages
-type MessageType = 'ANALYZE_JOB_LISTING' | 'GET_USER_PROFILE' | 'SAVE_USER_PROFILE';
+type MessageType = 'ANALYZE_JOB_LISTING' | 'GET_USER_PROFILE' | 'SAVE_USER_PROFILE' | 'GENERATE_RESUME';
 
 interface Message<T = unknown> {
   type: MessageType;
@@ -12,6 +12,16 @@ interface Message<T = unknown> {
 }
 
 interface UserProfile {
+  // Basic user information
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  location?: string;
+  headline?: string;
+  summary?: string;
+  // Structured data
   skills: Array<{ name: string; level?: string }>;
   experience: Array<{
     title: string;
@@ -49,7 +59,7 @@ const API_CONFIG = {
   ENDPOINTS: {
     ANALYZE: '/api/analyze',
     PROFILE: '/api/profile',
-    RESUME: '/api/resume'
+    RESUME_GENERATE: '/api/resume/generate'
   }
 } as const;
 
@@ -82,11 +92,19 @@ function initializeExtension() {
         });
       return true;
     } else if (message.type === 'SAVE_USER_PROFILE') {
-      saveUserProfile(message.data)
+      saveUserProfile(message.data as UserProfile)
         .then(sendResponse)
         .catch(error => {
           console.error('Error saving user profile:', error);
           sendResponse({ success: false, error: 'Failed to save user profile' });
+        });
+      return true;
+    } else if (message.type === 'GENERATE_RESUME') {
+      handleResumeGeneration(message.data as { tabId: number; analysis: any })
+        .then(sendResponse)
+        .catch(error => {
+          console.error('Error generating resume:', error);
+          sendResponse({ success: false, error: 'Failed to generate resume' });
         });
       return true;
     }
@@ -105,6 +123,14 @@ function initializeExtension() {
 async function handleInstallation(details: chrome.runtime.InstalledDetails) {
   if (details.reason === 'install') {
     const defaultProfile: UserProfile = {
+      name: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      location: '',
+      headline: '',
+      summary: '',
       skills: [],
       experience: [],
       education: [],
@@ -114,7 +140,7 @@ async function handleInstallation(details: chrome.runtime.InstalledDetails) {
     const defaultSettings: Settings = {
       theme: 'light',
       enableNotifications: true,
-      apiUrl: API_BASE_URL,
+      apiUrl: API_CONFIG.BASE_URL,
       autoAnalyze: true
     };
 
@@ -149,7 +175,7 @@ async function handleJobListingAnalysis(jobData: unknown, tabId?: number) {
   try {
     // Get user profile from storage
     const { userProfile } = await chrome.storage.local.get('userProfile') as { userProfile?: UserProfile };
-    
+
     // Call the backend API
     const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ANALYZE}`, {
       method: 'POST',
@@ -189,7 +215,7 @@ async function handleJobListingAnalysis(jobData: unknown, tabId?: number) {
     return { success: true, data: result.data };
   } catch (error) {
     console.error('Error analyzing job listing:', error);
-    
+
     // Send error to content script if possible
     if (tabId) {
       try {
@@ -201,9 +227,9 @@ async function handleJobListingAnalysis(jobData: unknown, tabId?: number) {
         console.warn('Could not send error to tab', e);
       }
     }
-    
-    return { 
-      success: false, 
+
+    return {
+      success: false,
       error: error instanceof Error ? error.message : 'Failed to analyze job listing'
     };
   }
@@ -232,6 +258,107 @@ async function saveUserProfile(profile: UserProfile) {
   } catch (error) {
     console.error('Error saving user profile:', error);
     return { success: false, error: 'Failed to save user profile' };
+  }
+}
+
+/**
+ * Handle resume generation by sending job data and analysis to the backend
+ */
+async function handleResumeGeneration(data: { tabId: number; analysis: any }) {
+  try {
+    const { tabId, analysis } = data;
+
+    // Get job data from the content script
+    const jobResponse = await chrome.tabs.sendMessage(tabId, { type: 'GET_JOB_DATA' });
+    if (!jobResponse?.success) {
+      throw new Error('Failed to get job data from page');
+    }
+
+    // Get user profile from storage
+    const { userProfile } = await chrome.storage.local.get('userProfile') as { userProfile?: UserProfile };
+
+    // Transform user profile to match backend schema
+    const userProfileFormatted = {
+      name: `${userProfile?.firstName || ''} ${userProfile?.lastName || ''}`.trim() || 'John Doe',
+      email: userProfile?.email || 'user@example.com',
+      phone: userProfile?.phone || '',
+      location: userProfile?.location || '',
+      headline: userProfile?.headline || '',
+      summary: userProfile?.summary || '',
+      skills: userProfile?.skills?.map(skill => skill.name || skill) || [],
+      experience: userProfile?.experience?.map(exp => ({
+        title: exp.title,
+        company: exp.company,
+        startDate: exp.startDate,
+        endDate: exp.endDate,
+        current: !exp.endDate,
+        description: exp.description,
+        skills: []
+      })) || [],
+      education: userProfile?.education?.map(edu => ({
+        degree: edu.degree,
+        institution: edu.institution,
+        field: edu.fieldOfStudy,
+        startDate: edu.startDate,
+        endDate: edu.endDate,
+        gpa: undefined
+      })) || [],
+      certifications: userProfile?.certifications?.map(cert => ({
+        name: cert.name,
+        issuer: cert.issuer,
+        date: cert.issueDate,
+        url: undefined
+      })) || []
+    };
+
+    // Transform job data to match backend schema
+    const jobListingFormatted = {
+      title: jobResponse.data.title || 'Unknown Position',
+      company: jobResponse.data.company || 'Unknown Company',
+      description: jobResponse.data.description || '',
+      requirements: jobResponse.data.requirements || [],
+      location: jobResponse.data.location || '',
+      salary: jobResponse.data.salary || '',
+      skills: jobResponse.data.skills || [],
+      experience: undefined,
+      education: undefined,
+      employmentType: undefined
+    };
+
+    // Call the backend API to generate resume
+    const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.RESUME_GENERATE}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userProfile: userProfileFormatted,
+        jobListing: jobListingFormatted,
+        options: {
+          format: 'markdown',
+          includeSummary: true,
+          includeSkills: true,
+          includeExperience: true,
+          includeEducation: true,
+          includeCertifications: true,
+          maxLength: 1000
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || 'Failed to generate resume');
+    }
+
+    const result = await response.json();
+    return { success: true, resumeId: result.resumeId, data: result.data };
+  } catch (error) {
+    console.error('Error generating resume:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to generate resume'
+    };
   }
 }
 

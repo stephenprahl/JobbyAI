@@ -6,7 +6,7 @@
     "dev": "vite build --watch --mode development",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx,ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "package": "npm run build && zip -r ../extension.zip .",
+    "package": "bun run build && zip -r ../extension.zip .",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
