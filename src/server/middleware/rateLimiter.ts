@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+const { Elysia } = require('elysia');
 import type { Context } from 'elysia';
 
 interface RateLimitOptions {
@@ -24,20 +24,20 @@ const defaultOptions: Required<RateLimitOptions> = {
   keyGenerator: (context: any) => {
     // Use the IP address as the key
     const headers = context.headers || context.request?.headers;
-    return headers?.get?.('cf-connecting-ip') || 
-           headers?.get?.('x-forwarded-for')?.split(',')[0].trim() || 
-           headers?.get?.('x-real-ip') ||
-           'unknown';
+    return headers?.get?.('cf-connecting-ip') ||
+      headers?.get?.('x-forwarded-for')?.split(',')[0].trim() ||
+      headers?.get?.('x-real-ip') ||
+      'unknown';
   }
 };
 
 export const rateLimit = (options: RateLimitOptions = {}) => {
-  const { 
-    windowMs, 
-    max, 
-    message, 
-    skip, 
-    keyGenerator 
+  const {
+    windowMs,
+    max,
+    message,
+    skip,
+    keyGenerator
   } = { ...defaultOptions, ...options };
 
   const store = new Map<string, RateLimitStore>();
@@ -52,21 +52,21 @@ export const rateLimit = (options: RateLimitOptions = {}) => {
     }
   }, windowMs).unref();
 
-  return (app: Elysia) => {
+  return (app: typeof Elysia) => {
     // Add rate limit headers to all responses
     app.onResponse(({ set, request }) => {
       // Don't add headers for OPTIONS requests
       if (request.method === 'OPTIONS') return;
-      
+
       // Get the client's IP address for the rate limit key
-      const ip = request.headers.get('cf-connecting-ip') || 
-                request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
-                request.headers.get('x-real-ip') ||
-                'unknown';
-      
+      const ip = request.headers.get('cf-connecting-ip') ||
+        request.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+        request.headers.get('x-real-ip') ||
+        'unknown';
+
       const entry = store.get(ip);
       if (!entry) return;
-      
+
       // Add rate limit headers to the response
       const remaining = Math.max(0, max - entry.count);
       const resetTime = Math.ceil(entry.resetTime / 1000);
@@ -75,7 +75,7 @@ export const rateLimit = (options: RateLimitOptions = {}) => {
         'X-RateLimit-Remaining': remaining.toString(),
         'X-RateLimit-Reset': resetTime.toString(),
       };
-      
+
       // Type assertion to handle the Set-Cookie header
       set.headers = headers as any;
     });
@@ -89,9 +89,9 @@ export const rateLimit = (options: RateLimitOptions = {}) => {
 
       const key = keyGenerator(context as unknown as Context);
       const now = Date.now();
-      
+
       let entry = store.get(key);
-      
+
       if (!entry || entry.resetTime <= now) {
         // Create new entry
         entry = {
@@ -114,7 +114,7 @@ export const rateLimit = (options: RateLimitOptions = {}) => {
         };
         // Type assertion to handle the Set-Cookie header
         context.set.headers = headers as any;
-        
+
         throw new Error(message);
       }
     });

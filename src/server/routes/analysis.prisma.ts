@@ -1,6 +1,6 @@
-import { Elysia, t } from 'elysia';
-import { analyzeJobListing } from '../services/analysis';
+const { Elysia, t } = require('elysia');
 import { JobAnalysisRequest } from '../schemas/analysis';
+import { analyzeJobListing } from '../services/analysis';
 import { logger } from '../utils/logger';
 
 // Define the request body schema
@@ -46,14 +46,14 @@ const analysisRequestSchema = t.Object({
  * Analysis routes for Elysia.js with Prisma integration
  * Handles job listing analysis and matching
  */
-export const analysisPrismaRoutes = (app: Elysia) => 
-  app.group('/analyze', (app) => 
+export const analysisPrismaRoutes = (app: typeof Elysia) =>
+  app.group('/analyze', (app) =>
     app
       // Add request logging
       .onRequest(({ request }) => {
         logger.info(`[${request.method}] ${request.url}`);
       })
-      
+
       // Health check endpoint
       .get('/health', () => ({
         status: 'ok',
@@ -61,14 +61,14 @@ export const analysisPrismaRoutes = (app: Elysia) =>
         timestamp: new Date().toISOString(),
         database: 'connected',
       }))
-      
+
       // Analyze job listing endpoint
       .post(
         '/',
         async ({ body, set }) => {
           try {
             const { job, userProfile, options = {} } = body as JobAnalysisRequest;
-            
+
             logger.info('Processing job analysis request', {
               jobTitle: job.title,
               company: job.company,

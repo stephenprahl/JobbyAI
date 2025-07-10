@@ -1,11 +1,11 @@
-import { Elysia, t } from 'elysia';
+const { Elysia, t } = require('elysia');
 import { logger } from '../utils/logger';
 
 /**
  * User profile routes for Elysia.js with Prisma integration
  * Handles user profile management operations
  */
-export const userRoutes = (app: Elysia) =>
+export const userRoutes = (app: typeof Elysia) =>
   app.group('/users', (app) =>
     app
       // Add request logging

@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+const { Elysia } = require('elysia');
 import { z } from 'zod';
 import { passwordService } from '../services/password.service';
 import { logger } from '../utils/logger';
@@ -29,18 +29,18 @@ export const passwordRoutes = new Elysia({ prefix: '/password' })
       try {
         const { email } = body as RequestResetBody;
         await passwordService.requestPasswordReset(email);
-        
+
         // Always return success to prevent email enumeration
-        return { 
-          success: true, 
-          message: 'If an account with this email exists, a password reset link has been sent.' 
+        return {
+          success: true,
+          message: 'If an account with this email exists, a password reset link has been sent.'
         };
       } catch (error) {
         logger.error('Error requesting password reset:', error);
         set.status = 500;
-        return { 
-          success: false, 
-          error: 'Failed to process password reset request' 
+        return {
+          success: false,
+          error: 'Failed to process password reset request'
         };
       }
     },
@@ -68,38 +68,38 @@ export const passwordRoutes = new Elysia({ prefix: '/password' })
       },
     }
   )
-  
+
   // Reset password with token
   .post(
     '/reset',
     async ({ body, set }) => {
       try {
         const { token, password } = body as ResetPasswordBody;
-        
+
         // Validate token first
         const isValid = await passwordService.validateResetToken(token);
         if (!isValid) {
           set.status = 400;
-          return { 
-            success: false, 
-            error: 'Invalid or expired password reset token' 
+          return {
+            success: false,
+            error: 'Invalid or expired password reset token'
           };
         }
-        
+
         // Hash the new password and reset it
         const hashedPassword = await Bun.password.hash(password);
         await passwordService.resetPassword(token, hashedPassword);
-        
-        return { 
-          success: true, 
-          message: 'Password has been successfully reset' 
+
+        return {
+          success: true,
+          message: 'Password has been successfully reset'
         };
       } catch (error: any) {
         logger.error('Error resetting password:', error);
         set.status = error.message.includes('Invalid') ? 400 : 500;
-        return { 
-          success: false, 
-          error: error.message || 'Failed to reset password' 
+        return {
+          success: false,
+          error: error.message || 'Failed to reset password'
         };
       }
     },
@@ -141,7 +141,7 @@ export const passwordRoutes = new Elysia({ prefix: '/password' })
       },
     }
   )
-  
+
   // Validate reset token
   .get(
     '/validate-token/:token',
@@ -150,19 +150,19 @@ export const passwordRoutes = new Elysia({ prefix: '/password' })
         const isValid = await passwordService.validateResetToken(token);
         if (!isValid) {
           set.status = 400;
-          return { 
-            valid: false, 
-            error: 'Invalid or expired password reset token' 
+          return {
+            valid: false,
+            error: 'Invalid or expired password reset token'
           };
         }
-        
+
         return { valid: true };
       } catch (error) {
         logger.error('Error validating reset token:', error);
         set.status = 500;
-        return { 
-          valid: false, 
-          error: 'Failed to validate token' 
+        return {
+          valid: false,
+          error: 'Failed to validate token'
         };
       }
     },

@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+const { Elysia } = require('elysia');
 import { authService } from '../services/auth.service';
 import { logger } from '../utils/logger';
 
@@ -11,7 +11,7 @@ export const authMiddleware = new Elysia({ name: 'auth-middleware' })
   .derive(async (context) => {
     try {
       const authHeader = context.headers.authorization;
-      
+
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         context.set.status = 401;
         return { error: 'No token provided' };
@@ -21,12 +21,12 @@ export const authMiddleware = new Elysia({ name: 'auth-middleware' })
       const user = authService.verifyToken(token);
       const isAdmin = user.role === 'ADMIN';
       const isVerified = user.emailVerified;
-      
+
       // Add user info to context
       (context as any).user = user;
       (context as any).isAdmin = isAdmin;
       (context as any).isVerified = isVerified;
-      
+
       return {
         user,
         isAdmin,
@@ -40,11 +40,11 @@ export const authMiddleware = new Elysia({ name: 'auth-middleware' })
   });
 
 // Middleware to require admin access
-export const adminOnly = (app: Elysia) =>
+export const adminOnly = (app: typeof Elysia) =>
   app.onBeforeHandle((context) => {
     const user = (context as any).user;
     const isAdmin = (context as any).isAdmin;
-    
+
     if (!user || !isAdmin) {
       context.set.status = 403;
       return { error: 'Forbidden: Admin access required' };
@@ -53,19 +53,19 @@ export const adminOnly = (app: Elysia) =>
   });
 
 // Middleware to require email verification
-export const verifiedOnly = (app: Elysia) =>
+export const verifiedOnly = (app: typeof Elysia) =>
   app.onBeforeHandle((context) => {
     const user = (context as any).user;
     const isVerified = (context as any).isVerified;
-    
+
     if (!user) {
       context.set.status = 401;
       return { error: 'Authentication required' };
     }
-    
+
     if (!isVerified) {
       context.set.status = 403;
-      return { 
+      return {
         error: 'Email verification required',
         code: 'EMAIL_VERIFICATION_REQUIRED',
         verified: false

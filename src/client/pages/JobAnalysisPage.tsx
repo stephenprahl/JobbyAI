@@ -39,18 +39,11 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { FiAlertTriangle, FiCheckCircle, FiTrendingUp, FiXCircle } from 'react-icons/fi'
 import * as apiService from '../services/api'
-
-interface JobAnalysisResult {
-  matchScore: number
-  matchingSkills: string[]
-  missingSkills: string[]
-  suggestions: string[]
-  analysis: string
-}
+import { JobAnalysis } from '../types'
 
 const JobAnalysisPage: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [analysisResult, setAnalysisResult] = useState<JobAnalysisResult | null>(null)
+  const [analysisResult, setAnalysisResult] = useState<JobAnalysis | null>(null)
   const toast = useToast()
 
   const { register, handleSubmit, reset } = useForm({
@@ -299,11 +292,21 @@ const JobAnalysisPage: React.FC = () => {
                 <Card>
                   <CardHeader>
                     <Heading as="h3" size="md">
-                      Analysis Summary
+                      Job Details Summary
                     </Heading>
                   </CardHeader>
                   <CardBody>
-                    <Text>{analysisResult.analysis}</Text>
+                    <VStack spacing={3} align="start">
+                      <Text><strong>Position:</strong> {analysisResult.jobDetails.title}</Text>
+                      <Text><strong>Company:</strong> {analysisResult.jobDetails.company}</Text>
+                      <Text><strong>Type:</strong> {analysisResult.jobDetails.type}</Text>
+                      <Text><strong>Experience Required:</strong> {analysisResult.jobDetails.experience}</Text>
+                      {analysisResult.salaryRange && (
+                        <Text>
+                          <strong>Salary Range:</strong> {analysisResult.salaryRange.currency} {analysisResult.salaryRange.min.toLocaleString()} - {analysisResult.salaryRange.max.toLocaleString()}
+                        </Text>
+                      )}
+                    </VStack>
                   </CardBody>
                 </Card>
 
@@ -325,10 +328,10 @@ const JobAnalysisPage: React.FC = () => {
                       </Box>
                     </Alert>
                     <List spacing={3}>
-                      {analysisResult.suggestions.map((suggestion, index) => (
+                      {analysisResult.recommendations.map((recommendation, index) => (
                         <ListItem key={index}>
                           <ListIcon as={FiAlertTriangle} color="orange.500" />
-                          {suggestion}
+                          {recommendation}
                         </ListItem>
                       ))}
                     </List>

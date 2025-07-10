@@ -12,7 +12,12 @@ type MessageType =
   | 'GET_COMPANY_INSIGHTS'
   | 'GET_SALARY_DATA'
   | 'OPEN_FULL_ANALYSIS'
-  | 'SYNC_WITH_BACKEND';
+  | 'SAVE_JOB'
+  | 'GET_SAVED_JOBS'
+  | 'SYNC_WITH_BACKEND'
+  | 'JOB_ANALYSIS_RESULT'
+  | 'GET_CURRENT_ANALYSIS'
+  | 'GET_JOB_DATA';
 
 interface Message<T = unknown> {
   type: MessageType;
@@ -38,6 +43,12 @@ interface UserProfile {
     startDate: string;
     endDate?: string;
   }>;
+  preferences?: {
+    desiredSalaryMin?: number;
+    desiredSalaryMax?: number;
+    preferredLocations?: string[];
+    workType?: 'remote' | 'hybrid' | 'onsite' | 'any';
+  };
 }
 
 interface JobApplication {
@@ -48,6 +59,16 @@ interface JobApplication {
   appliedDate: string;
   status: 'applied' | 'screening' | 'interview' | 'rejected' | 'offer';
   url: string;
+  analysis?: any;
+  notes?: string;
+}
+
+interface SavedJob {
+  id: string;
+  jobData: any;
+  analysis: any;
+  savedAt: string;
+  tags?: string[];
   notes?: string;
 }
 
@@ -56,9 +77,10 @@ const API_CONFIG = {
   BASE_URL: 'http://localhost:3001',
   TIMEOUT: 30000,
   ENDPOINTS: {
-    ANALYZE: '/api/analysis/analyze-job',
-    PROFILE: '/api/user/profile',
-    RESUME_GENERATE: '/api/resume/generate'
+    HEALTH: '/health',
+    ANALYZE: '/analyze',
+    PROFILE: '/users/me',
+    RESUME_GENERATE: '/resume/generate'
   }
 } as const;
 
@@ -113,9 +135,27 @@ chrome.runtime.onMessage.addListener((message: Message, sender, sendResponse) =>
       return true;
 
     case 'OPEN_FULL_ANALYSIS':
-      chrome.tabs.create({ url: 'http://localhost:5173/job-analysis' });
+      chrome.tabs.create({ url: 'http://localhost:5173/jobs' });
       sendResponse({ success: true });
       break;
+
+    case 'SAVE_JOB':
+      saveJob(message.data)
+        .then(sendResponse)
+        .catch(error => {
+          console.error('Error saving job:', error);
+          sendResponse({ success: false, error: String(error) });
+        });
+      return true;
+
+    case 'GET_SAVED_JOBS':
+      getSavedJobs()
+        .then(sendResponse)
+        .catch(error => {
+          console.error('Error getting saved jobs:', error);
+          sendResponse({ success: false, error: String(error) });
+        });
+      return true;
 
     default:
       sendResponse({ success: false, error: 'Unknown message type' });
@@ -262,6 +302,48 @@ async function getJobApplications(): Promise<any> {
   }
 }
 
+// Storage functions for saved jobs
+async function saveJob(jobData: any): Promise<{ success: boolean; id?: string; error?: string }> {
+  try {
+    const savedJob: SavedJob = {
+      id: generateId(),
+      jobData: jobData.jobData,
+      analysis: jobData.analysis,
+      savedAt: jobData.savedAt,
+      tags: jobData.tags || [],
+      notes: jobData.notes || ''
+    };
+
+    const result = await chrome.storage.local.get(['savedJobs']);
+    const savedJobs = result.savedJobs || [];
+
+    savedJobs.push(savedJob);
+    await chrome.storage.local.set({ savedJobs });
+
+    console.log('Job saved successfully:', savedJob.id);
+    return { success: true, id: savedJob.id };
+  } catch (error) {
+    console.error('Error saving job:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+async function getSavedJobs(): Promise<{ success: boolean; data?: SavedJob[]; error?: string }> {
+  try {
+    const result = await chrome.storage.local.get(['savedJobs']);
+    const savedJobs = result.savedJobs || [];
+
+    return { success: true, data: savedJobs };
+  } catch (error) {
+    console.error('Error getting saved jobs:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+function generateId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
 // Mock analysis data for when backend is unavailable
 function getMockAnalysis() {
   return {
@@ -289,6 +371,37 @@ function getMockAnalysis() {
     ]
   };
 }
+
+// Test connection to backend
+async function testBackendConnection(): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.HEALTH}`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(5000)
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('✅ Backend connection successful:', data);
+      return true;
+    } else {
+      console.warn('⚠️ Backend returned non-OK status:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error('❌ Failed to connect to backend:', error);
+    return false;
+  }
+}
+
+// Test connection on extension startup
+testBackendConnection().then(connected => {
+  if (connected) {
+    console.log('🚀 Resume Plan AI Extension ready - Backend connected');
+  } else {
+    console.warn('⚠️ Resume Plan AI Extension ready - Backend connection failed');
+  }
+});
 
 // Extension installation handler
 chrome.runtime.onInstalled.addListener((details) => {

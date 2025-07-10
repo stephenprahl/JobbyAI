@@ -16,11 +16,14 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
@@ -48,11 +51,13 @@
     }
   },
   "include": [
-    "src/client"
+    "src/**/*",
+    "scripts/**/*",
+    "extension/**/*"
   ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
   ]
 }

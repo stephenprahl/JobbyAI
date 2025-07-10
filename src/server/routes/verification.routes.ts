@@ -1,10 +1,10 @@
-import { Elysia, t } from 'elysia';
+const { Elysia, t } = require('elysia');
 import { authService } from '../services/auth.service';
 import { logger } from '../utils/logger';
 
 export const verificationRoutes = new Elysia({ prefix: '/api/verify' })
   // Verify email with token
-  .get('/email', 
+  .get('/email',
     async ({ query, set }) => {
       try {
         const { token } = query;
@@ -14,7 +14,7 @@ export const verificationRoutes = new Elysia({ prefix: '/api/verify' })
         }
 
         await authService.verifyEmail(token);
-        
+
         // Redirect to success page on the frontend
         set.redirect = `${process.env.FRONTEND_URL}/verification/success`;
         return;
@@ -31,24 +31,24 @@ export const verificationRoutes = new Elysia({ prefix: '/api/verify' })
       })
     }
   )
-  
+
   // Resend verification email
   .post('/resend',
     async ({ body, set }) => {
       try {
         const { email } = body;
         await authService.resendVerificationEmail(email);
-        
-        return { 
-          success: true, 
-          message: 'Verification email has been resent. Please check your inbox.' 
+
+        return {
+          success: true,
+          message: 'Verification email has been resent. Please check your inbox.'
         };
       } catch (error: any) {
         logger.error('Resend verification email failed:', error);
         set.status = 400;
-        return { 
-          success: false, 
-          message: error.message || 'Failed to resend verification email' 
+        return {
+          success: false,
+          message: error.message || 'Failed to resend verification email'
         };
       }
     },

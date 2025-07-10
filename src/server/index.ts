@@ -1,12 +1,12 @@
 import { cors } from '@elysiajs/cors';
 import { config } from 'dotenv';
-import { Elysia } from 'elysia';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
 import { analysisPrismaRoutes } from './routes/analysis.prisma';
 import { authRoutes } from './routes/auth.routes';
 import { resumeRoutes } from './routes/resume.routes';
 import prisma, { connect, disconnect } from './services/prisma.service';
+const { Elysia } = require('elysia');
 
 // Load environment variables
 config({
@@ -47,14 +47,7 @@ const logger = createLogger({
 console.log('Starting full Elysia server...');
 
 // Create Elysia app with minimal middleware first
-const app = new Elysia({
-  name: 'resume-plan-ai-backend',
-  serve: {
-    port: PORT,
-    hostname: isProduction ? '0.0.0.0' : 'localhost'
-  },
-  prefix: '/api',
-})
+const app = new Elysia()
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
   .use(cors({

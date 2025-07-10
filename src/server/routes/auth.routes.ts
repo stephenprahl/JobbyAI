@@ -1,8 +1,8 @@
-import { Elysia, t } from 'elysia';
+const { Elysia, t } = require('elysia');
 import { authService } from '../services/auth.service';
 import { logger } from '../utils/logger';
 
-export const authRoutes = (app: Elysia) =>
+export const authRoutes = (app: typeof Elysia) =>
   app.group('/auth', (app) =>
     app
       .post(

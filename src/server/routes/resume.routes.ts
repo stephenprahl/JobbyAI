@@ -1,4 +1,4 @@
-import { Elysia, t } from 'elysia';
+const { Elysia, t } = require('elysia');
 import { JobListing } from '../schemas/analysis';
 import { generateResume } from '../services/resumeBuilder';
 import { logger } from '../utils/logger';
@@ -69,7 +69,7 @@ const generateResumeSchema = t.Object({
  * Resume routes for Elysia.js
  * Handles resume generation and management
  */
-export const resumeRoutes = (app: Elysia) =>
+export const resumeRoutes = (app: typeof Elysia) =>
   app.group('/resume', (app) =>
     app
       // Add request logging

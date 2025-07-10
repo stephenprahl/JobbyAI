@@ -9,8 +9,8 @@ generator client {
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// To seed your database, run: npx prisma db seed
-// The seed script is defined in prisma/seed.cjs
+// To seed your database, run: bun run db:seed
+// The seed script is defined in prisma/seed.ts
 
 datasource db {
   provider   = "postgresql"

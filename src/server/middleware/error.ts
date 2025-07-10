@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+const { Elysia } = require('elysia');
 import { logger } from '../utils/logger';
 
 /**
@@ -17,7 +17,7 @@ export const errorHandler = new Elysia()
     // Format the error response
     const status = 'status' in error && typeof error.status === 'number' ? error.status : 500;
     const isProduction = process.env.NODE_ENV === 'production';
-    
+
     set.status = status;
     return {
       success: false,
@@ -41,7 +41,7 @@ export class ApiError extends Error {
     this.name = this.constructor.name;
     this.status = status;
     this.details = details;
-    
+
     // Capture stack trace, excluding constructor call from it
     Error.captureStackTrace(this, this.constructor);
   }

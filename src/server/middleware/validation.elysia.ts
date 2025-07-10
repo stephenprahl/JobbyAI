@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+const { Elysia } = require('elysia');
 import { AnyZodObject } from 'zod';
 import { logger } from '../utils/logger';
 import { ValidationError } from './error';
@@ -30,13 +30,13 @@ export const validateRequest = <T extends AnyZodObject>(
         default:
           data = undefined;
       }
-      
+
       const result = await schema.safeParseAsync(data);
-      
+
       if (!result.success) {
         throw new ValidationError('Validation failed', result.error.issues);
       }
-      
+
       // Update the context with validated data
       if (target === 'body' && 'body' in context) {
         context.body = result.data;
@@ -45,7 +45,7 @@ export const validateRequest = <T extends AnyZodObject>(
       } else if (target === 'params' && 'params' in context) {
         context.params = result.data;
       }
-      
+
       return true;
     } catch (error) {
       logger.error('Validation error:', error);
@@ -57,19 +57,19 @@ export const validateRequest = <T extends AnyZodObject>(
 /**
  * Validates request body against a Zod schema
  */
-export const validateBody = <T extends AnyZodObject>(schema: T) => 
+export const validateBody = <T extends AnyZodObject>(schema: T) =>
   validateRequest(schema, 'body');
 
 /**
  * Validates query parameters against a Zod schema
  */
-export const validateQuery = <T extends AnyZodObject>(schema: T) => 
+export const validateQuery = <T extends AnyZodObject>(schema: T) =>
   validateRequest(schema, 'query');
 
 /**
  * Validates route parameters against a Zod schema
  */
-export const validateParams = <T extends AnyZodObject>(schema: T) => 
+export const validateParams = <T extends AnyZodObject>(schema: T) =>
   validateRequest(schema, 'params');
 
 /**
@@ -88,7 +88,7 @@ export const validateHeaders = <T extends AnyZodObject>(schema: T) => {
           code: err.code,
         }));
 
-        logger.warn('Header validation failed', { 
+        logger.warn('Header validation failed', {
           headers: Object.keys(headers),
           errors,
           url: request.url,
@@ -113,7 +113,7 @@ export const validateResponse = <T extends AnyZodObject>(schema: T) => {
   return new Elysia().onAfterHandle(({ response }) => {
     try {
       const result = schema.safeParse(response);
-      
+
       if (!result.success) {
         const errors = result.error.errors.map(err => ({
           path: err.path.join('.'),
@@ -121,7 +121,7 @@ export const validateResponse = <T extends AnyZodObject>(schema: T) => {
           code: err.code,
         }));
 
-        logger.error('Response validation failed', { 
+        logger.error('Response validation failed', {
           errors,
           response: JSON.stringify(response).substring(0, 500),
         });
