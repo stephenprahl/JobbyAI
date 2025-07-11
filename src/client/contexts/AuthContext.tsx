@@ -31,6 +31,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const queryClient = useQueryClient()
 
+  // Initialize auth token on startup
+  useEffect(() => {
+    if (tokens?.accessToken) {
+      authService.setAuthToken(tokens.accessToken)
+    }
+  }, []) // Only run once on mount
+
   // Query to get current user
   const {
     data: user,
@@ -46,9 +53,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Only clear tokens if it's an authentication error (401, 403)
         // Don't clear on network errors or other issues
         if (error?.response?.status === 401 || error?.response?.status === 403) {
+          console.log('Authentication error, clearing tokens:', error?.response?.status)
           setTokens(null)
           localStorage.removeItem('auth_tokens')
           authService.removeAuthToken()
+        } else {
+          console.log('Non-auth error, keeping tokens:', error?.message)
         }
       },
     }

@@ -1,37 +1,8 @@
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Container,
-  Flex,
-  Grid,
-  GridItem,
-  Heading,
-  HStack,
-  Icon,
-  IconButton,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Spinner,
-  Text,
-  Textarea,
-  useColorModeValue,
-  useDisclosure,
-  useToast,
-  VStack,
-  Wrap
-} from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { FiDownload, FiEdit3, FiEye, FiPlus, FiSave, FiStar, FiTrash2 } from 'react-icons/fi'
 import { useQuery } from 'react-query'
+import NavigationTailwind from '../components/NavigationTailwind'
+import ThemeToggle from '../components/ThemeToggle'
 import { useAuth } from '../contexts/AuthContext'
 import { generateResume, getCurrentUser, getUserResumes } from '../services/api'
 
@@ -65,17 +36,14 @@ interface Education {
   description?: string
 }
 
-const ResumeBuilderPage: React.FC = () => {
+const ResumeBuilderPageTailwind: React.FC = () => {
   const { user, isLoading: authLoading } = useAuth()
-  const toast = useToast()
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const { isOpen: isPreviewOpen, onOpen: onPreviewOpen, onClose: onPreviewClose } = useDisclosure()
-  const borderColor = useColorModeValue('gray.200', 'gray.600')
-  const cardBg = useColorModeValue('white', 'gray.800')
   const [resumeTitle, setResumeTitle] = useState('My Resume')
   const [generatedContent, setGeneratedContent] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [sections, setSections] = useState<ResumeSection[]>([])
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false)
 
   // Always call useQuery hooks - control with enabled option but don't conditionally call
   const { data: userProfile, isLoading: profileLoading } = useQuery(
@@ -149,9 +117,9 @@ const ResumeBuilderPage: React.FC = () => {
 
   if (authLoading || profileLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minH="60vh">
-        <Spinner size="xl" />
-      </Box>
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
     )
   }
 
@@ -303,21 +271,9 @@ const ResumeBuilderPage: React.FC = () => {
   const saveResume = async () => {
     try {
       // TODO: Implement save resume API call
-      toast({
-        title: 'Resume saved!',
-        description: 'Your resume has been saved successfully.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      })
+      console.log('Resume saved!')
     } catch (error) {
-      toast({
-        title: 'Error saving resume',
-        description: 'There was an error saving your resume. Please try again.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
+      console.error('Error saving resume:', error)
     }
   }
 
@@ -410,33 +366,14 @@ const ResumeBuilderPage: React.FC = () => {
       if (result.success && result.data) {
         // Store the generated content
         setGeneratedContent(result.data.content || 'Resume generated successfully!')
-
-        toast({
-          title: 'AI Resume Generated!',
-          description: 'Your AI-optimized resume has been generated successfully.',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        })
-
-        // Update the resume title to something more descriptive
         setResumeTitle(`Professional Resume - ${new Date().toLocaleDateString()}`)
-
-        // Open the preview modal
-        onOpen()
-
+        setIsAIModalOpen(true)
         console.log('Generated resume:', result.data)
       } else {
         throw new Error(result.error || 'Failed to generate resume')
       }
     } catch (error: any) {
-      toast({
-        title: 'Generation Failed',
-        description: error.message || 'Failed to generate AI resume. Please try again.',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
+      console.error('Generation failed:', error.message)
     } finally {
       setIsGenerating(false)
     }
@@ -444,19 +381,15 @@ const ResumeBuilderPage: React.FC = () => {
 
   const PersonalInfoSection = () => {
     const personalSection = sections.find(s => s.type === 'personal')
-    const borderColor = useColorModeValue('gray.200', 'gray.600')
-    const cardBg = useColorModeValue('white', 'gray.800')
-
     if (!personalSection) return null
 
     return (
-      <Card bg={cardBg} borderColor={borderColor}>
-        <CardHeader>
-          <Heading size="md">Personal Information</Heading>
-        </CardHeader>
-        <CardBody>
-          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-            <Input
+      <div className="card-professional animate-fade-in">
+        <div className="p-6">
+          <h3 className="text-lg font-semibold text-heading mb-4">Personal Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
               placeholder="First Name"
               value={personalSection.content.firstName}
               onChange={e =>
@@ -468,8 +401,10 @@ const ResumeBuilderPage: React.FC = () => {
                   )
                 )
               }
+              className="input-professional"
             />
-            <Input
+            <input
+              type="text"
               placeholder="Last Name"
               value={personalSection.content.lastName}
               onChange={e =>
@@ -481,10 +416,11 @@ const ResumeBuilderPage: React.FC = () => {
                   )
                 )
               }
+              className="input-professional"
             />
-            <Input
-              placeholder="Email"
+            <input
               type="email"
+              placeholder="Email"
               value={personalSection.content.email}
               onChange={e =>
                 setSections(prev =>
@@ -495,8 +431,10 @@ const ResumeBuilderPage: React.FC = () => {
                   )
                 )
               }
+              className="input-professional"
             />
-            <Input
+            <input
+              type="tel"
               placeholder="Phone"
               value={personalSection.content.phone}
               onChange={e =>
@@ -508,8 +446,10 @@ const ResumeBuilderPage: React.FC = () => {
                   )
                 )
               }
+              className="input-professional"
             />
-            <Input
+            <input
+              type="text"
               placeholder="Location"
               value={personalSection.content.location}
               onChange={e =>
@@ -521,8 +461,10 @@ const ResumeBuilderPage: React.FC = () => {
                   )
                 )
               }
+              className="input-professional"
             />
-            <Input
+            <input
+              type="url"
               placeholder="Website"
               value={personalSection.content.website}
               onChange={e =>
@@ -534,179 +476,184 @@ const ResumeBuilderPage: React.FC = () => {
                   )
                 )
               }
+              className="input-professional"
             />
-          </Grid>
-        </CardBody>
-      </Card>
+          </div>
+        </div>
+      </div>
     )
   }
 
   const ExperienceSection = () => {
     const experienceSection = sections.find(s => s.type === 'experience')
-    const borderColor = useColorModeValue('gray.200', 'gray.600')
-    const cardBg = useColorModeValue('white', 'gray.800')
-
     if (!experienceSection) return null
 
     return (
-      <Card bg={cardBg} borderColor={borderColor}>
-        <CardHeader>
-          <Flex justify="space-between" align="center">
-            <Heading size="md">Work Experience</Heading>
-            <Button leftIcon={<Icon as={FiPlus} />} size="sm" onClick={addExperience}>
+      <div className="card-professional animate-fade-in">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-heading">Work Experience</h3>
+            <button onClick={addExperience} className="btn-primary flex items-center gap-2">
+              <FiPlus className="w-4 h-4" />
               Add Experience
-            </Button>
-          </Flex>
-        </CardHeader>
-        <CardBody>
-          <VStack spacing={6} align="stretch">
+            </button>
+          </div>
+          <div className="space-y-6">
             {experienceSection.content.map((exp: Experience) => (
-              <Box key={exp.id} p={4} border="1px" borderColor={borderColor} borderRadius="md">
-                <Flex justify="space-between" align="center" mb={4}>
-                  <Text fontWeight="bold">Experience Entry</Text>
-                  <IconButton
-                    aria-label="Remove experience"
-                    icon={<FiTrash2 />}
-                    size="sm"
-                    variant="ghost"
-                    colorScheme="red"
+              <div key={exp.id} className="border border-gray-200 dark:border-dark-600 rounded-lg p-4 bg-gray-50 dark:bg-dark-700/30">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="font-medium text-body">Experience Entry</span>
+                  <button
                     onClick={() => removeExperience(exp.id)}
-                  />
-                </Flex>
-                <Grid templateColumns="repeat(2, 1fr)" gap={4} mb={4}>
-                  <Input
+                    className="text-error-500 hover:text-error-600 p-1 rounded transition-colors"
+                  >
+                    <FiTrash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <input
+                    type="text"
                     placeholder="Job Title"
                     value={exp.title}
                     onChange={e => updateExperience(exp.id, 'title', e.target.value)}
+                    className="input-professional"
                   />
-                  <Input
+                  <input
+                    type="text"
                     placeholder="Company"
                     value={exp.company}
                     onChange={e => updateExperience(exp.id, 'company', e.target.value)}
+                    className="input-professional"
                   />
-                  <Input
+                  <input
+                    type="text"
                     placeholder="Location"
                     value={exp.location}
                     onChange={e => updateExperience(exp.id, 'location', e.target.value)}
+                    className="input-professional"
                   />
-                  <Input
-                    placeholder="Start Date"
+                  <input
                     type="month"
+                    placeholder="Start Date"
                     value={exp.startDate}
                     onChange={e => updateExperience(exp.id, 'startDate', e.target.value)}
+                    className="input-professional"
                   />
                   {!exp.current && (
-                    <Input
-                      placeholder="End Date"
+                    <input
                       type="month"
+                      placeholder="End Date"
                       value={exp.endDate}
                       onChange={e => updateExperience(exp.id, 'endDate', e.target.value)}
+                      className="input-professional"
                     />
                   )}
-                </Grid>
-                <Textarea
+                </div>
+                <textarea
                   placeholder="Job description and achievements..."
                   value={exp.description}
                   onChange={e => updateExperience(exp.id, 'description', e.target.value)}
-                  minH="100px"
+                  rows={4}
+                  className="input-professional w-full resize-none"
                 />
-              </Box>
+              </div>
             ))}
-          </VStack>
-        </CardBody>
-      </Card>
+          </div>
+        </div>
+      </div>
     )
   }
 
   const EducationSection = () => {
     const educationSection = sections.find(s => s.type === 'education')
-    const borderColor = useColorModeValue('gray.200', 'gray.600')
-    const cardBg = useColorModeValue('white', 'gray.800')
-
     if (!educationSection) return null
 
     return (
-      <Card bg={cardBg} borderColor={borderColor}>
-        <CardHeader>
-          <Flex justify="space-between" align="center">
-            <Heading size="md">Education</Heading>
-            <Button leftIcon={<Icon as={FiPlus} />} size="sm" onClick={addEducation}>
+      <div className="card-professional animate-fade-in">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-heading">Education</h3>
+            <button onClick={addEducation} className="btn-primary flex items-center gap-2">
+              <FiPlus className="w-4 h-4" />
               Add Education
-            </Button>
-          </Flex>
-        </CardHeader>
-        <CardBody>
-          <VStack spacing={6} align="stretch">
+            </button>
+          </div>
+          <div className="space-y-6">
             {educationSection.content.map((edu: Education) => (
-              <Box key={edu.id} p={4} border="1px" borderColor={borderColor} borderRadius="md">
-                <Flex justify="space-between" align="center" mb={4}>
-                  <Text fontWeight="bold">Education Entry</Text>
-                  <IconButton
-                    aria-label="Remove education"
-                    icon={<FiTrash2 />}
-                    size="sm"
-                    variant="ghost"
-                    colorScheme="red"
+              <div key={edu.id} className="border border-gray-200 dark:border-dark-600 rounded-lg p-4 bg-gray-50 dark:bg-dark-700/30">
+                <div className="flex justify-between items-center mb-4">
+                  <span className="font-medium text-body">Education Entry</span>
+                  <button
                     onClick={() => removeEducation(edu.id)}
-                  />
-                </Flex>
-                <Grid templateColumns="repeat(2, 1fr)" gap={4} mb={4}>
-                  <Input
+                    className="text-error-500 hover:text-error-600 p-1 rounded transition-colors"
+                  >
+                    <FiTrash2 className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <input
+                    type="text"
                     placeholder="Institution"
                     value={edu.institution}
                     onChange={e => updateEducation(edu.id, 'institution', e.target.value)}
+                    className="input-professional"
                   />
-                  <Input
+                  <input
+                    type="text"
                     placeholder="Degree"
                     value={edu.degree}
                     onChange={e => updateEducation(edu.id, 'degree', e.target.value)}
+                    className="input-professional"
                   />
-                  <Input
+                  <input
+                    type="text"
                     placeholder="Field of Study"
                     value={edu.fieldOfStudy}
                     onChange={e => updateEducation(edu.id, 'fieldOfStudy', e.target.value)}
+                    className="input-professional"
                   />
-                  <Input
-                    placeholder="GPA (optional)"
+                  <input
                     type="number"
+                    placeholder="GPA (optional)"
                     step="0.01"
                     min="0"
                     max="4"
                     value={edu.gpa || ''}
                     onChange={e => updateEducation(edu.id, 'gpa', parseFloat(e.target.value) || undefined)}
+                    className="input-professional"
                   />
-                  <Input
-                    placeholder="Start Date"
+                  <input
                     type="month"
+                    placeholder="Start Date"
                     value={edu.startDate}
                     onChange={e => updateEducation(edu.id, 'startDate', e.target.value)}
+                    className="input-professional"
                   />
-                  <Input
-                    placeholder="End Date"
+                  <input
                     type="month"
+                    placeholder="End Date"
                     value={edu.endDate}
                     onChange={e => updateEducation(edu.id, 'endDate', e.target.value)}
+                    className="input-professional"
                   />
-                </Grid>
-                <Textarea
+                </div>
+                <textarea
                   placeholder="Description (optional)"
                   value={edu.description || ''}
                   onChange={e => updateEducation(edu.id, 'description', e.target.value)}
-                  minH="80px"
+                  rows={3}
+                  className="input-professional w-full resize-none"
                 />
-              </Box>
+              </div>
             ))}
-          </VStack>
-        </CardBody>
-      </Card>
+          </div>
+        </div>
+      </div>
     )
   }
 
   const SkillsSection = () => {
     const skillsSection = sections.find(s => s.type === 'skills')
-    const borderColor = useColorModeValue('gray.200', 'gray.600')
-    const cardBg = useColorModeValue('white', 'gray.800')
-
     if (!skillsSection) return null
 
     // Skill suggestions based on common tech skills
@@ -730,265 +677,262 @@ const ResumeBuilderPage: React.FC = () => {
     }
 
     return (
-      <Card bg={cardBg} borderColor={borderColor}>
-        <CardHeader>
-          <Flex justify="space-between" align="center">
-            <Heading size="md">Skills</Heading>
-            <Button leftIcon={<Icon as={FiPlus} />} size="sm" onClick={addSkill}>
+      <div className="card-professional animate-fade-in">
+        <div className="p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-heading">Skills</h3>
+            <button onClick={addSkill} className="btn-primary flex items-center gap-2">
+              <FiPlus className="w-4 h-4" />
               Add Skill
-            </Button>
-          </Flex>
-        </CardHeader>
-        <CardBody>
-          <VStack spacing={3} align="stretch">
+            </button>
+          </div>
+          <div className="space-y-3 mb-6">
             {skillsSection.content.map((skill: string, index: number) => (
-              <HStack key={index}>
-                <Input
+              <div key={index} className="flex gap-2">
+                <input
+                  type="text"
                   placeholder="Skill name"
                   value={skill}
                   onChange={e => updateSkill(index, e.target.value)}
+                  className="input-professional flex-1"
                 />
-                <IconButton
-                  aria-label="Remove skill"
-                  icon={<FiTrash2 />}
-                  size="sm"
-                  variant="ghost"
-                  colorScheme="red"
+                <button
                   onClick={() => removeSkill(index)}
-                />
-              </HStack>
+                  className="text-error-500 hover:text-error-600 p-2 rounded transition-colors"
+                >
+                  <FiTrash2 className="w-4 h-4" />
+                </button>
+              </div>
             ))}
-          </VStack>
-          <Wrap spacing={4} mt={4}>
-            {skillSuggestions.map(skill => (
-              <Badge
-                key={skill}
-                colorScheme="blue"
-                borderRadius="full"
-                px={3}
-                py={1}
-                cursor="pointer"
-                onClick={() => addSuggestedSkill(skill)}
-              >
-                {skill}
-              </Badge>
-            ))}
-          </Wrap>
-        </CardBody>
-      </Card>
+          </div>
+          <div className="border-t border-gray-200 dark:border-dark-600 pt-4">
+            <p className="text-sm text-muted mb-3">Suggested Skills:</p>
+            <div className="flex flex-wrap gap-2">
+              {skillSuggestions.map(skill => (
+                <button
+                  key={skill}
+                  onClick={() => addSuggestedSkill(skill)}
+                  className="px-3 py-1 text-sm bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 rounded-full hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors"
+                >
+                  {skill}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     )
   }
 
   return (
-    <Container maxW="7xl" py={8}>
-      <VStack spacing={8} align="stretch">
-        {/* Existing Resumes Section */}
-        {resumes.length > 0 && (
-          <Card bg={cardBg} borderColor={borderColor}>
-            <CardHeader>
-              <Heading size="md">My Resumes</Heading>
-            </CardHeader>
-            <CardBody>
-              <Grid templateColumns="repeat(auto-fill, minmax(300px, 1fr))" gap={4}>
-                {resumes.map((resume: any) => (
-                  <Card key={resume.id} variant="outline" size="sm">
-                    <CardBody>
-                      <VStack align="start" spacing={2}>
-                        <Heading size="sm">{resume.title}</Heading>
-                        <Text fontSize="sm" color="gray.600">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-950 transition-colors duration-300">
+      <NavigationTailwind />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          {/* Existing Resumes Section */}
+          {resumes.length > 0 && (
+            <div className="card-professional animate-fade-in">
+              <div className="p-6">
+                <h2 className="text-lg font-semibold text-heading mb-4">My Resumes</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {resumes.map((resume: any) => (
+                    <div key={resume.id} className="border border-gray-200 dark:border-dark-600 rounded-lg p-4 bg-gray-50 dark:bg-dark-700/30 hover:bg-gray-100 dark:hover:bg-dark-700/50 transition-colors">
+                      <div className="space-y-2">
+                        <h3 className="font-medium text-heading">{resume.title}</h3>
+                        <p className="text-sm text-muted">
                           Created: {new Date(resume.createdAt).toLocaleDateString()}
-                        </Text>
-                        <Text fontSize="sm" color="gray.600">
+                        </p>
+                        <p className="text-sm text-muted">
                           Updated: {new Date(resume.updatedAt).toLocaleDateString()}
-                        </Text>
-                        <HStack spacing={2} mt={2}>
-                          <Button size="xs" leftIcon={<FiEye />} variant="outline">
+                        </p>
+                        <div className="flex gap-2 mt-3">
+                          <button className="flex items-center gap-1 px-2 py-1 text-xs btn-secondary">
+                            <FiEye className="w-3 h-3" />
                             View
-                          </Button>
-                          <Button size="xs" leftIcon={<FiEdit3 />} variant="outline">
+                          </button>
+                          <button className="flex items-center gap-1 px-2 py-1 text-xs btn-secondary">
+                            <FiEdit3 className="w-3 h-3" />
                             Edit
-                          </Button>
-                          <Button size="xs" leftIcon={<FiDownload />} variant="outline">
+                          </button>
+                          <button className="flex items-center gap-1 px-2 py-1 text-xs btn-secondary">
+                            <FiDownload className="w-3 h-3" />
                             Download
-                          </Button>
-                        </HStack>
-                      </VStack>
-                    </CardBody>
-                  </Card>
-                ))}
-              </Grid>
-            </CardBody>
-          </Card>
-        )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* Header */}
-        <Flex justify="space-between" align="center">
-          <VStack align="start" spacing={1}>
-            <Heading size="lg">Resume Builder</Heading>
-            <Text color="gray.600">Create and customize your professional resume</Text>
-          </VStack>
-          <HStack spacing={3}>
-            <Button leftIcon={<Icon as={FiEye} />} variant="outline" onClick={onPreviewOpen}>
-              Preview
-            </Button>
-            <Button leftIcon={<Icon as={FiDownload} />} variant="outline">
-              Export PDF
-            </Button>
-            <Button
-              leftIcon={<Icon as={FiStar} />}
-              colorScheme="purple"
-              onClick={generateWithAI}
-              isLoading={isGenerating}
-              loadingText="Generating..."
-            >
-              Generate with AI
-            </Button>
-            <Button leftIcon={<Icon as={FiSave} />} colorScheme="blue" onClick={saveResume}>
-              Save Resume
-            </Button>
-          </HStack>
-        </Flex>
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 animate-fade-in">
+            <div>
+              <h1 className="text-3xl font-bold text-heading">Resume Builder</h1>
+              <p className="text-body mt-1">Create and customize your professional resume</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <ThemeToggle />
+              <button
+                onClick={() => setIsPreviewOpen(true)}
+                className="btn-secondary flex items-center gap-2"
+              >
+                <FiEye className="w-4 h-4" />
+                Preview
+              </button>
+              <button className="btn-secondary flex items-center gap-2">
+                <FiDownload className="w-4 h-4" />
+                Export PDF
+              </button>
+              <button
+                onClick={generateWithAI}
+                disabled={isGenerating}
+                className="btn-accent flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <FiStar className="w-4 h-4" />
+                {isGenerating ? 'Generating...' : 'Generate with AI'}
+              </button>
+              <button onClick={saveResume} className="btn-primary flex items-center gap-2">
+                <FiSave className="w-4 h-4" />
+                Save Resume
+              </button>
+            </div>
+          </div>
 
-        {/* Resume Title */}
-        <Card bg={cardBg} borderColor={borderColor}>
-          <CardBody>
-            <HStack>
-              <Icon as={FiEdit3} />
-              <Input
-                value={resumeTitle}
-                onChange={e => setResumeTitle(e.target.value)}
-                fontWeight="bold"
-                fontSize="lg"
-                border="none"
-                _focus={{ boxShadow: 'none' }}
-              />
-            </HStack>
-          </CardBody>
-        </Card>
+          {/* Resume Title */}
+          <div className="card-professional animate-fade-in">
+            <div className="p-6">
+              <div className="flex items-center gap-3">
+                <FiEdit3 className="w-5 h-5 text-muted" />
+                <input
+                  type="text"
+                  value={resumeTitle}
+                  onChange={e => setResumeTitle(e.target.value)}
+                  className="flex-1 text-lg font-semibold bg-transparent border-none outline-none text-heading focus:ring-0"
+                  placeholder="Resume Title"
+                />
+              </div>
+            </div>
+          </div>
 
-        {/* Resume Sections */}
-        <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={8}>
-          <GridItem>
-            <VStack spacing={6} align="stretch">
+          {/* Resume Sections */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="space-y-6">
               <PersonalInfoSection />
               <ExperienceSection />
-            </VStack>
-          </GridItem>
-          <GridItem>
-            <VStack spacing={6} align="stretch">
+            </div>
+            <div className="space-y-6">
               <EducationSection />
               <SkillsSection />
-            </VStack>
-          </GridItem>
-        </Grid>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        {/* Preview Modal */}
-        <Modal isOpen={isPreviewOpen} onClose={onPreviewClose} size="lg">
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Resume Preview</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              {/* Here you can render the resume preview based on the current sections state */}
-              <VStack spacing={4} align="stretch">
+      {/* Preview Modal */}
+      {isPreviewOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-dark-800 rounded-xl max-w-4xl max-h-[90vh] overflow-hidden shadow-strong animate-scale-in">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-dark-600">
+              <h2 className="text-xl font-semibold text-heading">Resume Preview</h2>
+              <button
+                onClick={() => setIsPreviewOpen(false)}
+                className="text-muted hover:text-body transition-colors"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              <div className="space-y-6">
                 {sections.map(section => (
-                  <Box key={section.id} p={4} borderWidth={1} borderRadius="md">
-                    <Text fontWeight="bold" fontSize="lg" mb={2}>
-                      {section.title}
-                    </Text>
+                  <div key={section.id} className="p-4 border border-gray-200 dark:border-dark-600 rounded-lg">
+                    <h3 className="text-lg font-semibold text-heading mb-3">{section.title}</h3>
                     {section.type === 'personal' && (
-                      <Text>
-                        {section.content.firstName} {section.content.lastName}
-                        <br />
-                        {section.content.email} | {section.content.phone}
-                        <br />
-                        {section.content.location} | {section.content.website}
-                      </Text>
+                      <div className="text-body">
+                        <p className="font-medium">
+                          {section.content.firstName} {section.content.lastName}
+                        </p>
+                        <p>{section.content.email} | {section.content.phone}</p>
+                        <p>{section.content.location} | {section.content.website}</p>
+                      </div>
                     )}
                     {section.type === 'experience' && (
-                      <VStack spacing={2} align="stretch">
+                      <div className="space-y-3">
                         {section.content.map((exp: Experience) => (
-                          <Box key={exp.id} p={3} borderWidth={1} borderRadius="md">
-                            <Text fontWeight="bold">
-                              {exp.title} - {exp.company}
-                            </Text>
-                            <Text fontSize="sm" color="gray.600">
-                              {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
-                            </Text>
-                            <Text>{exp.description}</Text>
-                          </Box>
+                          <div key={exp.id} className="p-3 border border-gray-100 dark:border-dark-700 rounded">
+                            <p className="font-medium text-heading">{exp.title} - {exp.company}</p>
+                            <p className="text-sm text-muted">{exp.startDate} - {exp.current ? 'Present' : exp.endDate}</p>
+                            <p className="text-body mt-1">{exp.description}</p>
+                          </div>
                         ))}
-                      </VStack>
+                      </div>
                     )}
                     {section.type === 'education' && (
-                      <VStack spacing={2} align="stretch">
+                      <div className="space-y-3">
                         {section.content.map((edu: Education) => (
-                          <Box key={edu.id} p={3} borderWidth={1} borderRadius="md">
-                            <Text fontWeight="bold">
-                              {edu.degree} in {edu.fieldOfStudy}
-                            </Text>
-                            <Text fontSize="sm" color="gray.600">
-                              {edu.institution} | {edu.startDate} - {edu.endDate}
-                            </Text>
-                            {edu.gpa && (
-                              <Text fontSize="sm" color="gray.600">
-                                GPA: {edu.gpa}
-                              </Text>
-                            )}
-                          </Box>
+                          <div key={edu.id} className="p-3 border border-gray-100 dark:border-dark-700 rounded">
+                            <p className="font-medium text-heading">{edu.degree} in {edu.fieldOfStudy}</p>
+                            <p className="text-sm text-muted">{edu.institution} | {edu.startDate} - {edu.endDate}</p>
+                            {edu.gpa && <p className="text-sm text-muted">GPA: {edu.gpa}</p>}
+                          </div>
                         ))}
-                      </VStack>
+                      </div>
                     )}
                     {section.type === 'skills' && (
-                      <Wrap spacing={4}>
+                      <div className="flex flex-wrap gap-2">
                         {section.content.map((skill: string, index: number) => (
-                          <Badge key={index} colorScheme="blue" borderRadius="full" px={3} py={1}>
+                          <span key={index} className="px-3 py-1 text-sm bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border border-primary-200 dark:border-primary-800 rounded-full">
                             {skill}
-                          </Badge>
+                          </span>
                         ))}
-                      </Wrap>
+                      </div>
                     )}
-                  </Box>
+                  </div>
                 ))}
-              </VStack>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-        {/* AI Generated Resume Preview Modal */}
-        <Modal isOpen={isOpen} onClose={onClose} size="4xl">
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>AI Generated Resume Preview</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody pb={6}>
-              <Box
-                p={6}
-                border="1px"
-                borderColor={borderColor}
-                borderRadius="md"
-                bg={cardBg}
-                maxH="500px"
-                overflowY="auto"
+      {/* AI Generated Resume Preview Modal */}
+      {isAIModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-dark-800 rounded-xl max-w-6xl max-h-[90vh] overflow-hidden shadow-strong animate-scale-in">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-dark-600">
+              <h2 className="text-xl font-semibold text-heading">AI Generated Resume Preview</h2>
+              <button
+                onClick={() => setIsAIModalOpen(false)}
+                className="text-muted hover:text-body transition-colors"
               >
-                <Text whiteSpace="pre-wrap" fontFamily="monospace" fontSize="sm">
+                ×
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              <div className="p-6 border border-gray-200 dark:border-dark-600 rounded-lg bg-gray-50 dark:bg-dark-700/30 max-h-96 overflow-y-auto">
+                <pre className="whitespace-pre-wrap font-mono text-sm text-body">
                   {generatedContent}
-                </Text>
-              </Box>
-              <HStack spacing={4} mt={4} justify="flex-end">
-                <Button variant="outline" onClick={onClose}>
+                </pre>
+              </div>
+              <div className="flex gap-4 mt-6 justify-end">
+                <button
+                  onClick={() => setIsAIModalOpen(false)}
+                  className="btn-secondary"
+                >
                   Close
-                </Button>
-                <Button colorScheme="blue">
+                </button>
+                <button className="btn-primary">
                   Download PDF
-                </Button>
-              </HStack>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-      </VStack>
-    </Container>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
 
-export default ResumeBuilderPage
+export default ResumeBuilderPageTailwind

@@ -1,4 +1,6 @@
 const { Elysia, t } = require('elysia');
+import { authService } from '../services/auth.service';
+import prisma from '../services/prisma.service';
 import { logger } from '../utils/logger';
 
 /**
@@ -23,7 +25,6 @@ export const userRoutes = new Elysia({ prefix: '/users' })
     '/me',
     async ({ headers, set }) => {
       try {
-        // In a real implementation, extract user ID from JWT token
         const authHeader = headers.authorization;
         if (!authHeader) {
           set.status = 401;
@@ -33,23 +34,100 @@ export const userRoutes = new Elysia({ prefix: '/users' })
           };
         }
 
-        // For now, we'll simulate getting the user
-        // In production, decode JWT and get user ID
-        logger.info('Getting current user profile');
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
 
-        // Return mock user for development
+        // Get user profile with related data
+        const userProfile = await prisma.user.findUnique({
+          where: { id: user.id },
+          include: {
+            profile: true,
+            skills: {
+              include: {
+                skill: true
+              }
+            },
+            experiences: true,
+            education: true,
+            certifications: true,
+            jobListings: true,
+            resumes: true
+          }
+        });
+
+        if (!userProfile) {
+          set.status = 404;
+          return {
+            success: false,
+            error: 'User not found'
+          };
+        }
+
+        logger.info('Getting current user profile', { userId: user.id });
+
         return {
           success: true,
           data: {
-            id: 'user-123',
-            email: 'user@example.com',
-            firstName: 'John',
-            lastName: 'Doe',
-            profile: {
-              headline: 'Senior Software Engineer',
-              summary: 'Experienced full-stack developer...',
-              location: 'San Francisco, CA',
-            }
+            id: userProfile.id,
+            email: userProfile.email,
+            firstName: userProfile.firstName,
+            lastName: userProfile.lastName,
+            role: userProfile.role,
+            emailVerified: userProfile.emailVerified,
+            isActive: userProfile.isActive,
+            createdAt: userProfile.createdAt.toISOString(),
+            updatedAt: userProfile.updatedAt.toISOString(),
+            lastLoginAt: userProfile.lastLoginAt?.toISOString(),
+            profile: userProfile.profile ? {
+              id: userProfile.profile.id,
+              headline: userProfile.profile.headline,
+              summary: userProfile.profile.summary,
+              location: userProfile.profile.location,
+              websiteUrl: userProfile.profile.websiteUrl,
+              linkedinUrl: userProfile.profile.linkedinUrl,
+              githubUrl: userProfile.profile.githubUrl,
+              createdAt: userProfile.profile.createdAt.toISOString(),
+              updatedAt: userProfile.profile.updatedAt.toISOString()
+            } : undefined,
+            skills: userProfile.skills.map(userSkill => ({
+              skillId: userSkill.skillId,
+              name: userSkill.skill.name,
+              level: userSkill.level,
+              yearsOfExperience: userSkill.yearsOfExperience,
+              createdAt: userSkill.createdAt.toISOString(),
+              updatedAt: userSkill.updatedAt.toISOString()
+            })),
+            experiences: userProfile.experiences.map(exp => ({
+              ...exp,
+              startDate: exp.startDate.toISOString(),
+              endDate: exp.endDate?.toISOString() || null,
+              createdAt: exp.createdAt.toISOString(),
+              updatedAt: exp.updatedAt.toISOString()
+            })),
+            education: userProfile.education.map(edu => ({
+              ...edu,
+              startDate: edu.startDate?.toISOString() || null,
+              endDate: edu.endDate?.toISOString() || null,
+              createdAt: edu.createdAt.toISOString(),
+              updatedAt: edu.updatedAt.toISOString()
+            })),
+            certifications: userProfile.certifications.map(cert => ({
+              ...cert,
+              issueDate: cert.issueDate.toISOString(),
+              expirationDate: cert.expirationDate?.toISOString() || null,
+              createdAt: cert.createdAt.toISOString(),
+              updatedAt: cert.updatedAt.toISOString()
+            })),
+            jobListings: userProfile.jobListings.map(job => ({
+              ...job,
+              createdAt: job.createdAt.toISOString(),
+              updatedAt: job.updatedAt.toISOString()
+            })),
+            resumes: userProfile.resumes.map(resume => ({
+              ...resume,
+              createdAt: resume.createdAt.toISOString(),
+              updatedAt: resume.updatedAt.toISOString()
+            }))
           }
         };
       } catch (error: unknown) {
@@ -72,16 +150,45 @@ export const userRoutes = new Elysia({ prefix: '/users' })
           data: t.Object({
             id: t.String(),
             email: t.String(),
-            firstName: t.String(),
-            lastName: t.String(),
-            profile: t.Object({
-              headline: t.String(),
-              summary: t.String(),
-              location: t.String(),
-            })
+            firstName: t.Optional(t.String()),
+            lastName: t.Optional(t.String()),
+            role: t.String(),
+            emailVerified: t.Boolean(),
+            isActive: t.Boolean(),
+            createdAt: t.String(),
+            updatedAt: t.String(),
+            lastLoginAt: t.Optional(t.String()),
+            profile: t.Optional(t.Object({
+              id: t.String(),
+              headline: t.Optional(t.String()),
+              summary: t.Optional(t.String()),
+              location: t.Optional(t.String()),
+              websiteUrl: t.Optional(t.String()),
+              linkedinUrl: t.Optional(t.String()),
+              githubUrl: t.Optional(t.String()),
+              createdAt: t.String(),
+              updatedAt: t.String()
+            })),
+            skills: t.Array(t.Object({
+              skillId: t.String(),
+              name: t.String(),
+              level: t.Optional(t.String()),
+              yearsOfExperience: t.Optional(t.Number()),
+              createdAt: t.String(),
+              updatedAt: t.String()
+            })),
+            experiences: t.Array(t.Any()),
+            education: t.Array(t.Any()),
+            certifications: t.Array(t.Any()),
+            jobListings: t.Array(t.Any()),
+            resumes: t.Array(t.Any())
           })
         }),
         401: t.Object({
+          success: t.Boolean(),
+          error: t.String()
+        }),
+        404: t.Object({
           success: t.Boolean(),
           error: t.String()
         }),
@@ -123,14 +230,55 @@ export const userRoutes = new Elysia({ prefix: '/users' })
           };
         }
 
-        logger.info('Updating user profile', { updates: Object.keys(body) });
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
 
-        // For now, return success with updated data
+        logger.info('Updating user profile', { updates: Object.keys(body), userId: user.id });
+
+        // Update user basic info
+        const updateData: any = {};
+        if (body.firstName !== undefined) updateData.firstName = body.firstName;
+        if (body.lastName !== undefined) updateData.lastName = body.lastName;
+
+        let updatedUser;
+        if (Object.keys(updateData).length > 0) {
+          updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: updateData
+          });
+        } else {
+          updatedUser = user;
+        }
+
+        // Update profile if provided
+        if (body.profile) {
+          await prisma.userProfile.upsert({
+            where: { userId: user.id },
+            update: {
+              headline: body.profile.headline,
+              summary: body.profile.summary,
+              location: body.profile.location,
+              websiteUrl: body.profile.websiteUrl,
+              linkedinUrl: body.profile.linkedinUrl,
+              githubUrl: body.profile.githubUrl,
+              updatedAt: new Date()
+            },
+            create: {
+              userId: user.id,
+              headline: body.profile.headline,
+              summary: body.profile.summary,
+              location: body.profile.location,
+              websiteUrl: body.profile.websiteUrl,
+              linkedinUrl: body.profile.linkedinUrl,
+              githubUrl: body.profile.githubUrl
+            }
+          });
+        }
+
         return {
           success: true,
           data: {
-            id: 'user-123',
-            ...body,
+            id: updatedUser.id,
             updatedAt: new Date().toISOString()
           }
         };
@@ -210,17 +358,25 @@ export const userRoutes = new Elysia({ prefix: '/users' })
           };
         }
 
-        logger.info('Getting user skills');
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
 
-        // Return mock skills for development
+        logger.info('Getting user skills', { userId: user.id });
+
+        const userSkills = await prisma.userSkill.findMany({
+          where: { userId: user.id },
+          include: {
+            skill: true
+          }
+        });
+
         return {
           success: true,
-          data: [
-            { name: 'JavaScript', level: 'EXPERT', yearsOfExperience: 5 },
-            { name: 'TypeScript', level: 'ADVANCED', yearsOfExperience: 3 },
-            { name: 'React', level: 'EXPERT', yearsOfExperience: 4 },
-            { name: 'Node.js', level: 'ADVANCED', yearsOfExperience: 4 },
-          ]
+          data: userSkills.map(userSkill => ({
+            name: userSkill.skill.name,
+            level: userSkill.level || 'BEGINNER',
+            yearsOfExperience: userSkill.yearsOfExperience || 0,
+          }))
         };
       } catch (error: unknown) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
@@ -269,6 +425,169 @@ export const userRoutes = new Elysia({ prefix: '/users' })
             description: 'Internal server error'
           }
         }
+      }
+    }
+  )
+
+  // Get user resumes
+  .get(
+    '/me/resumes',
+    async ({ headers, set }) => {
+      try {
+        const authHeader = headers.authorization;
+        if (!authHeader) {
+          set.status = 401;
+          return {
+            success: false,
+            error: 'Authorization header required'
+          };
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
+
+        const resumes = await prisma.userResume.findMany({
+          where: { userId: user.id },
+          include: {
+            template: true
+          },
+          orderBy: { createdAt: 'desc' }
+        });
+
+        logger.info('Getting user resumes', { userId: user.id, count: resumes.length });
+
+        return {
+          success: true,
+          data: resumes
+        };
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        logger.error('Error getting user resumes:', errorMessage);
+        set.status = 500;
+        return {
+          success: false,
+          error: errorMessage
+        };
+      }
+    }
+  )
+
+  // Get user job listings
+  .get(
+    '/me/jobs',
+    async ({ headers, set }) => {
+      try {
+        const authHeader = headers.authorization;
+        if (!authHeader) {
+          set.status = 401;
+          return {
+            success: false,
+            error: 'Authorization header required'
+          };
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
+
+        const jobListings = await prisma.jobListing.findMany({
+          where: { userId: user.id },
+          orderBy: { createdAt: 'desc' }
+        });
+
+        logger.info('Getting user job listings', { userId: user.id, count: jobListings.length });
+
+        return {
+          success: true,
+          data: jobListings
+        };
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        logger.error('Error getting user job listings:', errorMessage);
+        set.status = 500;
+        return {
+          success: false,
+          error: errorMessage
+        };
+      }
+    }
+  )
+
+  // Get user experiences
+  .get(
+    '/me/experiences',
+    async ({ headers, set }) => {
+      try {
+        const authHeader = headers.authorization;
+        if (!authHeader) {
+          set.status = 401;
+          return {
+            success: false,
+            error: 'Authorization header required'
+          };
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
+
+        const experiences = await prisma.experience.findMany({
+          where: { userId: user.id },
+          orderBy: { startDate: 'desc' }
+        });
+
+        logger.info('Getting user experiences', { userId: user.id, count: experiences.length });
+
+        return {
+          success: true,
+          data: experiences
+        };
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        logger.error('Error getting user experiences:', errorMessage);
+        set.status = 500;
+        return {
+          success: false,
+          error: errorMessage
+        };
+      }
+    }
+  )
+
+  // Get user education
+  .get(
+    '/me/education',
+    async ({ headers, set }) => {
+      try {
+        const authHeader = headers.authorization;
+        if (!authHeader) {
+          set.status = 401;
+          return {
+            success: false,
+            error: 'Authorization header required'
+          };
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
+
+        const education = await prisma.education.findMany({
+          where: { userId: user.id },
+          orderBy: { startDate: 'desc' }
+        });
+
+        logger.info('Getting user education', { userId: user.id, count: education.length });
+
+        return {
+          success: true,
+          data: education
+        };
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        logger.error('Error getting user education:', errorMessage);
+        set.status = 500;
+        return {
+          success: false,
+          error: errorMessage
+        };
       }
     }
   );

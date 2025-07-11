@@ -10,6 +10,12 @@ export interface User {
   isActive: boolean
   emailVerified: boolean
   profile?: UserProfile
+  skills?: UserSkill[]
+  experiences?: Experience[]
+  education?: Education[]
+  certifications?: Certification[]
+  jobListings?: JobListing[]
+  resumes?: UserResume[]
 }
 
 export interface UserProfile {

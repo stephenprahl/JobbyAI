@@ -16,84 +16,138 @@ import {
   Input,
   SimpleGrid,
   Spacer,
+  Spinner,
   Text,
   Textarea,
   useToast,
   VStack,
 } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { FiEdit, FiPlus, FiSave, FiTrash2, FiX } from 'react-icons/fi'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useAuth } from '../contexts/AuthContext'
-
-// Mock data - replace with actual API calls
-const mockProfile = {
-  headline: 'Senior Software Engineer',
-  summary: 'Experienced software engineer with 5+ years of experience in full-stack development. Passionate about creating scalable web applications and mentoring junior developers.',
-  location: 'San Francisco, CA',
-  websiteUrl: 'https://johndoe.dev',
-  linkedinUrl: 'https://linkedin.com/in/johndoe',
-  githubUrl: 'https://github.com/johndoe',
-}
-
-const mockSkills = [
-  { id: '1', name: 'React', level: 'EXPERT', yearsOfExperience: 4 },
-  { id: '2', name: 'Node.js', level: 'ADVANCED', yearsOfExperience: 3 },
-  { id: '3', name: 'TypeScript', level: 'ADVANCED', yearsOfExperience: 3 },
-  { id: '4', name: 'Python', level: 'INTERMEDIATE', yearsOfExperience: 2 },
-]
-
-const mockExperience = [
-  {
-    id: '1',
-    title: 'Senior Software Engineer',
-    companyName: 'Tech Corp',
-    location: 'San Francisco, CA',
-    startDate: '2022-01-01',
-    endDate: null,
-    current: true,
-    description: 'Lead a team of 5 engineers in developing React-based web applications.',
-  },
-  {
-    id: '2',
-    title: 'Software Engineer',
-    companyName: 'StartupXYZ',
-    location: 'Remote',
-    startDate: '2020-06-01',
-    endDate: '2021-12-31',
-    current: false,
-    description: 'Developed full-stack web applications using React and Node.js.',
-  },
-]
+import { getCurrentUser, getUserSkills, updateUserProfile } from '../services/api'
 
 const ProfilePage: React.FC = () => {
-  const { user } = useAuth()
+  const { user, isLoading: authLoading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const toast = useToast()
+  const queryClient = useQueryClient()
 
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: mockProfile,
-  })
+  // Fetch user profile data
+  const { data: userProfile, isLoading: profileLoading } = useQuery(
+    ['user-profile'],
+    () => getCurrentUser(),
+    {
+      enabled: !!user,
+      onError: (error) => {
+        console.error('Error fetching user profile:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to load profile data',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+      }
+    }
+  )
+
+  // Fetch user skills
+  const { data: userSkills, isLoading: skillsLoading } = useQuery(
+    ['user-skills'],
+    () => getUserSkills(),
+    {
+      enabled: !!user,
+      onError: (error) => {
+        console.error('Error fetching skills:', error)
+      }
+    }
+  )
+
+  // Update profile mutation
+  const updateProfileMutation = useMutation(
+    (updates: any) => updateUserProfile(updates),
+    {
+      onSuccess: () => {
+        toast({
+          title: 'Profile updated',
+          description: 'Your profile has been successfully updated.',
+          status: 'success',
+          duration: 3000,
+          isClosable: true,
+        })
+        setIsEditing(false)
+        queryClient.invalidateQueries(['user-profile'])
+      },
+      onError: (error) => {
+        console.error('Error updating profile:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to update profile',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+      }
+    }
+  )
+
+  const { register, handleSubmit, reset } = useForm()
+
+  // Set form defaults when profile data loads
+  useEffect(() => {
+    if (userProfile?.data?.profile) {
+      reset({
+        headline: userProfile.data.profile.headline || '',
+        summary: userProfile.data.profile.summary || '',
+        location: userProfile.data.profile.location || '',
+        websiteUrl: userProfile.data.profile.websiteUrl || '',
+        linkedinUrl: userProfile.data.profile.linkedinUrl || '',
+        githubUrl: userProfile.data.profile.githubUrl || '',
+      })
+    }
+  }, [userProfile, reset])
 
   const onSubmit = async (data: any) => {
-    // TODO: Implement API call to update profile
-    console.log('Updating profile:', data)
-
-    toast({
-      title: 'Profile updated',
-      description: 'Your profile has been successfully updated.',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
+    updateProfileMutation.mutate({
+      profile: {
+        headline: data.headline,
+        summary: data.summary,
+        location: data.location,
+        websiteUrl: data.websiteUrl,
+        linkedinUrl: data.linkedinUrl,
+        githubUrl: data.githubUrl,
+      }
     })
-
-    setIsEditing(false)
   }
 
   const handleCancel = () => {
-    reset(mockProfile)
+    if (userProfile?.data?.profile) {
+      reset({
+        headline: userProfile.data.profile.headline || '',
+        summary: userProfile.data.profile.summary || '',
+        location: userProfile.data.profile.location || '',
+        websiteUrl: userProfile.data.profile.websiteUrl || '',
+        linkedinUrl: userProfile.data.profile.linkedinUrl || '',
+        githubUrl: userProfile.data.profile.githubUrl || '',
+      })
+    }
     setIsEditing(false)
   }
+
+  if (authLoading || profileLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minH="60vh">
+        <Spinner size="xl" />
+      </Box>
+    )
+  }
+
+  const profile = userProfile?.data?.profile
+  const skills = userSkills?.data || []
+  const experiences = userProfile?.data?.experiences || []
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -222,8 +276,8 @@ const ProfilePage: React.FC = () => {
         </CardHeader>
         <CardBody>
           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-            {mockSkills.map((skill) => (
-              <Box key={skill.id} p={4} border="1px" borderColor="gray.200" borderRadius="md">
+            {skills.map((skill) => (
+              <Box key={skill.skillId} p={4} border="1px" borderColor="gray.200" borderRadius="md">
                 <Flex align="center" justify="space-between">
                   <VStack align="start" spacing={1}>
                     <Text fontWeight="semibold">{skill.name}</Text>
@@ -273,7 +327,7 @@ const ProfilePage: React.FC = () => {
         </CardHeader>
         <CardBody>
           <VStack spacing={6} align="stretch">
-            {mockExperience.map((exp, index) => (
+            {experiences.map((exp, index) => (
               <Box key={exp.id}>
                 <Flex align="start" justify="space-between">
                   <VStack align="start" spacing={2} flex={1}>
@@ -305,7 +359,7 @@ const ProfilePage: React.FC = () => {
                     />
                   </HStack>
                 </Flex>
-                {index < mockExperience.length - 1 && <Divider mt={4} />}
+                {index < experiences.length - 1 && <Divider mt={4} />}
               </Box>
             ))}
           </VStack>

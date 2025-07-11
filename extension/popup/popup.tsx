@@ -225,30 +225,65 @@ const Popup: React.FC = () => {
           const analysisData = await analysisResponse.json();
           setAnalysis(analysisData.data || analysisData);
         } else {
-          // Fallback to mock data for demo
-          setAnalysis(MOCK_ENHANCED_ANALYSIS);
+          console.warn('Analysis API failed, no fallback data');
+          setAnalysis(null);
         }
       }
     } catch (error) {
       console.error('Failed to load job analysis:', error);
-      // Fallback to mock data
-      setAnalysis(MOCK_ENHANCED_ANALYSIS);
+      setAnalysis(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const loadUserProfile = async () => {
     try {
-      // Load from storage or API
+      // Try to load from backend API first
+      const apiResponse = await fetch('http://localhost:3001/api/users/me', {
+        headers: {
+          'Authorization': `Bearer ${await getAuthToken()}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (apiResponse.ok) {
+        const userData = await apiResponse.json();
+        if (userData.success && userData.data) {
+          const profile = {
+            name: `${userData.data.firstName} ${userData.data.lastName}`,
+            currentTitle: userData.data.profile?.headline || 'Professional',
+            skills: userData.data.skills?.map((skill: any) => skill.name) || [],
+            experience: userData.data.experiences?.length || 0,
+            applications: [] // Will be populated from jobListings
+          };
+          setUserProfile(profile);
+          return;
+        }
+      }
+
+      // Fallback to storage
       const result = await chrome.storage.local.get(['userProfile']);
       if (result.userProfile) {
         setUserProfile(result.userProfile);
       } else {
-        // Load default profile
-        setUserProfile(MOCK_USER_PROFILE);
+        console.warn('No user profile available');
+        setUserProfile(null);
       }
     } catch (error) {
       console.error('Failed to load user profile:', error);
-      setUserProfile(MOCK_USER_PROFILE);
+      setUserProfile(null);
+    }
+  };
+
+  // Helper function to get auth token
+  const getAuthToken = async (): Promise<string> => {
+    try {
+      const result = await chrome.storage.local.get(['auth_tokens']);
+      return result.auth_tokens?.accessToken || '';
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+      return '';
     }
   };
 

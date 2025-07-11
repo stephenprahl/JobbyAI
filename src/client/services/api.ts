@@ -1,5 +1,52 @@
-import { ApiResponse, GeneratedResume, JobAnalysis } from '../types'
+import { ApiResponse, GeneratedResume, JobAnalysis, User } from '../types'
 import api from './auth'
+
+// User profile functions
+export const getCurrentUser = async (): Promise<ApiResponse<User>> => {
+  const response = await api.get('/users/me')
+  return response.data
+}
+
+export const updateUserProfile = async (updates: {
+  firstName?: string
+  lastName?: string
+  profile?: {
+    headline?: string
+    summary?: string
+    location?: string
+    websiteUrl?: string
+    linkedinUrl?: string
+    githubUrl?: string
+  }
+}): Promise<ApiResponse<any>> => {
+  const response = await api.put('/users/me', updates)
+  return response.data
+}
+
+export const getUserSkills = async (): Promise<ApiResponse<any[]>> => {
+  const response = await api.get('/users/me/skills')
+  return response.data
+}
+
+export const getUserResumes = async (): Promise<ApiResponse<any[]>> => {
+  const response = await api.get('/users/me/resumes')
+  return response.data
+}
+
+export const getUserJobListings = async (): Promise<ApiResponse<any[]>> => {
+  const response = await api.get('/users/me/jobs')
+  return response.data
+}
+
+export const getUserExperiences = async (): Promise<ApiResponse<any[]>> => {
+  const response = await api.get('/users/me/experiences')
+  return response.data
+}
+
+export const getUserEducation = async (): Promise<ApiResponse<any[]>> => {
+  const response = await api.get('/users/me/education')
+  return response.data
+}
 
 // Resume generation
 export const generateResume = async (data: {
@@ -16,77 +63,99 @@ export const generateResume = async (data: {
   maxLength?: number
   userProfile?: any // Accept user profile data
 }): Promise<ApiResponse<GeneratedResume>> => {
-  // Use provided user profile or create a default one
-  const userProfile = data.userProfile || {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '(555) 123-4567',
-    location: 'San Francisco, CA',
-    headline: 'Senior Software Engineer',
-    summary: 'Experienced software engineer with 5+ years of full-stack development experience.',
-    skills: ['React', 'TypeScript', 'Node.js', 'JavaScript', 'Python', 'AWS', 'Docker'],
-    experience: [
-      {
-        title: 'Senior Software Engineer',
-        company: 'Tech Corp',
-        startDate: '2022-01-01',
-        endDate: null,
-        current: true,
-        description: 'Lead development of React-based web applications serving 100k+ users.',
-        skills: ['React', 'TypeScript', 'Node.js']
-      },
-      {
-        title: 'Software Engineer',
-        company: 'StartupXYZ',
-        startDate: '2020-06-01',
-        endDate: '2021-12-31',
-        current: false,
-        description: 'Developed full-stack web applications using React and Node.js.',
-        skills: ['React', 'Node.js', 'MongoDB']
+  try {
+    // Try to fetch real user profile first
+    let userProfile = data.userProfile
+    if (!userProfile) {
+      try {
+        const userResponse = await getCurrentUser()
+        if (userResponse.success && userResponse.data) {
+          const userData = userResponse.data
+          // Transform user data to resume format
+          userProfile = {
+            name: `${userData.firstName || ''} ${userData.lastName || ''}`.trim() || 'User',
+            email: userData.email,
+            phone: '', // Phone not in user profile yet
+            location: userData.profile?.location || '',
+            headline: userData.profile?.headline || '',
+            summary: userData.profile?.summary || '',
+            skills: userData.skills?.map((skill: any) => skill.name) || [],
+            experience: userData.experiences?.map((exp: any) => ({
+              title: exp.title,
+              company: exp.companyName,
+              startDate: exp.startDate,
+              endDate: exp.endDate,
+              current: exp.current,
+              description: exp.description,
+              skills: []
+            })) || [],
+            education: userData.education?.map((edu: any) => ({
+              degree: edu.degree,
+              institution: edu.institution,
+              field: edu.fieldOfStudy,
+              startDate: edu.startDate,
+              endDate: edu.endDate,
+              gpa: edu.gpa
+            })) || [],
+            certifications: userData.certifications?.map((cert: any) => ({
+              name: cert.name,
+              issuer: cert.issuer,
+              date: cert.issueDate
+            })) || []
+          }
+        }
+      } catch (error) {
+        console.warn('Could not fetch user profile, using defaults:', error)
       }
-    ],
-    education: [
-      {
-        degree: 'Bachelor of Science in Computer Science',
-        institution: 'University of Technology',
-        field: 'Computer Science',
-        startDate: '2016-09-01',
-        endDate: '2020-05-31',
-        gpa: 3.8
+    }
+
+    // Fallback to default profile if no real data available
+    if (!userProfile) {
+      userProfile = {
+        name: 'User',
+        email: 'user@example.com',
+        phone: '',
+        location: '',
+        headline: 'Professional',
+        summary: 'Experienced professional seeking new opportunities.',
+        skills: ['JavaScript', 'React', 'Node.js'],
+        experience: [],
+        education: [],
+        certifications: []
       }
-    ],
-    certifications: [
-      {
-        name: 'AWS Certified Solutions Architect',
-        issuer: 'Amazon Web Services',
-        date: '2023-01-15'
-      }
-    ]
-  }
+    }
 
-  const jobListing = {
-    title: data.jobTitle,
-    company: data.companyName,
-    description: data.jobDescription,
-    requirements: data.requirements ? data.requirements.split('\n').filter(r => r.trim()) : []
-  }
+    const jobListing = {
+      title: data.jobTitle,
+      company: data.companyName,
+      description: data.jobDescription,
+      requirements: data.requirements ? data.requirements.split('\n').filter(r => r.trim()) : []
+    }
 
-  const options = {
-    format: data.format || 'markdown',
-    includeSummary: data.includeSummary !== false,
-    includeSkills: data.includeSkills !== false,
-    includeExperience: data.includeExperience !== false,
-    includeEducation: data.includeEducation !== false,
-    includeCertifications: data.includeCertifications !== false,
-    maxLength: data.maxLength || 1000
-  }
+    const options = {
+      format: data.format || 'markdown',
+      includeSummary: data.includeSummary !== false,
+      includeSkills: data.includeSkills !== false,
+      includeExperience: data.includeExperience !== false,
+      includeEducation: data.includeEducation !== false,
+      includeCertifications: data.includeCertifications !== false,
+      maxLength: data.maxLength || 1000
+    }
 
-  const response = await api.post('/resume/generate', {
-    userProfile: userProfile,
-    jobListing,
-    options
-  })
-  return response.data
+    const response = await api.post('/resume/generate', {
+      userProfile: userProfile,
+      jobListing,
+      options
+    })
+    return response.data
+  } catch (error: any) {
+    console.error('Resume generation error:', error)
+    return {
+      success: false,
+      error: error.response?.data?.message || error.message || 'Failed to generate resume',
+      message: 'Resume generation failed'
+    }
+  }
 }
 
 // Get available resume formats

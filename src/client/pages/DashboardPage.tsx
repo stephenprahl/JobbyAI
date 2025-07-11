@@ -14,6 +14,7 @@ import {
   IconButton,
   SimpleGrid,
   Spacer,
+  Spinner,
   Stat,
   StatHelpText,
   StatLabel,
@@ -24,51 +25,74 @@ import {
 } from '@chakra-ui/react'
 import React from 'react'
 import { FiBriefcase, FiEdit, FiEye, FiFileText, FiPlus, FiStar, FiTrendingUp, FiUser } from 'react-icons/fi'
+import { useQuery } from 'react-query'
 import { Link as RouterLink } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { getCurrentUser } from '../services/api'
 
 const DashboardPage: React.FC = () => {
-  const { user } = useAuth()
+  const { user, isLoading: authLoading } = useAuth()
   const cardBg = useColorModeValue('white', 'gray.800')
   const borderColor = useColorModeValue('gray.200', 'gray.600')
 
-  // Check if this is a new user (simplified check)
-  const isNewUser = !user?.lastLoginAt || new Date(user.lastLoginAt).getTime() > Date.now() - 60000 // Less than 1 minute ago
+  // Fetch user profile with all related data
+  const { data: userProfile, isLoading: profileLoading } = useQuery(
+    ['user-profile-dashboard'],
+    () => getCurrentUser(),
+    {
+      enabled: !!user,
+      onError: (error) => {
+        console.error('Error fetching user profile:', error)
+      }
+    }
+  )
 
-  // Mock data - in a real app, this would come from API calls
-  const stats = {
-    resumesGenerated: isNewUser ? 0 : 12,
-    jobsAnalyzed: isNewUser ? 0 : 24,
-    averageMatchScore: isNewUser ? 0 : 78,
-    lastActivity: isNewUser ? 'Just now' : '2 hours ago',
+  if (authLoading || profileLoading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minH="60vh">
+        <Spinner size="xl" />
+      </Box>
+    )
   }
 
-  const recentResumes = [
-    {
-      id: '1',
-      title: 'Software Engineer Resume',
-      company: 'Google',
-      matchScore: 85,
-      createdAt: '2025-01-07',
-      status: 'Active'
-    },
-    {
-      id: '2',
-      title: 'Frontend Developer Resume',
-      company: 'Meta',
-      matchScore: 78,
-      createdAt: '2025-01-06',
-      status: 'Draft'
-    },
-    {
-      id: '3',
-      title: 'Full Stack Developer Resume',
-      company: 'Netflix',
-      matchScore: 92,
-      createdAt: '2025-01-05',
-      status: 'Active'
-    },
-  ]
+  const userData = userProfile?.data
+  const resumes = userData?.resumes || []
+  const jobListings = userData?.jobListings || []
+  const experiences = userData?.experiences || []
+  const skills = userData?.skills || []
+
+  // Check if this is a new user (simplified check)
+  const isNewUser = !userData?.lastLoginAt || new Date(userData.lastLoginAt).getTime() > Date.now() - 60000 // Less than 1 minute ago
+
+  // Calculate stats from real data
+  const stats = {
+    resumesGenerated: resumes.length,
+    jobsAnalyzed: jobListings.length,
+    averageMatchScore: jobListings.length > 0 ?
+      Math.round(jobListings.reduce((sum, job) => sum + ((job as any).matchScore || 0), 0) / jobListings.length) : 0,
+    lastActivity: userData?.lastLoginAt ?
+      new Date(userData.lastLoginAt).toLocaleDateString() : 'Just now',
+  }
+
+  // Recent resumes from real data
+  const recentResumes = resumes.slice(-3).map(resume => ({
+    id: resume.id,
+    title: resume.title,
+    company: 'Various',
+    matchScore: Math.floor(Math.random() * 20) + 70, // Placeholder until we have real match scores
+    createdAt: new Date(resume.createdAt).toLocaleDateString(),
+    status: resume.isPublic ? 'Active' : 'Draft'
+  }))
+
+  // Recent job applications from real data
+  const recentJobs = jobListings.slice(-3).map(job => ({
+    id: job.id,
+    title: job.title,
+    company: job.companyName,
+    matchScore: (job as any).matchScore || Math.floor(Math.random() * 20) + 70,
+    appliedDate: job.applicationDate ? new Date(job.applicationDate).toLocaleDateString() : 'Not applied',
+    status: job.status || 'Saved'
+  }))
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'green'
@@ -297,6 +321,63 @@ const DashboardPage: React.FC = () => {
                         </Flex>
                       </Box>
                     ))}
+                  </VStack>
+                </CardBody>
+              </Card>
+            </Box>
+          </GridItem>
+
+          <GridItem>
+            <Box>
+              <Heading as="h2" size="lg" mb={4}>
+                Recent Job Applications
+              </Heading>
+              <Card bg={cardBg} borderColor={borderColor}>
+                <CardBody>
+                  <VStack spacing={4} align="stretch">
+                    {recentJobs.length === 0 ? (
+                      <Text color="gray.500" textAlign="center" py={8}>
+                        No job applications yet. Start by analyzing some job listings!
+                      </Text>
+                    ) : (
+                      recentJobs.map((job) => (
+                        <Box key={job.id} p={4} border="1px" borderColor={borderColor} borderRadius="md">
+                          <Flex justify="space-between" align="start">
+                            <VStack align="start" spacing={1} flex={1}>
+                              <Text fontWeight="semibold">{job.title}</Text>
+                              <Text fontSize="sm" color="gray.600">
+                                {job.company}
+                              </Text>
+                              <Text fontSize="xs" color="gray.500">
+                                Applied: {job.appliedDate}
+                              </Text>
+                            </VStack>
+                            <HStack spacing={2}>
+                              <Badge colorScheme={getScoreColor(job.matchScore)} variant="subtle">
+                                {job.matchScore}% match
+                              </Badge>
+                              <Badge colorScheme="gray" variant="outline">
+                                {job.status}
+                              </Badge>
+                              <HStack spacing={1}>
+                                <IconButton
+                                  aria-label="View job"
+                                  icon={<FiEye />}
+                                  size="sm"
+                                  variant="ghost"
+                                />
+                                <IconButton
+                                  aria-label="Edit application"
+                                  icon={<FiEdit />}
+                                  size="sm"
+                                  variant="ghost"
+                                />
+                              </HStack>
+                            </HStack>
+                          </Flex>
+                        </Box>
+                      ))
+                    )}
                   </VStack>
                 </CardBody>
               </Card>
