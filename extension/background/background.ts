@@ -74,7 +74,7 @@ interface SavedJob {
 
 // API configuration
 const API_CONFIG = {
-  BASE_URL: 'http://localhost:3001',
+  BASE_URL: 'http://localhost:3002',
   TIMEOUT: 30000,
   ENDPOINTS: {
     HEALTH: '/health',

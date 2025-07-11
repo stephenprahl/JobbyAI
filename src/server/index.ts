@@ -5,7 +5,10 @@ import { createLogger, format, transports } from 'winston';
 import { analysisPrismaRoutes } from './routes/analysis.prisma';
 import { authRoutes } from './routes/auth.routes';
 import { resumeRoutes } from './routes/resume.routes';
+import { userRoutes } from './routes/user.routes';
 import prisma, { connect, disconnect } from './services/prisma.service';
+
+
 const { Elysia } = require('elysia');
 
 // Load environment variables
@@ -61,10 +64,19 @@ const app = new Elysia()
     timestamp: new Date().toISOString(),
     environment: NODE_ENV,
   }))
-  // Add core routes
-  .use(resumeRoutes)
-  .use(authRoutes)
-  .use(analysisPrismaRoutes)
+  // Group all API routes under /api prefix
+  .group('/api', (api) =>
+    api
+      .use(resumeRoutes)
+      .use(authRoutes)
+      .use(analysisPrismaRoutes)
+      .use(userRoutes)
+      .get('/health', () => ({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        environment: NODE_ENV,
+      }))
+  )
   .all('*', () => ({
     success: false,
     error: 'Not Found',

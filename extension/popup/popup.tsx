@@ -177,20 +177,53 @@ const Popup: React.FC = () => {
 
       if (response?.success && response.data) {
         // Send to backend for analysis
-        const analysisResponse = await fetch('http://localhost:3001/api/analysis/analyze-job', {
+        const analysisResponse = await fetch('http://localhost:3002/analyze', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            jobData: response.data,
-            url: currentJobUrl
+            job: {
+              title: response.data?.title || 'Unknown Position',
+              company: response.data?.company || 'Unknown Company',
+              description: response.data?.description || 'No description available',
+              requirements: response.data?.requirements || [],
+              location: response.data?.location || '',
+              salary: response.data?.salary || '',
+              skills: response.data?.skills || [],
+              experience: response.data?.experience || 0,
+              education: response.data?.education || '',
+              employmentType: response.data?.employmentType || 'Full-time'
+            },
+            userProfile: userProfile ? {
+              skills: userProfile.skills,
+              experience: [{
+                title: userProfile.currentTitle,
+                company: 'Current Company',
+                startDate: '2020-01-01',
+                endDate: '2024-01-01',
+                description: 'Experience in various technologies',
+                skills: userProfile.skills
+              }],
+              education: [{
+                degree: 'Bachelor of Science',
+                institution: 'University',
+                field: 'Computer Science',
+                startDate: '2016-09-01',
+                endDate: '2020-05-01'
+              }]
+            } : undefined,
+            options: {
+              includeMissingSkills: true,
+              includeSuggestions: true,
+              detailedAnalysis: true
+            }
           })
         });
 
         if (analysisResponse.ok) {
           const analysisData = await analysisResponse.json();
-          setAnalysis(analysisData);
+          setAnalysis(analysisData.data || analysisData);
         } else {
           // Fallback to mock data for demo
           setAnalysis(MOCK_ENHANCED_ANALYSIS);
@@ -282,7 +315,7 @@ const Popup: React.FC = () => {
   };
 
   const openResumeBuilder = () => {
-    chrome.tabs.create({ url: 'http://localhost:5173/resume-builder' });
+    chrome.tabs.create({ url: 'http://localhost:5173/resume/builder' });
   };
 
   const openFullDashboard = () => {

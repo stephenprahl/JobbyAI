@@ -46,148 +46,145 @@ const analysisRequestSchema = t.Object({
  * Analysis routes for Elysia.js with Prisma integration
  * Handles job listing analysis and matching
  */
-export const analysisPrismaRoutes = (app: typeof Elysia) =>
-  app.group('/analyze', (app) =>
-    app
-      // Add request logging
-      .onRequest(({ request }) => {
-        logger.info(`[${request.method}] ${request.url}`);
-      })
+export const analysisPrismaRoutes = new Elysia({ prefix: '/analyze' })
+  // Add request logging
+  .onRequest(({ request }) => {
+    logger.info(`[${request.method}] ${request.url}`);
+  })
 
-      // Health check endpoint
-      .get('/health', () => ({
-        status: 'ok',
-        service: 'analysis',
-        timestamp: new Date().toISOString(),
-        database: 'connected',
-      }))
+  // Health check endpoint
+  .get('/health', () => ({
+    status: 'ok',
+    service: 'analysis',
+    timestamp: new Date().toISOString(),
+    database: 'connected',
+  }))
 
-      // Analyze job listing endpoint
-      .post(
-        '/',
-        async ({ body, set }) => {
-          try {
-            const { job, userProfile, options = {} } = body as JobAnalysisRequest;
+  // Analyze job listing endpoint
+  .post(
+    '/',
+    async ({ body, set }) => {
+      try {
+        const { job, userProfile, options = {} } = body as JobAnalysisRequest;
 
-            logger.info('Processing job analysis request', {
-              jobTitle: job.title,
-              company: job.company,
-              hasUserProfile: !!userProfile,
-              options
-            });
+        logger.info('Processing job analysis request', {
+          jobTitle: job.title,
+          company: job.company,
+          hasUserProfile: !!userProfile,
+          options
+        });
 
-            // Set default options if not provided
-            const analysisOptions = {
-              includeMissingSkills: true,
-              includeSuggestions: true,
-              detailedAnalysis: false,
-              ...options
-            };
+        // Set default options if not provided
+        const analysisOptions = {
+          includeMissingSkills: true,
+          includeSuggestions: true,
+          detailedAnalysis: false,
+          ...options
+        };
 
-            // Process the analysis
-            const result = await analyzeJobListing({
-              job,
-              userProfile,
-              options: analysisOptions
-            });
+        // Process the analysis
+        const result = await analyzeJobListing({
+          job,
+          userProfile,
+          options: analysisOptions
+        });
 
-            logger.info('Job analysis completed successfully', {
-              jobTitle: job.title,
-              matchScore: result.matchScore
-            });
+        logger.info('Job analysis completed successfully', {
+          jobTitle: job.title,
+          matchScore: result.matchScore
+        });
 
-            return {
-              success: true,
-              data: result
-            };
-          } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
-            logger.error('Error analyzing job listing:', errorMessage);
-            set.status = 500;
-            return {
-              success: false,
-              error: errorMessage
-            };
+        return {
+          success: true,
+          data: result
+        };
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        logger.error('Error analyzing job listing:', errorMessage);
+        set.status = 500;
+        return {
+          success: false,
+          error: errorMessage
+        };
+      }
+    },
+    {
+      // @ts-ignore - Elysia type definitions are not perfectly aligned with our schema
+      body: analysisRequestSchema,
+      response: {
+        200: t.Object({
+          success: t.Boolean(),
+          data: t.Object({
+            matchScore: t.Number(),
+            matchingSkills: t.Array(t.String()),
+            missingSkills: t.Array(t.String()),
+            suggestions: t.Array(t.String()),
+            analysis: t.Optional(t.String())
+          })
+        }),
+        500: t.Object({
+          success: t.Boolean(),
+          error: t.String()
+        })
+      },
+      detail: {
+        summary: 'Analyze a job listing',
+        tags: ['Analysis'],
+        requestBody: {
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  job: {
+                    $ref: '#/components/schemas/Job'
+                  },
+                  userProfile: {
+                    $ref: '#/components/schemas/UserProfile'
+                  },
+                  options: {
+                    $ref: '#/components/schemas/AnalysisOptions'
+                  }
+                },
+                required: ['job']
+              }
+            }
           }
         },
-        {
-          // @ts-ignore - Elysia type definitions are not perfectly aligned with our schema
-          body: analysisRequestSchema,
-          response: {
-            200: t.Object({
-              success: t.Boolean(),
-              data: t.Object({
-                matchScore: t.Number(),
-                matchingSkills: t.Array(t.String()),
-                missingSkills: t.Array(t.String()),
-                suggestions: t.Array(t.String()),
-                analysis: t.Optional(t.String())
-              })
-            }),
-            500: t.Object({
-              success: t.Boolean(),
-              error: t.String()
-            })
-          },
-          detail: {
-            summary: 'Analyze a job listing',
-            tags: ['Analysis'],
-            requestBody: {
-              content: {
-                'application/json': {
-                  schema: {
-                    type: 'object',
-                    properties: {
-                      job: {
-                        $ref: '#/components/schemas/Job'
-                      },
-                      userProfile: {
-                        $ref: '#/components/schemas/UserProfile'
-                      },
-                      options: {
-                        $ref: '#/components/schemas/AnalysisOptions'
-                      }
-                    },
-                    required: ['job']
+        responses: {
+          200: {
+            description: 'Analysis completed successfully',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                    data: {
+                      $ref: '#/components/schemas/AnalysisResult'
+                    }
                   }
                 }
               }
-            },
-            responses: {
-              200: {
-                description: 'Analysis completed successfully',
-                content: {
-                  'application/json': {
-                    schema: {
-                      type: 'object',
-                      properties: {
-                        success: { type: 'boolean' },
-                        data: {
-                          $ref: '#/components/schemas/AnalysisResult'
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              500: {
-                description: 'Internal server error',
-                content: {
-                  'application/json': {
-                    schema: {
-                      type: 'object',
-                      properties: {
-                        success: { type: 'boolean' },
-                        error: { type: 'string' }
-                      }
-                    }
+            }
+          },
+          500: {
+            description: 'Internal server error',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                    error: { type: 'string' }
                   }
                 }
               }
             }
           }
         }
-      )
+      }
+    }
   );
 
 export default analysisPrismaRoutes;

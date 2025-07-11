@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
         env.VITE_API_BASE_URL ||
         (env.NODE_ENV === 'production'
           ? 'https://api.resumeplan.ai'
-          : 'http://localhost:3001')
+          : 'http://localhost:3002')
       ),
     },
     plugins: [
