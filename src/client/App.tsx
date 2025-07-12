@@ -4,7 +4,7 @@ import { useAuth } from './contexts/AuthContext'
 
 // Import Tailwind pages
 import DashboardPage from './pages/DashboardPage'
-import JobAnalysisPage from './pages/JobAnalysisPageEnhanced'
+import JobAnalysisPage from './pages/JobAnalysisPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
