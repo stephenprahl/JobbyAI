@@ -26,17 +26,27 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [tokens, setTokens] = useState<AuthTokens | null>(() => {
     const storedTokens = localStorage.getItem('auth_tokens')
-    return storedTokens ? JSON.parse(storedTokens) : null
+    if (storedTokens) {
+      try {
+        const parsedTokens = JSON.parse(storedTokens)
+        // Validate token structure
+        if (parsedTokens && parsedTokens.accessToken && typeof parsedTokens.accessToken === 'string') {
+          return parsedTokens
+        } else {
+          // Clear invalid tokens
+          localStorage.removeItem('auth_tokens')
+          return null
+        }
+      } catch (error) {
+        // Clear corrupted tokens
+        localStorage.removeItem('auth_tokens')
+        return null
+      }
+    }
+    return null
   })
 
   const queryClient = useQueryClient()
-
-  // Initialize auth token on startup
-  useEffect(() => {
-    if (tokens?.accessToken) {
-      authService.setAuthToken(tokens.accessToken)
-    }
-  }, []) // Only run once on mount
 
   // Query to get current user
   const {
@@ -53,12 +63,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Only clear tokens if it's an authentication error (401, 403)
         // Don't clear on network errors or other issues
         if (error?.response?.status === 401 || error?.response?.status === 403) {
-          console.log('Authentication error, clearing tokens:', error?.response?.status)
           setTokens(null)
           localStorage.removeItem('auth_tokens')
           authService.removeAuthToken()
-        } else {
-          console.log('Non-auth error, keeping tokens:', error?.message)
         }
       },
     }
@@ -156,9 +163,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log('Auth state changed:', {
       hasTokens: !!tokens?.accessToken,
+      tokenLength: tokens?.accessToken?.length || 0,
       hasUser: !!user,
       isAuthenticated: !!user && !!tokens?.accessToken,
-      isLoading: isLoading || loginMutation.isLoading || registerMutation.isLoading
+      isLoading: isLoading || loginMutation.isLoading || registerMutation.isLoading,
+      tokensPreview: tokens?.accessToken ? `${tokens.accessToken.substring(0, 20)}...` : 'none'
     })
   }, [user, tokens, isLoading, loginMutation.isLoading, registerMutation.isLoading])
 

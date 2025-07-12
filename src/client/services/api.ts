@@ -3,7 +3,8 @@ import api from './auth'
 
 // User profile functions
 export const getCurrentUser = async (): Promise<ApiResponse<User>> => {
-  const response = await api.get('/users/me')
+  // Use /auth/me instead of /users/me to avoid 400 errors
+  const response = await api.get('/auth/me')
   return response.data
 }
 

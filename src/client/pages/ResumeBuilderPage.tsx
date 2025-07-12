@@ -69,38 +69,36 @@ const ResumeBuilderPage: React.FC = () => {
   const { user, isLoading: authLoading } = useAuth()
   const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { isOpen: isPreviewOpen, onOpen: onPreviewOpen, onClose: onPreviewClose } = useDisclosure()
-  const borderColor = useColorModeValue('gray.200', 'gray.600')
-  const cardBg = useColorModeValue('white', 'gray.800')
   const [resumeTitle, setResumeTitle] = useState('My Resume')
   const [generatedContent, setGeneratedContent] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
-  const [sections, setSections] = useState<ResumeSection[]>([])
 
-  // Always call useQuery hooks - control with enabled option but don't conditionally call
+  // Fetch user profile data
   const { data: userProfile, isLoading: profileLoading } = useQuery(
     ['user-profile-builder'],
     () => getCurrentUser(),
     {
-      enabled: !!user && !authLoading,
-      retry: false,
+      enabled: !!user,
       onError: (error) => {
         console.error('Error fetching user profile:', error)
       }
     }
   )
 
+  // Fetch existing resumes
   const { data: userResumes, isLoading: resumesLoading } = useQuery(
     ['user-resumes'],
     () => getUserResumes(),
     {
-      enabled: !!user && !authLoading,
-      retry: false,
+      enabled: !!user,
       onError: (error) => {
         console.error('Error fetching resumes:', error)
       }
     }
   )
+
+  // Initialize sections with user data
+  const [sections, setSections] = useState<ResumeSection[]>([])
 
   useEffect(() => {
     if (userProfile?.data) {
@@ -156,6 +154,11 @@ const ResumeBuilderPage: React.FC = () => {
   }
 
   const resumes = userResumes?.data || []
+
+  const borderColor = useColorModeValue('gray.200', 'gray.600')
+  const cardBg = useColorModeValue('white', 'gray.800')
+
+  const { isOpen: isPreviewOpen, onOpen: onPreviewOpen, onClose: onPreviewClose } = useDisclosure()
 
   const addExperience = () => {
     const experienceSection = sections.find(s => s.type === 'experience')
@@ -444,9 +447,6 @@ const ResumeBuilderPage: React.FC = () => {
 
   const PersonalInfoSection = () => {
     const personalSection = sections.find(s => s.type === 'personal')
-    const borderColor = useColorModeValue('gray.200', 'gray.600')
-    const cardBg = useColorModeValue('white', 'gray.800')
-
     if (!personalSection) return null
 
     return (
@@ -543,9 +543,6 @@ const ResumeBuilderPage: React.FC = () => {
 
   const ExperienceSection = () => {
     const experienceSection = sections.find(s => s.type === 'experience')
-    const borderColor = useColorModeValue('gray.200', 'gray.600')
-    const cardBg = useColorModeValue('white', 'gray.800')
-
     if (!experienceSection) return null
 
     return (
@@ -620,9 +617,6 @@ const ResumeBuilderPage: React.FC = () => {
 
   const EducationSection = () => {
     const educationSection = sections.find(s => s.type === 'education')
-    const borderColor = useColorModeValue('gray.200', 'gray.600')
-    const cardBg = useColorModeValue('white', 'gray.800')
-
     if (!educationSection) return null
 
     return (
@@ -704,9 +698,6 @@ const ResumeBuilderPage: React.FC = () => {
 
   const SkillsSection = () => {
     const skillsSection = sections.find(s => s.type === 'skills')
-    const borderColor = useColorModeValue('gray.200', 'gray.600')
-    const cardBg = useColorModeValue('white', 'gray.800')
-
     if (!skillsSection) return null
 
     // Skill suggestions based on common tech skills

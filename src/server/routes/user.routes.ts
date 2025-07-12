@@ -75,9 +75,9 @@ export const userRoutes = new Elysia({ prefix: '/users' })
             role: userProfile.role,
             emailVerified: userProfile.emailVerified,
             isActive: userProfile.isActive,
-            createdAt: userProfile.createdAt.toISOString(),
-            updatedAt: userProfile.updatedAt.toISOString(),
-            lastLoginAt: userProfile.lastLoginAt?.toISOString(),
+            createdAt: userProfile.createdAt,
+            updatedAt: userProfile.updatedAt,
+            lastLoginAt: userProfile.lastLoginAt,
             profile: userProfile.profile ? {
               id: userProfile.profile.id,
               headline: userProfile.profile.headline,
@@ -86,48 +86,22 @@ export const userRoutes = new Elysia({ prefix: '/users' })
               websiteUrl: userProfile.profile.websiteUrl,
               linkedinUrl: userProfile.profile.linkedinUrl,
               githubUrl: userProfile.profile.githubUrl,
-              createdAt: userProfile.profile.createdAt.toISOString(),
-              updatedAt: userProfile.profile.updatedAt.toISOString()
-            } : undefined,
+              createdAt: userProfile.profile.createdAt,
+              updatedAt: userProfile.profile.updatedAt
+            } : null,
             skills: userProfile.skills.map(userSkill => ({
               skillId: userSkill.skillId,
               name: userSkill.skill.name,
               level: userSkill.level,
               yearsOfExperience: userSkill.yearsOfExperience,
-              createdAt: userSkill.createdAt.toISOString(),
-              updatedAt: userSkill.updatedAt.toISOString()
+              createdAt: userSkill.createdAt,
+              updatedAt: userSkill.updatedAt
             })),
-            experiences: userProfile.experiences.map(exp => ({
-              ...exp,
-              startDate: exp.startDate.toISOString(),
-              endDate: exp.endDate?.toISOString() || null,
-              createdAt: exp.createdAt.toISOString(),
-              updatedAt: exp.updatedAt.toISOString()
-            })),
-            education: userProfile.education.map(edu => ({
-              ...edu,
-              startDate: edu.startDate?.toISOString() || null,
-              endDate: edu.endDate?.toISOString() || null,
-              createdAt: edu.createdAt.toISOString(),
-              updatedAt: edu.updatedAt.toISOString()
-            })),
-            certifications: userProfile.certifications.map(cert => ({
-              ...cert,
-              issueDate: cert.issueDate.toISOString(),
-              expirationDate: cert.expirationDate?.toISOString() || null,
-              createdAt: cert.createdAt.toISOString(),
-              updatedAt: cert.updatedAt.toISOString()
-            })),
-            jobListings: userProfile.jobListings.map(job => ({
-              ...job,
-              createdAt: job.createdAt.toISOString(),
-              updatedAt: job.updatedAt.toISOString()
-            })),
-            resumes: userProfile.resumes.map(resume => ({
-              ...resume,
-              createdAt: resume.createdAt.toISOString(),
-              updatedAt: resume.updatedAt.toISOString()
-            }))
+            experiences: userProfile.experiences,
+            education: userProfile.education,
+            certifications: userProfile.certifications,
+            jobListings: userProfile.jobListings,
+            resumes: userProfile.resumes
           }
         };
       } catch (error: unknown) {

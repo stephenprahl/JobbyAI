@@ -1,45 +1,80 @@
-/* Resume Plan AI Extension Styles - Enhanced Responsive Design */
+/* Resume Plan AI Extension Styles - Clean Tailwind-inspired CSS */
 
 /* CSS Custom Properties for consistent theming */
 :root {
-  --rpa-primary-color: #667eea;
-  --rpa-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --rpa-secondary-color: #764ba2;
-  --rpa-success-color: #48bb78;
-  --rpa-warning-color: #ed8936;
-  --rpa-danger-color: #f56565;
-  --rpa-background: rgba(255, 255, 255, 0.98);
-  --rpa-surface: #ffffff;
-  --rpa-text-primary: #2d3748;
-  --rpa-text-secondary: #718096;
-  --rpa-border: rgba(49, 130, 206, 0.15);
-  --rpa-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
-  --rpa-radius: 16px;
-  --rpa-radius-sm: 8px;
   --rpa-z-index: 2147483647;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --purple-600: #9333ea;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --green-500: #10b981;
+  --green-600: #059669;
+  --yellow-500: #eab308;
+  --orange-500: #f97316;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
 }
 
-/* Global extension styles with responsive design */
+/* Global extension styles */
 .resume-plan-ai-widget {
   position: fixed !important;
   top: 20px !important;
   right: 20px !important;
-  width: 420px !important;
-  max-width: calc(100vw - 40px) !important;
-  background: var(--rpa-background) !important;
-  border: 1px solid var(--rpa-border) !important;
-  border-radius: var(--rpa-radius) !important;
-  box-shadow: var(--rpa-shadow) !important;
+  width: 384px !important;
+  max-width: calc(100vw - 2.5rem) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(219, 234, 254, 0.3) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  backdrop-filter: blur(16px) !important;
   z-index: var(--rpa-z-index) !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
   font-size: 14px !important;
-  line-height: 1.5 !important;
-  color: var(--rpa-text-primary) !important;
-  backdrop-filter: blur(20px) !important;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  line-height: 1.625 !important;
+  color: #1f2937 !important;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
   transform: translateY(-10px) !important;
   opacity: 0 !important;
   animation: slideInFromTop 0.6s ease-out forwards !important;
+}
+
+/* Dark mode support */
+.resume-plan-ai-widget.dark {
+  background: rgba(31, 41, 55, 0.95) !important;
+  border-color: rgba(75, 85, 99, 0.3) !important;
+  color: #e5e7eb !important;
+}
+
+/* Minimized state */
+.resume-plan-ai-widget.minimized {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  animation: slideInFromBottom 0.6s ease-out forwards !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .resume-plan-ai-widget {
+    bottom: 12px !important;
+    right: 12px !important;
+    left: 12px !important;
+    top: auto !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .resume-plan-ai-widget.minimized {
+    width: 56px !important;
+    height: 56px !important;
+    right: 16px !important;
+    left: auto !important;
+  }
 }
 
 /* Animation keyframes */
@@ -55,143 +90,56 @@
   }
 }
 
-@keyframes pulse {
+@keyframes slideInFromBottom {
+  0% {
+    transform: translateY(20px) !important;
+    opacity: 0 !important;
+  }
 
-  0%,
   100% {
-    transform: scale(1) !important;
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0 !important;
+  }
+
+  to {
+    opacity: 1 !important;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.8) !important;
+    opacity: 0 !important;
   }
 
   50% {
     transform: scale(1.05) !important;
   }
-}
 
-@keyframes shake {
-
-  0%,
   100% {
-    transform: translateX(0) !important;
-  }
-
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-2px) !important;
-  }
-
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(2px) !important;
-  }
-}
-
-@keyframes fillProgress {
-  from {
-    width: 0% !important;
+    transform: scale(1) !important;
+    opacity: 1 !important;
   }
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg) !important;
-  }
-
   to {
     transform: rotate(360deg) !important;
   }
 }
 
-/* Widget states */
-.resume-plan-ai-widget.minimized {
-  width: 70px !important;
-  height: 70px !important;
-  border-radius: 50% !important;
-  overflow: hidden !important;
-  cursor: pointer !important;
-  transform: scale(0.9) !important;
-}
-
-.resume-plan-ai-widget.minimized:hover {
-  transform: scale(1) !important;
-  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3) !important;
-}
-
-.resume-plan-ai-widget.hidden {
-  transform: translateY(-30px) !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-.resume-plan-ai-widget.dragging {
-  transition: none !important;
-  cursor: grabbing !important;
-  user-select: none !important;
-}
-
-.resume-plan-ai-widget * {
-  box-sizing: border-box !important;
-}
-
-/* Enhanced mobile responsive design */
-@media (max-width: 768px) {
-  .resume-plan-ai-widget {
-    position: fixed !important;
-    top: auto !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    left: 20px !important;
-    width: auto !important;
-    max-width: none !important;
-    animation: slideInFromBottom 0.6s ease-out forwards !important;
-  }
-
-  @keyframes slideInFromBottom {
-    0% {
-      transform: translateY(20px) !important;
-      opacity: 0 !important;
-    }
-
-    100% {
-      transform: translateY(0) !important;
-      opacity: 1 !important;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .resume-plan-ai-widget {
-    bottom: 10px !important;
-    right: 10px !important;
-    left: 10px !important;
-    font-size: 13px !important;
-    border-radius: var(--rpa-radius-sm) !important;
-  }
-
-  .resume-plan-ai-widget.minimized {
-    width: 60px !important;
-    height: 60px !important;
-    right: 15px !important;
-    left: auto !important;
-  }
-}
-
-@media (max-width: 360px) {
-  .resume-plan-ai-widget {
-    font-size: 12px !important;
-  }
-}
-
-/* Widget header with enhanced design */
+/* Widget header */
 .resume-plan-ai-header {
-  background: var(--rpa-primary-gradient) !important;
+  background: linear-gradient(to right, var(--primary-600), var(--purple-600)) !important;
   color: white !important;
-  padding: 16px 20px !important;
-  border-radius: 15px 15px 0 0 !important;
+  padding: 16px !important;
+  border-radius: 16px 16px 0 0 !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -208,24 +156,9 @@
 .resume-plan-ai-header::before {
   content: '' !important;
   position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%) !important;
+  inset: 0 !important;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.15), transparent) !important;
   pointer-events: none !important;
-}
-
-.resume-plan-ai-header::after {
-  content: '' !important;
-  position: absolute !important;
-  top: -2px !important;
-  left: -2px !important;
-  right: -2px !important;
-  bottom: -2px !important;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent) !important;
-  border-radius: 17px 17px 0 0 !important;
-  z-index: -1 !important;
 }
 
 .resume-plan-ai-title {
@@ -234,8 +167,8 @@
   margin: 0 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  z-index: 1 !important;
+  gap: 8px !important;
+  z-index: 10 !important;
   position: relative !important;
   flex: 1 !important;
 }
@@ -253,14 +186,14 @@
 }
 
 .resume-plan-ai-logo:hover {
-  transform: rotate(10deg) scale(1.1) !important;
+  transform: rotate(12deg) scale(1.1) !important;
 }
 
 .resume-plan-ai-controls {
   display: flex !important;
   gap: 8px !important;
   align-items: center !important;
-  z-index: 2 !important;
+  z-index: 20 !important;
 }
 
 .resume-plan-ai-btn {
@@ -277,7 +210,7 @@
   justify-content: center !important;
   border-radius: 6px !important;
   transition: all 0.2s ease !important;
-  backdrop-filter: blur(5px) !important;
+  backdrop-filter: blur(4px) !important;
 }
 
 .resume-plan-ai-btn:hover {
@@ -292,12 +225,11 @@
 /* Mobile header adjustments */
 @media (max-width: 480px) {
   .resume-plan-ai-header {
-    padding: 12px 16px !important;
+    padding: 12px !important;
   }
 
   .resume-plan-ai-title {
     font-size: 14px !important;
-    gap: 8px !important;
   }
 
   .resume-plan-ai-logo {
@@ -313,13 +245,17 @@
   }
 }
 
-/* Widget content with enhanced styling */
+/* Widget content */
 .resume-plan-ai-content {
   padding: 20px !important;
   background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(10px) !important;
-  border-radius: 0 0 15px 15px !important;
+  backdrop-filter: blur(16px) !important;
+  border-radius: 0 0 16px 16px !important;
   position: relative !important;
+}
+
+.resume-plan-ai-content.dark {
+  background: rgba(31, 41, 55, 0.95) !important;
 }
 
 .resume-plan-ai-content.loading {
@@ -327,15 +263,20 @@
   pointer-events: none !important;
 }
 
-/* Enhanced match score section */
+/* Match score section */
 .resume-plan-ai-match-score {
   margin-bottom: 20px !important;
   padding: 16px !important;
-  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%) !important;
+  background: linear-gradient(to right, var(--gray-50), var(--gray-100)) !important;
   border-radius: 12px !important;
-  border: 1px solid rgba(113, 128, 150, 0.1) !important;
+  border: 1px solid rgba(209, 213, 219, 0.2) !important;
   position: relative !important;
   overflow: hidden !important;
+}
+
+.resume-plan-ai-match-score.dark {
+  background: linear-gradient(to right, var(--gray-700), var(--gray-800)) !important;
+  border-color: rgba(75, 85, 99, 0.2) !important;
 }
 
 .resume-plan-ai-match-score::before {
@@ -345,7 +286,7 @@
   left: 0 !important;
   right: 0 !important;
   height: 2px !important;
-  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(to right, var(--primary-600), var(--purple-600)) !important;
 }
 
 .resume-plan-ai-score-header {
@@ -357,24 +298,28 @@
 
 .resume-plan-ai-score-label {
   font-weight: 700 !important;
-  font-size: 15px !important;
-  color: #2d3748 !important;
+  font-size: 16px !important;
+  color: #1f2937 !important;
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
+}
+
+.resume-plan-ai-score-label.dark {
+  color: #e5e7eb !important;
 }
 
 .resume-plan-ai-score-icon {
   width: 20px !important;
   height: 20px !important;
   border-radius: 50% !important;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(to right, var(--primary-600), var(--purple-600)) !important;
   color: white !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 10px !important;
-  font-weight: bold !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
 }
 
 .resume-plan-ai-score-badge {
@@ -385,468 +330,189 @@
   color: white !important;
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
   transition: all 0.2s ease !important;
 }
 
 .resume-plan-ai-score-badge:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
 }
 
 .resume-plan-ai-score-badge.high {
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
+  background: linear-gradient(to right, var(--green-500), var(--green-600)) !important;
 }
 
 .resume-plan-ai-score-badge.medium {
-  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+  background: linear-gradient(to right, var(--yellow-500), var(--orange-500)) !important;
 }
 
 .resume-plan-ai-score-badge.low {
-  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
+  background: linear-gradient(to right, var(--red-500), var(--red-600)) !important;
 }
 
-.resume-plan-ai-score-header {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  margin-bottom: 8px !important;
+/* Progress bars */
+.resume-plan-ai-progress {
+  width: 100% !important;
+  background: var(--gray-200) !important;
+  border-radius: 9999px !important;
+  height: 8px !important;
+  overflow: hidden !important;
 }
 
-.resume-plan-ai-score-label {
-  font-weight: 600 !important;
-  font-size: 14px !important;
-}
-
-.resume-plan-ai-score-badge {
-  padding: 4px 8px !important;
-  border-radius: 16px !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  color: white !important;
-}
-
-.resume-plan-ai-score-badge.high {
-  background-color: #48bb78 !important;
-}
-
-.resume-plan-ai-score-badge.medium {
-  background-color: #ed8936 !important;
-}
-
-.resume-plan-ai-score-badge.low {
-  background-color: #f56565 !important;
-}
-
-/* Progress bar with animation */
-.resume-plan-ai-progress-container {
-  margin-top: 12px !important;
+.resume-plan-ai-progress.dark {
+  background: var(--gray-700) !important;
 }
 
 .resume-plan-ai-progress-bar {
-  width: 100% !important;
-  height: 12px !important;
-  background: rgba(226, 232, 240, 0.8) !important;
-  border-radius: 8px !important;
-  overflow: hidden !important;
-  position: relative !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
-}
-
-.resume-plan-ai-progress-fill {
   height: 100% !important;
-  border-radius: 8px !important;
-  position: relative !important;
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: linear-gradient(to right, var(--primary-600), var(--purple-600)) !important;
+  border-radius: 9999px !important;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.resume-plan-ai-progress-fill.high {
-  background: linear-gradient(90deg, #48bb78 0%, #38a169 100%) !important;
+/* Suggestions section */
+.resume-plan-ai-suggestions {
+  margin-top: 20px !important;
 }
 
-.resume-plan-ai-progress-fill.medium {
-  background: linear-gradient(90deg, #ed8936 0%, #dd6b20 100%) !important;
-}
-
-.resume-plan-ai-progress-fill.low {
-  background: linear-gradient(90deg, #f56565 0%, #e53e3e 100%) !important;
-}
-
-.resume-plan-ai-score-label-text {
-  text-align: center !important;
-  margin-top: 8px !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  color: #4a5568 !important;
-}
-
-/* Skills section with enhanced styling */
-.resume-plan-ai-skills-section {
-  margin: 20px 0 !important;
-}
-
-.resume-plan-ai-skills-grid {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 16px !important;
-}
-
-.resume-plan-ai-skill-group {
-  background: rgba(247, 250, 252, 0.8) !important;
-  border-radius: 12px !important;
-  padding: 16px !important;
-  border: 1px solid rgba(226, 232, 240, 0.6) !important;
-  transition: all 0.2s ease !important;
-}
-
-.resume-plan-ai-skill-group:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
-}
-
-.resume-plan-ai-skill-group.matching {
-  border-left: 4px solid #48bb78 !important;
-}
-
-.resume-plan-ai-skill-group.missing {
-  border-left: 4px solid #f56565 !important;
-}
-
-.resume-plan-ai-skill-header {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
+.resume-plan-ai-suggestion-item {
+  padding: 12px !important;
   margin-bottom: 12px !important;
-}
-
-.resume-plan-ai-skill-icon {
-  font-size: 16px !important;
-}
-
-.resume-plan-ai-skill-title {
-  font-weight: 600 !important;
-  color: #2d3748 !important;
-  flex: 1 !important;
-}
-
-.resume-plan-ai-skill-count {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  color: white !important;
-  padding: 2px 8px !important;
-  border-radius: 12px !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-}
-
-.resume-plan-ai-skill-list {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 6px !important;
-}
-
-.resume-plan-ai-skill-tag {
-  padding: 4px 10px !important;
-  border-radius: 20px !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  text-transform: capitalize !important;
-  transition: all 0.2s ease !important;
-  cursor: default !important;
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-.resume-plan-ai-skill-tag.matching {
-  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%) !important;
-  color: #155724 !important;
-  border: 1px solid #b8dacc !important;
-}
-
-.resume-plan-ai-skill-tag.missing {
-  background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%) !important;
-  color: #721c24 !important;
-  border: 1px solid #f1b0b7 !important;
-}
-
-.resume-plan-ai-skill-tag:hover {
-  transform: translateY(-1px) scale(1.02) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-}
-
-.resume-plan-ai-skill-more {
-  padding: 4px 10px !important;
-  border-radius: 20px !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  background: rgba(113, 128, 150, 0.1) !important;
-  color: var(--rpa-text-secondary) !important;
-  border: 1px solid rgba(113, 128, 150, 0.2) !important;
-  cursor: pointer !important;
-  transition: all 0.2s ease !important;
-}
-
-.resume-plan-ai-skill-more:hover {
-  background: rgba(113, 128, 150, 0.15) !important;
-  transform: translateY(-1px) !important;
-}
-
-/* Enhanced action buttons with modern design */
-.resume-plan-ai-actions {
-  display: flex !important;
-  gap: 12px !important;
-  margin: 20px 0 !important;
-  flex-wrap: wrap !important;
-}
-
-.resume-plan-ai-action-btn {
-  flex: 1 !important;
-  min-width: 140px !important;
-  padding: 12px 16px !important;
-  border: none !important;
-  border-radius: 10px !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  font-family: inherit !important;
-  position: relative !important;
-  overflow: hidden !important;
-}
-
-.resume-plan-ai-action-btn::before {
-  content: '' !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: -100% !important;
-  width: 100% !important;
-  height: 100% !important;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
-  transition: left 0.5s !important;
-}
-
-.resume-plan-ai-action-btn:hover::before {
-  left: 100% !important;
-}
-
-.resume-plan-ai-action-btn.primary {
-  background: var(--rpa-primary-gradient) !important;
-  color: white !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
-}
-
-.resume-plan-ai-action-btn.primary:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
-}
-
-.resume-plan-ai-action-btn.secondary {
-  background: rgba(113, 128, 150, 0.1) !important;
-  color: var(--rpa-text-primary) !important;
-  border: 1px solid rgba(113, 128, 150, 0.2) !important;
-}
-
-.resume-plan-ai-action-btn.secondary:hover {
-  background: rgba(113, 128, 150, 0.15) !important;
-  transform: translateY(-1px) !important;
-}
-
-.resume-plan-ai-action-btn:active {
-  transform: translateY(0) scale(0.98) !important;
-}
-
-.resume-plan-ai-btn-icon {
-  font-size: 14px !important;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1)) !important;
-}
-
-/* Enhanced quick stats section */
-.resume-plan-ai-quick-stats {
-  display: grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 12px !important;
-  margin-top: 16px !important;
-  padding-top: 16px !important;
-  border-top: 1px solid rgba(226, 232, 240, 0.6) !important;
-}
-
-.resume-plan-ai-stat {
-  text-align: center !important;
-  padding: 12px 8px !important;
-  background: rgba(255, 255, 255, 0.6) !important;
+  background: white !important;
+  border: 1px solid var(--gray-200) !important;
   border-radius: 8px !important;
-  border: 1px solid rgba(226, 232, 240, 0.4) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
   transition: all 0.2s ease !important;
 }
 
-.resume-plan-ai-stat:hover {
-  background: rgba(255, 255, 255, 0.8) !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+.resume-plan-ai-suggestion-item.dark {
+  background: var(--gray-700) !important;
+  border-color: var(--gray-600) !important;
 }
 
-.resume-plan-ai-stat-value {
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  color: var(--rpa-primary-color) !important;
+.resume-plan-ai-suggestion-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-1px) !important;
+}
+
+.resume-plan-ai-suggestion-title {
+  font-weight: 600 !important;
+  color: #1f2937 !important;
   margin-bottom: 4px !important;
 }
 
-.resume-plan-ai-stat-label {
-  font-size: 11px !important;
-  color: var(--rpa-text-secondary) !important;
+.resume-plan-ai-suggestion-title.dark {
+  color: #e5e7eb !important;
+}
+
+.resume-plan-ai-suggestion-text {
+  color: var(--gray-600) !important;
+  font-size: 14px !important;
+}
+
+.resume-plan-ai-suggestion-text.dark {
+  color: #9ca3af !important;
+}
+
+/* Loading states */
+.resume-plan-ai-loading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 32px 0 !important;
+}
+
+.resume-plan-ai-spinner {
+  animation: spin 1s linear infinite !important;
+  width: 24px !important;
+  height: 24px !important;
+  border: 2px solid var(--primary-600) !important;
+  border-top-color: transparent !important;
+  border-radius: 50% !important;
+}
+
+/* Error states */
+.resume-plan-ai-error {
+  padding: 16px !important;
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  border-radius: 8px !important;
+  color: #991b1b !important;
+}
+
+.resume-plan-ai-error.dark {
+  background: rgba(153, 27, 27, 0.2) !important;
+  border-color: #991b1b !important;
+  color: #fca5a5 !important;
+}
+
+/* Success states */
+.resume-plan-ai-success {
+  padding: 16px !important;
+  background: #f0fdf4 !important;
+  border: 1px solid #bbf7d0 !important;
+  border-radius: 8px !important;
+  color: #166534 !important;
+}
+
+.resume-plan-ai-success.dark {
+  background: rgba(22, 101, 52, 0.2) !important;
+  border-color: #166534 !important;
+  color: #86efac !important;
+}
+
+/* Buttons */
+.resume-plan-ai-button {
+  padding: 8px 16px !important;
+  background: var(--primary-600) !important;
+  color: white !important;
+  border-radius: 8px !important;
   font-weight: 500 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  cursor: pointer !important;
 }
 
-/* Animations */
-@keyframes fillProgress {
-  from {
-    width: 0% !important;
-  }
-
-  to {
-    width: var(--progress-width) !important;
-  }
+.resume-plan-ai-button:hover {
+  background: var(--primary-700) !important;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0 !important;
-    transform: translateY(20px) !important;
-  }
-
-  to {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-  }
+.resume-plan-ai-button:active {
+  transform: scale(0.95) !important;
 }
 
-@keyframes bounce {
-
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0) !important;
-  }
-
-  40% {
-    transform: translateY(-5px) !important;
-  }
-
-  60% {
-    transform: translateY(-3px) !important;
-  }
+.resume-plan-ai-button.secondary {
+  background: var(--gray-200) !important;
+  color: #1f2937 !important;
 }
 
-.resume-plan-ai-widget {
-  animation: fadeInUp 0.4s ease-out !important;
+.resume-plan-ai-button.secondary:hover {
+  background: #d1d5db !important;
 }
 
-/* Loading state */
-.resume-plan-ai-content.loading::after {
-  content: '' !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  background: rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(2px) !important;
-  border-radius: 0 0 15px 15px !important;
+.resume-plan-ai-button.secondary.dark {
+  background: var(--gray-700) !important;
+  color: #e5e7eb !important;
 }
 
-/* Responsive improvements for mobile */
-@media (max-width: 768px) {
-  .resume-plan-ai-actions {
-    flex-direction: column !important;
-  }
-
-  .resume-plan-ai-action-btn {
-    min-width: auto !important;
-    width: 100% !important;
-  }
-
-  .resume-plan-ai-quick-stats {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 8px !important;
-  }
-
-  .resume-plan-ai-stat:last-child {
-    grid-column: 1 / -1 !important;
-  }
+.resume-plan-ai-button.secondary.dark:hover {
+  background: var(--gray-600) !important;
 }
 
-@media (max-width: 480px) {
-  .resume-plan-ai-content {
-    padding: 16px !important;
-  }
-
-  .resume-plan-ai-match-score {
-    margin-bottom: 16px !important;
-    padding: 12px !important;
-  }
-
-  .resume-plan-ai-actions {
-    margin: 16px 0 !important;
-    gap: 8px !important;
-  }
-
-  .resume-plan-ai-action-btn {
-    padding: 10px 14px !important;
-    font-size: 12px !important;
-  }
-
-  .resume-plan-ai-quick-stats {
-    grid-template-columns: 1fr !important;
-    gap: 6px !important;
-  }
-
-  .resume-plan-ai-stat {
-    padding: 8px 6px !important;
-  }
-
-  .resume-plan-ai-stat-value {
-    font-size: 14px !important;
-  }
-
-  .resume-plan-ai-stat-label {
-    font-size: 10px !important;
-  }
+/* Utility classes */
+.resume-plan-ai-hidden {
+  display: none !important;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --rpa-background: rgba(26, 32, 44, 0.95);
-    --rpa-surface: #2d3748;
-    --rpa-text-primary: #e2e8f0;
-    --rpa-text-secondary: #a0aec0;
-    --rpa-border: rgba(81, 99, 133, 0.2);
-  }
+.resume-plan-ai-visible {
+  display: block !important;
+}
 
-  .resume-plan-ai-match-score {
-    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
-  }
+.resume-plan-ai-fade-in {
+  animation: fadeIn 0.3s ease-in-out !important;
+}
 
-  .resume-plan-ai-skill-group {
-    background: rgba(45, 55, 72, 0.8) !important;
-    border-color: rgba(81, 99, 133, 0.3) !important;
-  }
-
-  .resume-plan-ai-stat {
-    background: rgba(45, 55, 72, 0.6) !important;
-    border-color: rgba(81, 99, 133, 0.2) !important;
-  }
-
-  .resume-plan-ai-action-btn.secondary {
-    background: rgba(45, 55, 72, 0.8) !important;
-    border-color: rgba(81, 99, 133, 0.3) !important;
-  }
+.resume-plan-ai-bounce-in {
+  animation: bounceIn 0.5s ease-out !important;
 }

@@ -12,7 +12,6 @@ import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
 import RegisterPage from './pages/RegisterPage'
 import ResumeBuilderPage from './pages/ResumeBuilderPage'
-import ResumeBuilderPageTailwind from './pages/ResumeBuilderPageTailwind'
 import ResumePage from './pages/ResumePage'
 
 // Import layout
@@ -127,14 +126,6 @@ const App: React.FC = () => {
               <Layout>
                 <ResumeBuilderPage />
               </Layout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/resume-builder"
-          element={
-            <ProtectedRoute>
-              <ResumeBuilderPageTailwind />
             </ProtectedRoute>
           }
         />
