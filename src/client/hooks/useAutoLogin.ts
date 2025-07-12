@@ -1,12 +1,19 @@
 import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { isRememberMeEnabled, loadCredentials } from '../utils/encryption'
 
 export const useAutoLogin = () => {
   const { login, isAuthenticated, isLoading } = useAuth()
+  const location = useLocation()
   const hasAttemptedAutoLogin = useRef(false)
 
   useEffect(() => {
+    // Don't auto-login if user is on login/register pages (they might be manually logging in)
+    if (location.pathname === '/login' || location.pathname === '/register') {
+      return
+    }
+
     // Only attempt auto-login once and if user is not already authenticated
     if (hasAttemptedAutoLogin.current || isAuthenticated || isLoading) {
       return
@@ -27,5 +34,5 @@ export const useAutoLogin = () => {
         })
       }
     }
-  }, [login, isAuthenticated, isLoading])
+  }, [login, isAuthenticated, isLoading, location.pathname])
 }

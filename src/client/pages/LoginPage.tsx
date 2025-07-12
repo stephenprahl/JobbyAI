@@ -94,6 +94,8 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
     if (!validateForm()) return
 
     setIsLoading(true)
+    setErrors({}) // Clear any previous errors
+
     try {
       if (isLogin) {
         await login({ email: formData.email, password: formData.password })
@@ -106,17 +108,19 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
           // Clear stored credentials if remember me is unchecked
           clearCredentials()
         }
+
+        // Navigation will be handled by the auth context and route protection
       } else {
         await register({
           email: formData.email,
           password: formData.password,
           firstName: formData.name
         })
+        // Navigation will be handled by the auth context and route protection
       }
-      navigate('/dashboard')
     } catch (error) {
       // If login fails, don't save credentials regardless of remember me state
-      if (isLogin && !rememberMe) {
+      if (isLogin) {
         clearCredentials()
       }
       setErrors({ submit: error instanceof Error ? error.message : 'An error occurred' })

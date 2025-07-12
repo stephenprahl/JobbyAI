@@ -59,7 +59,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     () => authService.getCurrentUser(),
     {
       enabled: !!tokens?.accessToken && tokens.accessToken.length > 0,
-      retry: false,
+      retry: (failureCount, error: any) => {
+        // Don't retry on authentication errors (401, 403)
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+          return false
+        }
+        // Only retry network errors up to 2 times
+        return failureCount < 2
+      },
       staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
       onError: (error: any) => {
         // Only clear tokens if it's an authentication error (401, 403)
@@ -79,20 +86,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     {
       onSuccess: (response) => {
         const newTokens = response.data
-        if (newTokens) {
+        if (newTokens && newTokens.accessToken) {
           setTokens(newTokens)
           localStorage.setItem('auth_tokens', JSON.stringify(newTokens))
 
           // Force the auth token to be set immediately
           authService.setAuthToken(newTokens.accessToken)
 
-          // Immediately invalidate and refetch user query
+          // Invalidate and refetch user query immediately
           queryClient.invalidateQueries(['user'])
-          queryClient.refetchQueries(['user'])
         }
       },
       onError: (error: any) => {
         console.error('Login failed:', error)
+        // Clear any stored tokens on login failure
+        setTokens(null)
+        localStorage.removeItem('auth_tokens')
+        authService.removeAuthToken()
       }
     }
   )
@@ -185,19 +195,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAuthenticated: !!user && !!tokens?.accessToken,
     isAutoLoggingIn,
     login: async (credentials: LoginRequest) => {
-      try {
-        await loginMutation.mutateAsync(credentials)
-        // Wait a moment for the query to update
-        await new Promise(resolve => setTimeout(resolve, 200))
-      } catch (error) {
-        console.error('Login failed:', error)
-        throw error
-      }
+      await loginMutation.mutateAsync(credentials)
     },
     register: async (data: RegisterRequest) => {
       await registerMutation.mutateAsync(data)
-      // Wait a moment for the query to update
-      await new Promise(resolve => setTimeout(resolve, 200))
     },
     logout,
     refreshToken,
