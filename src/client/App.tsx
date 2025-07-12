@@ -1,6 +1,7 @@
 import React from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
+import { useAutoLogin } from './hooks/useAutoLogin'
 
 // Import Tailwind pages
 import DashboardPage from './pages/DashboardPage'
@@ -59,6 +60,9 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 }
 
 const App: React.FC = () => {
+  // Enable auto-login for users with "Remember Me" enabled
+  useAutoLogin()
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Routes>

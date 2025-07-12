@@ -7,6 +7,7 @@ interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
+  isAutoLoggingIn: boolean
   login: (credentials: LoginRequest) => Promise<void>
   register: (data: RegisterRequest) => Promise<void>
   logout: () => void
@@ -46,6 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return null
   })
 
+  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(false)
   const queryClient = useQueryClient()
 
   // Query to get current user
@@ -115,6 +117,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setTokens(null)
     localStorage.removeItem('auth_tokens')
+
+    // Clear remember me credentials on logout
+    import('../utils/encryption').then(({ clearCredentials }) => {
+      clearCredentials()
+    })
+
     queryClient.clear()
   }
 
@@ -175,6 +183,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user: user || null,
     isLoading: isLoading || loginMutation.isLoading || registerMutation.isLoading,
     isAuthenticated: !!user && !!tokens?.accessToken,
+    isAutoLoggingIn,
     login: async (credentials: LoginRequest) => {
       try {
         await loginMutation.mutateAsync(credentials)

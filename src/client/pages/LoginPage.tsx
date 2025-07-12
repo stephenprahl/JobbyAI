@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FiArrowLeft, FiEye, FiEyeOff, FiLock, FiMail, FiUser } from 'react-icons/fi'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { clearCredentials, isRememberMeEnabled, loadCredentials, saveCredentials } from '../utils/encryption'
 
 interface LoginPageTailwindProps {
   mode?: 'login' | 'register'
@@ -10,17 +11,37 @@ interface LoginPageTailwindProps {
 const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' }) => {
   const [isLogin, setIsLogin] = useState(mode === 'login')
   const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    name: '',
-    confirmPassword: ''
+  const [formData, setFormData] = useState(() => {
+    // Load saved credentials if "remember me" was checked
+    const savedCredentials = loadCredentials()
+
+    return {
+      email: savedCredentials?.email || '',
+      password: savedCredentials?.password || '',
+      name: '',
+      confirmPassword: ''
+    }
+  })
+  const [rememberMe, setRememberMe] = useState(() => {
+    // Check if remember me was previously enabled
+    return isRememberMeEnabled()
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
 
   const { login, register } = useAuth()
   const navigate = useNavigate()
+
+  // Clear any form errors when credentials are auto-filled
+  useEffect(() => {
+    if (isLogin && formData.email && formData.password && rememberMe) {
+      setErrors({})
+    }
+  }, [isLogin, formData.email, formData.password, rememberMe])
+
+  // Show a subtle indication when credentials are auto-filled
+  const areCredentialsAutoFilled = isLogin && rememberMe && loadCredentials() &&
+    formData.email === loadCredentials()?.email
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -76,6 +97,15 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
     try {
       if (isLogin) {
         await login({ email: formData.email, password: formData.password })
+
+        // Handle remember me functionality after successful login
+        if (rememberMe) {
+          // Store credentials securely
+          saveCredentials(formData.email, formData.password)
+        } else {
+          // Clear stored credentials if remember me is unchecked
+          clearCredentials()
+        }
       } else {
         await register({
           email: formData.email,
@@ -85,6 +115,10 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
       }
       navigate('/dashboard')
     } catch (error) {
+      // If login fails, don't save credentials regardless of remember me state
+      if (isLogin && !rememberMe) {
+        clearCredentials()
+      }
       setErrors({ submit: error instanceof Error ? error.message : 'An error occurred' })
     } finally {
       setIsLoading(false)
@@ -94,12 +128,28 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
   const toggleMode = () => {
     setIsLogin(!isLogin)
     setErrors({})
-    setFormData({
-      email: '',
-      password: '',
-      name: '',
-      confirmPassword: ''
-    })
+
+    if (!isLogin) {
+      // Switching to login mode - restore saved credentials if available
+      const savedCredentials = loadCredentials()
+
+      setFormData({
+        email: savedCredentials?.email || '',
+        password: savedCredentials?.password || '',
+        name: '',
+        confirmPassword: ''
+      })
+      setRememberMe(isRememberMeEnabled())
+    } else {
+      // Switching to register mode - clear form
+      setFormData({
+        email: '',
+        password: '',
+        name: '',
+        confirmPassword: ''
+      })
+      setRememberMe(false)
+    }
   }
 
   return (
@@ -164,18 +214,22 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <FiMail className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-                </div>
-                <input
+                </div>                  <input
                   id="email"
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`input pl-10 ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                  className={`input pl-10 ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''} ${areCredentialsAutoFilled ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700' : ''}`}
                   placeholder="Enter your email"
                 />
               </div>
               {errors.email && <p className="mt-1 text-sm text-red-600 font-medium">{errors.email}</p>}
+              {areCredentialsAutoFilled && !errors.email && (
+                <p className="mt-1 text-sm text-green-600 dark:text-green-400">
+                  Credentials restored from previous login
+                </p>
+              )}
             </div>
 
             <div>
@@ -185,14 +239,13 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <FiLock className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-                </div>
-                <input
+                </div>                  <input
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`input pl-10 pr-10 ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                  className={`input pl-10 pr-10 ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''} ${areCredentialsAutoFilled ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700' : ''}`}
                   placeholder="Enter your password"
                 />
                 <button
@@ -240,10 +293,30 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => {
+                      const checked = e.target.checked
+                      setRememberMe(checked)
+
+                      // If unchecking, immediately clear stored credentials
+                      if (!checked) {
+                        clearCredentials()
+                      }
+                    }}
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-100">
                     Remember me
+                    {rememberMe && loadCredentials() && (
+                      <span className="ml-1 text-xs text-primary-600 dark:text-primary-400">
+                        (credentials saved)
+                      </span>
+                    )}
+                    {rememberMe && !loadCredentials() && (
+                      <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                        (will save on login)
+                      </span>
+                    )}
                   </label>
                 </div>
 
