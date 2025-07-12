@@ -19,7 +19,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useAuth } from '../contexts/AuthContext'
 import { getCurrentUser, getUserSkills, updateUserProfile } from '../services/api'
 
-const ProfilePage: React.FC = () => {
+const ProfilePageTailwind: React.FC = () => {
   const { user, isLoading: authLoading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
@@ -147,35 +147,35 @@ const ProfilePage: React.FC = () => {
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <div className="space-y-8">
         {/* Header */}
-        <div className="bg-gradient-to-br from-primary-50 via-purple-50 to-blue-50 dark:from-gray-800 dark:via-gray-750 dark:to-gray-700 rounded-3xl p-8 border border-gray-200 dark:border-gray-600 shadow-xl">
+        <div className="bg-gradient-to-r from-primary-50 to-purple-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8">
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8">
             {/* Avatar */}
             <div className="flex-shrink-0">
-              <div className="w-28 h-28 bg-gradient-to-br from-primary-500 via-primary-600 to-purple-600 rounded-3xl flex items-center justify-center text-white text-3xl font-black shadow-2xl border-4 border-white dark:border-gray-700">
+              <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-purple-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">
                 {getInitials(userName)}
               </div>
             </div>
 
             {/* User Info */}
-            <div className="flex-grow space-y-3">
-              <h1 className="text-4xl font-black text-gray-950 dark:text-white tracking-tight">
+            <div className="flex-grow space-y-2">
+              <h1 className="text-3xl font-bold text-gray-950 dark:text-white">
                 {userName}
               </h1>
               {profile?.headline && (
-                <p className="text-xl text-gray-800 dark:text-gray-100 font-semibold leading-relaxed">
+                <p className="text-xl text-gray-700 dark:text-gray-200 font-medium">
                   {profile.headline}
                 </p>
               )}
-              <div className="flex flex-wrap items-center gap-6 text-sm text-gray-700 dark:text-gray-200 font-medium">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
                 {user?.email && (
                   <div className="flex items-center space-x-2">
-                    <FiMail className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                    <FiMail className="w-4 h-4" />
                     <span>{user.email}</span>
                   </div>
                 )}
                 {profile?.location && (
                   <div className="flex items-center space-x-2">
-                    <FiMapPin className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                    <FiMapPin className="w-4 h-4" />
                     <span>{profile.location}</span>
                   </div>
                 )}
@@ -187,26 +187,26 @@ const ProfilePage: React.FC = () => {
               {!isEditing ? (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="btn btn-primary flex items-center space-x-2 font-bold text-base px-6 py-3"
+                  className="btn btn-primary flex items-center space-x-2"
                 >
-                  <FiEdit className="w-5 h-5" />
+                  <FiEdit className="w-4 h-4" />
                   <span>Edit Profile</span>
                 </button>
               ) : (
                 <div className="flex space-x-3">
                   <button
                     onClick={handleSubmit(onSubmit)}
-                    className="btn btn-primary flex items-center space-x-2 font-bold text-base px-6 py-3"
+                    className="btn btn-primary flex items-center space-x-2"
                     disabled={updateProfileMutation.isLoading}
                   >
-                    <FiSave className="w-5 h-5" />
+                    <FiSave className="w-4 h-4" />
                     <span>Save</span>
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="btn btn-outline flex items-center space-x-2 font-bold text-base px-6 py-3"
+                    className="btn btn-outline flex items-center space-x-2"
                   >
-                    <FiX className="w-5 h-5" />
+                    <FiX className="w-4 h-4" />
                     <span>Cancel</span>
                   </button>
                 </div>
@@ -217,53 +217,53 @@ const ProfilePage: React.FC = () => {
 
         {/* Basic Information */}
         <div className="card">
-          <div className="mb-8">
-            <h2 className="text-3xl font-black text-gray-950 dark:text-white mb-3 tracking-tight">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-950 dark:text-white mb-2">
               Basic Information
             </h2>
-            <p className="text-gray-700 dark:text-gray-200 text-lg font-medium">
+            <p className="text-gray-600 dark:text-gray-300">
               Manage your personal information and contact details
             </p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="profile-label">First Name</label>
+                <label className="form-label">First Name</label>
                 <input
                   type="text"
                   defaultValue={user?.firstName}
                   readOnly={!isEditing}
-                  className="profile-input"
+                  className={`input ${!isEditing ? 'bg-gray-50 dark:bg-gray-700 cursor-not-allowed' : ''}`}
                 />
               </div>
               <div>
-                <label className="profile-label">Last Name</label>
+                <label className="form-label">Last Name</label>
                 <input
                   type="text"
                   defaultValue={user?.lastName}
                   readOnly={!isEditing}
-                  className="profile-input"
+                  className={`input ${!isEditing ? 'bg-gray-50 dark:bg-gray-700 cursor-not-allowed' : ''}`}
                 />
               </div>
               <div>
-                <label className="profile-label">Email</label>
+                <label className="form-label">Email</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiMail className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                   </div>
                   <input
                     type="email"
                     defaultValue={user?.email}
                     readOnly
-                    className="profile-input pl-12"
+                    className="input pl-10 bg-gray-50 dark:bg-gray-700 cursor-not-allowed"
                   />
                 </div>
               </div>
               <div>
-                <label className="profile-label">Location</label>
+                <label className="form-label">Location</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FiMapPin className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                   </div>
                   <input
@@ -271,44 +271,44 @@ const ProfilePage: React.FC = () => {
                     {...register('location')}
                     readOnly={!isEditing}
                     placeholder="Your location"
-                    className="profile-input pl-12"
+                    className={`input pl-10 ${!isEditing ? 'bg-gray-50 dark:bg-gray-700 cursor-not-allowed' : ''}`}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div>
-                <label className="profile-label">Professional Headline</label>
+                <label className="form-label">Professional Headline</label>
                 <input
                   type="text"
                   {...register('headline')}
                   readOnly={!isEditing}
                   placeholder="e.g., Senior Software Engineer at Tech Corp"
-                  className="profile-input"
+                  className={`input ${!isEditing ? 'bg-gray-50 dark:bg-gray-700 cursor-not-allowed' : ''}`}
                 />
               </div>
               <div>
-                <label className="profile-label">Professional Summary</label>
+                <label className="form-label">Professional Summary</label>
                 <textarea
                   {...register('summary')}
                   readOnly={!isEditing}
-                  rows={5}
+                  rows={4}
                   placeholder="Brief description of your professional background and expertise..."
-                  className="profile-textarea"
+                  className={`form-textarea ${!isEditing ? 'bg-gray-50 dark:bg-gray-700 cursor-not-allowed' : ''}`}
                 />
               </div>
             </div>
 
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
-              <h3 className="text-xl font-bold text-gray-950 dark:text-white mb-6 tracking-tight">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="text-lg font-semibold text-gray-950 dark:text-white mb-4">
                 Social Links
               </h3>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <label className="profile-label">Website URL</label>
+                  <label className="form-label">Website URL</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FiGlobe className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                     </div>
                     <input
@@ -316,14 +316,14 @@ const ProfilePage: React.FC = () => {
                       {...register('websiteUrl')}
                       readOnly={!isEditing}
                       placeholder="https://yourwebsite.com"
-                      className="profile-input pl-12"
+                      className={`input pl-10 ${!isEditing ? 'bg-gray-50 dark:bg-gray-700 cursor-not-allowed' : ''}`}
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="profile-label">LinkedIn URL</label>
+                  <label className="form-label">LinkedIn URL</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FiLinkedin className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                     </div>
                     <input
@@ -331,14 +331,14 @@ const ProfilePage: React.FC = () => {
                       {...register('linkedinUrl')}
                       readOnly={!isEditing}
                       placeholder="https://linkedin.com/in/yourprofile"
-                      className="profile-input pl-12"
+                      className={`input pl-10 ${!isEditing ? 'bg-gray-50 dark:bg-gray-700 cursor-not-allowed' : ''}`}
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="profile-label">GitHub URL</label>
+                  <label className="form-label">GitHub URL</label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <FiGithub className="h-5 w-5 text-gray-600 dark:text-gray-300" />
                     </div>
                     <input
@@ -346,7 +346,7 @@ const ProfilePage: React.FC = () => {
                       {...register('githubUrl')}
                       readOnly={!isEditing}
                       placeholder="https://github.com/yourusername"
-                      className="profile-input pl-12"
+                      className={`input pl-10 ${!isEditing ? 'bg-gray-50 dark:bg-gray-700 cursor-not-allowed' : ''}`}
                     />
                   </div>
                 </div>
@@ -357,44 +357,44 @@ const ProfilePage: React.FC = () => {
 
         {/* Skills */}
         <div className="card">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-black text-gray-950 dark:text-white mb-3 tracking-tight">
+              <h2 className="text-2xl font-bold text-gray-950 dark:text-white mb-2">
                 Skills
               </h2>
-              <p className="text-gray-700 dark:text-gray-200 text-lg font-medium">
+              <p className="text-gray-600 dark:text-gray-300">
                 Your technical and professional skills
               </p>
             </div>
-            <button className="btn btn-outline flex items-center space-x-2 font-bold text-base px-6 py-3">
-              <FiPlus className="w-5 h-5" />
+            <button className="btn btn-outline flex items-center space-x-2">
+              <FiPlus className="w-4 h-4" />
               <span>Add Skill</span>
             </button>
           </div>
 
           {skills.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {skills.map((skill) => (
-                <div key={skill.skillId} className="p-6 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-500 transition-all duration-200 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700">
+                <div key={skill.skillId} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between">
                     <div className="flex-grow">
-                      <h3 className="font-bold text-lg text-gray-950 dark:text-white mb-3 tracking-tight">
+                      <h3 className="font-semibold text-gray-950 dark:text-white mb-2">
                         {skill.name}
                       </h3>
                       <div className="flex items-center space-x-3">
-                        <span className={`px-3 py-1 text-sm font-bold rounded-full ${getLevelColor(skill.level)}`}>
+                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getLevelColor(skill.level)}`}>
                           {skill.level}
                         </span>
-                        <span className="text-sm text-gray-700 dark:text-gray-200 font-semibold">
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
                           {skill.yearsOfExperience} years
                         </span>
                       </div>
                     </div>
                     <div className="flex space-x-2">
-                      <button className="p-2 text-gray-700 dark:text-gray-200 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
+                      <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
                         <FiEdit className="w-4 h-4" />
                       </button>
-                      <button className="p-2 text-gray-700 dark:text-gray-200 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                      <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
                         <FiTrash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -407,12 +407,12 @@ const ProfilePage: React.FC = () => {
               <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiUser className="w-8 h-8 text-gray-500 dark:text-gray-400" />
               </div>
-              <h3 className="text-lg font-black text-gray-950 dark:text-white mb-2">No skills added yet</h3>
-              <p className="text-gray-700 dark:text-gray-200 mb-4 font-medium">
+              <h3 className="text-lg font-medium text-gray-950 dark:text-white mb-2">No skills added yet</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 Add your technical and professional skills to showcase your expertise.
               </p>
-              <button className="btn btn-primary flex items-center space-x-2 mx-auto font-bold text-base px-6 py-3">
-                <FiPlus className="w-5 h-5" />
+              <button className="btn btn-primary flex items-center space-x-2 mx-auto">
+                <FiPlus className="w-4 h-4" />
                 <span>Add Your First Skill</span>
               </button>
             </div>
@@ -421,57 +421,57 @@ const ProfilePage: React.FC = () => {
 
         {/* Experience */}
         <div className="card">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-black text-gray-950 dark:text-white mb-3 tracking-tight">
+              <h2 className="text-2xl font-bold text-gray-950 dark:text-white mb-2">
                 Work Experience
               </h2>
-              <p className="text-gray-700 dark:text-gray-200 text-lg font-medium">
+              <p className="text-gray-600 dark:text-gray-300">
                 Your professional work history
               </p>
             </div>
-            <button className="btn btn-outline flex items-center space-x-2 font-bold text-base px-6 py-3">
-              <FiPlus className="w-5 h-5" />
+            <button className="btn btn-outline flex items-center space-x-2">
+              <FiPlus className="w-4 h-4" />
               <span>Add Experience</span>
             </button>
           </div>
 
           {experiences.length > 0 ? (
-            <div className="space-y-8">
+            <div className="space-y-6">
               {experiences.map((exp, index) => (
                 <div key={exp.id} className="group">
                   <div className="flex items-start justify-between">
-                    <div className="flex-grow space-y-4">
-                      <div className="flex items-start space-x-6">
-                        <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                          <FiBriefcase className="w-7 h-7 text-white" />
+                    <div className="flex-grow space-y-3">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <FiBriefcase className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                         </div>
                         <div className="flex-grow">
-                          <h3 className="text-xl font-bold text-gray-950 dark:text-white mb-2 tracking-tight">
+                          <h3 className="text-lg font-semibold text-gray-950 dark:text-white">
                             {exp.title}
                           </h3>
-                          <p className="text-gray-800 dark:text-gray-100 font-bold text-lg mb-3">
+                          <p className="text-gray-700 dark:text-gray-200 font-medium">
                             {exp.companyName}
                           </p>
-                          <div className="flex items-center space-x-6 text-sm text-gray-700 dark:text-gray-200 mb-4">
-                            <div className="flex items-center space-x-2 font-semibold">
+                          <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300 mt-2">
+                            <div className="flex items-center space-x-1">
                               <FiMapPin className="w-4 h-4" />
                               <span>{exp.location}</span>
                             </div>
-                            <div className="flex items-center space-x-2 font-semibold">
+                            <div className="flex items-center space-x-1">
                               <FiCalendar className="w-4 h-4" />
                               <span>
                                 {formatDate(exp.startDate)} - {exp.current ? 'Present' : formatDate(exp.endDate!)}
                               </span>
                             </div>
                             {exp.current && (
-                              <span className="px-3 py-1 text-xs font-bold bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 rounded-full">
+                              <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 rounded-full">
                                 Current
                               </span>
                             )}
                           </div>
                           {exp.description && (
-                            <p className="text-gray-800 dark:text-gray-100 leading-relaxed font-medium">
+                            <p className="text-gray-700 dark:text-gray-200 mt-3 leading-relaxed">
                               {exp.description}
                             </p>
                           )}
@@ -479,16 +479,16 @@ const ProfilePage: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-3 text-gray-700 dark:text-gray-200 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
+                      <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
                         <FiEdit className="w-4 h-4" />
                       </button>
-                      <button className="p-3 text-gray-700 dark:text-gray-200 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                      <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-red-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
                         <FiTrash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
                   {index < experiences.length - 1 && (
-                    <div className="border-b border-gray-200 dark:border-gray-700 mt-8"></div>
+                    <div className="border-b border-gray-200 dark:border-gray-700 mt-6"></div>
                   )}
                 </div>
               ))}
@@ -498,12 +498,12 @@ const ProfilePage: React.FC = () => {
               <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiBriefcase className="w-8 h-8 text-gray-500 dark:text-gray-400" />
               </div>
-              <h3 className="text-lg font-black text-gray-950 dark:text-white mb-2">No experience added yet</h3>
-              <p className="text-gray-700 dark:text-gray-200 mb-4 font-medium">
+              <h3 className="text-lg font-medium text-gray-950 dark:text-white mb-2">No experience added yet</h3>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
                 Add your work experience to showcase your professional background.
               </p>
-              <button className="btn btn-primary flex items-center space-x-2 mx-auto font-bold text-base px-6 py-3">
-                <FiPlus className="w-5 h-5" />
+              <button className="btn btn-primary flex items-center space-x-2 mx-auto">
+                <FiPlus className="w-4 h-4" />
                 <span>Add Your First Experience</span>
               </button>
             </div>
@@ -514,4 +514,4 @@ const ProfilePage: React.FC = () => {
   )
 }
 
-export default ProfilePage
+export default ProfilePageTailwind

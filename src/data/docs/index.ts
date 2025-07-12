@@ -5,7 +5,7 @@ import { extensionTestingDocumentation } from './extensionTesting.js';
 import { migrationCompleteDoc } from './migrationComplete.js';
 import { projectCompleteDocumentation } from './projectComplete.js';
 import { readmeDocumentation } from './readme.js';
-import { supabaseMigrationDoc } from './supabaseMigration';
+import { supabaseMigrationDoc } from './supabaseMigration.js';
 
 export const documentationRepository: DocumentationRepository = {
   version: '1.0.0',

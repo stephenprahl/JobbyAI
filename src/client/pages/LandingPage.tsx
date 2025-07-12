@@ -79,7 +79,7 @@ const LandingPageTailwind: React.FC = () => {
               <ThemeToggle />
               <RouterLink
                 to="/login"
-                className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                className="text-gray-800 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 Sign In
               </RouterLink>
@@ -109,7 +109,7 @@ const LandingPageTailwind: React.FC = () => {
                 AI Power
               </span>
             </h1>
-            <p className="text-xl md:text-2xl mb-12 text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
+            <p className="text-xl md:text-2xl mb-12 text-gray-800 dark:text-gray-100 max-w-3xl mx-auto leading-relaxed font-medium">
               Create tailored, ATS-friendly resumes that get you noticed.
               Our AI analyzes job postings and crafts the perfect resume for each application.
             </p>
@@ -133,15 +133,15 @@ const LandingPageTailwind: React.FC = () => {
             <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
               <div className="text-center">
                 <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">95%</div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">Match Rate Improvement</div>
+                <div className="text-gray-800 dark:text-gray-100 font-semibold">Match Rate Improvement</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">10K+</div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">Resumes Generated</div>
+                <div className="text-gray-800 dark:text-gray-100 font-semibold">Resumes Generated</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">2x</div>
-                <div className="text-gray-600 dark:text-gray-400 font-medium">Interview Rate</div>
+                <div className="text-gray-800 dark:text-gray-100 font-semibold">Interview Rate</div>
               </div>
             </div>
           </div>
@@ -159,7 +159,7 @@ const LandingPageTailwind: React.FC = () => {
               Everything You Need to{' '}
               <span className="text-gradient">Land Your Dream Job</span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-800 dark:text-gray-100 max-w-3xl mx-auto leading-relaxed font-medium">
               Our AI-powered platform provides everything you need to create compelling resumes
               that stand out in today's competitive job market.
             </p>
@@ -179,7 +179,7 @@ const LandingPageTailwind: React.FC = () => {
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                  <p className="text-gray-800 dark:text-gray-100 leading-relaxed font-medium">
                     {feature.description}
                   </p>
                 </div>
@@ -201,7 +201,7 @@ const LandingPageTailwind: React.FC = () => {
                 Stand Out from the{' '}
                 <span className="text-gradient">Competition</span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 leading-relaxed">
+              <p className="text-xl text-gray-700 dark:text-gray-200 mb-10 leading-relaxed font-medium">
                 Transform your job search with resumes that are specifically
                 tailored to each application using cutting-edge AI technology.
               </p>
@@ -211,7 +211,7 @@ const LandingPageTailwind: React.FC = () => {
                     <div className="w-6 h-6 rounded-full bg-gradient-to-r from-success-400 to-green-500 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                       <FiCheck className="h-4 w-4 text-white" />
                     </div>
-                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                    <span className="text-gray-800 dark:text-gray-200 font-semibold">
                       {benefit}
                     </span>
                   </div>
@@ -227,12 +227,12 @@ const LandingPageTailwind: React.FC = () => {
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                     Generate in Seconds
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg leading-relaxed">
+                  <p className="text-gray-700 dark:text-gray-200 mb-8 text-lg leading-relaxed font-medium">
                     Upload your existing resume or start from scratch and let our AI do the heavy lifting.
                   </p>
                   <div className="bg-gradient-to-r from-primary-50 to-purple-50 dark:from-primary-900/50 dark:to-purple-900/50 rounded-2xl p-6">
                     <div className="text-4xl font-black text-gradient mb-2">95%</div>
-                    <div className="text-gray-600 dark:text-gray-400 font-medium">Match Rate Improvement</div>
+                    <div className="text-gray-700 dark:text-gray-200 font-semibold">Match Rate Improvement</div>
                   </div>
                 </div>
               </div>

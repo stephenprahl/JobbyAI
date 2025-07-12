@@ -71,10 +71,10 @@ const DashboardPageTailwind: React.FC = () => {
       <div className="space-y-8">
         {/* Welcome Section */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-gray-950 dark:text-white mb-2">
             Welcome back, {user?.firstName || 'there'}! 👋
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
+          <p className="text-gray-700 dark:text-gray-200 text-lg">
             Ready to take your job search to the next level?
           </p>
         </div>

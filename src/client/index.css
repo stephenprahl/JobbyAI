@@ -13,7 +13,7 @@
   }
 
   body {
-    @apply m-0 font-sans antialiased text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-900;
+    @apply m-0 font-sans antialiased text-gray-950 dark:text-gray-50 bg-white dark:bg-gray-900;
     font-feature-settings: 'rlig' 1, 'calt' 1, 'ss01' 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -26,7 +26,7 @@
   h4,
   h5,
   h6 {
-    @apply font-semibold tracking-tight;
+    @apply font-bold tracking-tight text-gray-950 dark:text-white;
   }
 
   h1 {
@@ -54,15 +54,15 @@
   }
 
   p {
-    @apply leading-relaxed;
+    @apply leading-relaxed text-gray-900 dark:text-gray-100;
   }
 
   code {
-    @apply font-mono text-sm bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded;
+    @apply font-mono text-sm bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-950 dark:text-gray-50;
   }
 
   pre {
-    @apply font-mono text-sm bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto;
+    @apply font-mono text-sm bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto text-gray-950 dark:text-gray-50;
   }
 
   /* Custom scrollbar */
@@ -91,25 +91,54 @@
   }
 
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800;
+    @apply bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-lg;
   }
 
   .btn-secondary {
-    @apply bg-gray-600 text-white hover:bg-gray-700 active:bg-gray-800;
+    @apply bg-gray-700 text-white hover:bg-gray-800 active:bg-gray-900 shadow-lg;
   }
 
   .btn-outline {
-    @apply border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800;
+    @apply border-2 border-gray-600 dark:border-gray-400 text-gray-950 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-700 dark:hover:border-gray-300;
   }
 
   /* Custom input styles */
   .input {
-    @apply block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100;
+    @apply block w-full px-4 py-3 border-2 border-gray-400 dark:border-gray-500 rounded-lg shadow-sm placeholder-gray-600 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-950 dark:text-gray-50 font-medium;
+  }
+
+  /* Enhanced input styles for ProfilePage */
+  .profile-input {
+    @apply block w-full px-4 py-4 border-2 border-gray-400 dark:border-gray-500 rounded-xl shadow-sm placeholder-gray-600 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-950 dark:text-gray-50 font-semibold text-base transition-all duration-200;
+  }
+
+  .profile-input:read-only {
+    @apply bg-gray-100 dark:bg-gray-700 cursor-not-allowed border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200;
+  }
+
+  .profile-input:focus {
+    @apply shadow-lg transform scale-[1.01];
+  }
+
+  .profile-label {
+    @apply block text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 tracking-wide;
+  }
+
+  .profile-textarea {
+    @apply block w-full px-4 py-4 border-2 border-gray-400 dark:border-gray-500 rounded-xl shadow-sm placeholder-gray-600 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-950 dark:text-gray-50 font-semibold text-base transition-all duration-200 resize-y;
+  }
+
+  .profile-textarea:read-only {
+    @apply bg-gray-100 dark:bg-gray-700 cursor-not-allowed border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200;
+  }
+
+  .profile-textarea:focus {
+    @apply shadow-lg transform scale-[1.01];
   }
 
   /* Custom card styles */
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6;
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6;
   }
 
   .card-hover {
@@ -149,6 +178,109 @@
 
   .shadow-glow {
     box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+
+  /* Additional accessibility and contrast improvements */
+  .text-muted {
+    @apply text-gray-700 dark:text-gray-200;
+  }
+
+  .text-subtle {
+    @apply text-gray-600 dark:text-gray-300;
+  }
+
+  .text-strong {
+    @apply text-gray-950 dark:text-gray-50;
+  }
+
+  /* Enhanced form elements */
+  .form-label {
+    @apply block text-sm font-bold text-gray-900 dark:text-gray-100 mb-2;
+  }
+
+  .form-input {
+    @apply input;
+  }
+
+  .form-textarea {
+    @apply block w-full px-4 py-3 border-2 border-gray-400 dark:border-gray-500 rounded-lg shadow-sm placeholder-gray-600 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-950 dark:text-gray-50 font-medium resize-y;
+  }
+
+  .form-select {
+    @apply block w-full px-4 py-3 border-2 border-gray-400 dark:border-gray-500 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-950 dark:text-gray-50 font-medium;
+  }
+
+  /* Enhanced checkbox and radio styles */
+  .form-checkbox,
+  .form-radio {
+    @apply w-4 h-4 text-primary-600 bg-white dark:bg-gray-800 border-2 border-gray-400 dark:border-gray-500 rounded focus:ring-2 focus:ring-primary-500 focus:ring-offset-0;
+  }
+
+  .form-radio {
+    @apply rounded-full;
+  }
+
+  /* Enhanced link styles */
+  .link {
+    @apply text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 underline font-medium transition-colors duration-200;
+  }
+
+  .link-muted {
+    @apply text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 underline transition-colors duration-200;
+  }
+
+  /* Enhanced text colors for better contrast */
+  .text-brand {
+    @apply text-primary-600 dark:text-primary-400;
+  }
+
+  .text-success {
+    @apply text-green-700 dark:text-green-400;
+  }
+
+  .text-warning {
+    @apply text-yellow-700 dark:text-yellow-400;
+  }
+
+  .text-danger {
+    @apply text-red-700 dark:text-red-400;
+  }
+
+  /* Enhanced background colors */
+  .bg-brand {
+    @apply bg-primary-600 text-white;
+  }
+
+  .bg-success {
+    @apply bg-green-600 text-white;
+  }
+
+  .bg-warning {
+    @apply bg-yellow-600 text-white;
+  }
+
+  .bg-danger {
+    @apply bg-red-600 text-white;
+  }
+
+  /* Focus styles for better accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+  }
+
+  /* High contrast mode utilities */
+  @media (prefers-contrast: high) {
+    .input {
+      @apply border-gray-900 dark:border-gray-100;
+    }
+
+    .btn-outline {
+      @apply border-gray-900 dark:border-gray-100 text-gray-950 dark:text-gray-50;
+    }
+
+    p {
+      @apply text-gray-950 dark:text-gray-50;
+    }
   }
 }
 
