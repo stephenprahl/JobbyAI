@@ -4,7 +4,7 @@ A full-stack application for intelligent resume generation and job analysis, bui
 
 ## 🏗️ Project Structure
 
-```
+```bash
 resume-plan-ai/
 ├── src/
 │   ├── client/          # React frontend
@@ -133,7 +133,7 @@ This starts both:
 
 Environment variables are managed in `.env`:
 
-```env
+```bash
 # Frontend
 VITE_API_BASE_URL=http://localhost:3001/api
 
