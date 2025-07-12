@@ -1,60 +1,50 @@
-import {
-  Box,
-  Button,
-  Container,
-  Heading,
-  Text,
-  VStack,
-} from '@chakra-ui/react'
 import React from 'react'
 import { FiArrowLeft, FiHome } from 'react-icons/fi'
 import { Link as RouterLink } from 'react-router-dom'
 
-const NotFoundPage: React.FC = () => {
+const NotFoundPageTailwind: React.FC = () => {
   return (
-    <Box minH="100vh" bg="gray.50" display="flex" alignItems="center">
-      <Container maxW="md">
-        <VStack spacing={8} textAlign="center">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center">
+      <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center space-y-8">
           {/* 404 Illustration */}
-          <Box>
-            <Text fontSize="8xl" fontWeight="bold" color="brand.500" lineHeight="1">
+          <div>
+            <p className="text-8xl font-bold text-primary-500 leading-none">
               404
-            </Text>
-          </Box>
+            </p>
+          </div>
 
           {/* Content */}
-          <VStack spacing={4}>
-            <Heading as="h1" size="xl">
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Page Not Found
-            </Heading>
-            <Text color="gray.600" fontSize="lg" maxW="md">
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 text-lg max-w-md">
               Sorry, we couldn't find the page you're looking for. The page might have been moved, deleted, or you might have entered the wrong URL.
-            </Text>
-          </VStack>
+            </p>
+          </div>
 
           {/* Actions */}
-          <VStack spacing={4}>
-            <Button
-              as={RouterLink}
+          <div className="space-y-4">
+            <RouterLink
               to="/"
-              leftIcon={<FiHome />}
-              colorScheme="brand"
-              size="lg"
+              className="inline-flex items-center px-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors duration-200 text-lg"
             >
+              <FiHome className="w-5 h-5 mr-2" />
               Go Home
-            </Button>
-            <Button
-              leftIcon={<FiArrowLeft />}
-              variant="outline"
+            </RouterLink>
+            <button
               onClick={() => window.history.back()}
+              className="mx-auto flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
             >
+              <FiArrowLeft className="w-4 h-4 mr-2" />
               Go Back
-            </Button>
-          </VStack>
-        </VStack>
-      </Container>
-    </Box>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
-export default NotFoundPage
+export default NotFoundPageTailwind

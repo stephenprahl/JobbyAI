@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter } from 'react-router-dom'
-import AppTailwind from './AppTailwind.tsx'
+import App from './App.tsx'
 import { AuthProvider } from './contexts/AuthContext.tsx'
 import { ThemeProvider } from './contexts/ThemeContext.tsx'
 import './index.css'
@@ -28,7 +28,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           }}
         >
           <AuthProvider>
-            <AppTailwind />
+            <App />
           </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>

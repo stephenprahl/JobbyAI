@@ -7,6 +7,7 @@ export default {
     "./extension/content/*.{js,ts,jsx,tsx}",
     "./extension/background/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {

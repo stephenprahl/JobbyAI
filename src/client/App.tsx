@@ -1,21 +1,29 @@
-import { Box, Center, Spinner } from '@chakra-ui/react'
 import React from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
 
-// Import pages
+// Import Tailwind pages
 import DashboardPage from './pages/DashboardPage'
 import JobAnalysisPage from './pages/JobAnalysisPageEnhanced'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
-import RegisterPage from './pages/RegisterPage'
 import ResumeBuilderPage from './pages/ResumeBuilderPage'
 import ResumePage from './pages/ResumePage'
 
-// Import layout
+// Import Tailwind layout
 import Layout from './components/Layout'
+
+// Loading component
+const LoadingSpinner: React.FC = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div className="text-center">
+      <div className="animate-spin w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+      <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+    </div>
+  </div>
+)
 
 // Protected Route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -23,11 +31,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   const location = useLocation()
 
   if (isLoading) {
-    return (
-      <Center h="100vh">
-        <Spinner size="xl" color="brand.500" />
-      </Center>
-    )
+    return <LoadingSpinner />
   }
 
   if (!isAuthenticated) {
@@ -42,29 +46,20 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth()
 
-  console.log('PublicRoute render:', { isAuthenticated, isLoading })
-
   if (isLoading) {
-    console.log('PublicRoute: Showing loading spinner')
-    return (
-      <Center h="100vh">
-        <Spinner size="xl" color="brand.500" />
-      </Center>
-    )
+    return <LoadingSpinner />
   }
 
   if (isAuthenticated) {
-    console.log('PublicRoute: User is authenticated, redirecting to dashboard')
     return <Navigate to="/dashboard" replace />
   }
 
-  console.log('PublicRoute: User not authenticated, showing children')
   return <>{children}</>
 }
 
 const App: React.FC = () => {
   return (
-    <Box minHeight="100vh" bg="gray.50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Routes>
         {/* Public routes */}
         <Route
@@ -77,13 +72,17 @@ const App: React.FC = () => {
         />
         <Route
           path="/login"
-          element={<LoginPage />}
+          element={
+            <PublicRoute>
+              <LoginPage mode="login" />
+            </PublicRoute>
+          }
         />
         <Route
           path="/register"
           element={
             <PublicRoute>
-              <RegisterPage />
+              <LoginPage mode="register" />
             </PublicRoute>
           }
         />
@@ -143,7 +142,7 @@ const App: React.FC = () => {
         {/* 404 page */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </Box>
+    </div>
   )
 }
 
