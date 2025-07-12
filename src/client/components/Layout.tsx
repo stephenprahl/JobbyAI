@@ -68,8 +68,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     key={item.name}
                     to={item.href}
                     className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive
-                        ? 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50'
-                        : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      ? 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                   >
                     <Icon className={`mr-2 h-4 w-4 ${item.color}`} />
@@ -104,14 +104,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
                     <div className="py-1">
-                      <RouterLink
-                        to="/profile"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        <FiUser className="mr-3 h-4 w-4" />
-                        Your Profile
-                      </RouterLink>
                       <RouterLink
                         to="/settings"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -159,8 +151,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     key={item.name}
                     to={item.href}
                     className={`flex items-center px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive
-                        ? 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50'
-                        : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                      ? 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50'
+                      : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700'
                       }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >

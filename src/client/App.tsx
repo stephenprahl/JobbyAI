@@ -11,6 +11,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
 import ResumeBuilderPage from './pages/ResumeBuilderPage'
 import ResumePage from './pages/ResumePage'
+import SettingsPage from './pages/SettingsPage'
 
 // Import Tailwind layout
 import Layout from './components/Layout'
@@ -104,6 +105,16 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <Layout>
                 <ProfilePage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <SettingsPage />
               </Layout>
             </ProtectedRoute>
           }
