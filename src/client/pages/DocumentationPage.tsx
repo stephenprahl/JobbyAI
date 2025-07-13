@@ -47,10 +47,37 @@ const DocumentationPage: React.FC = () => (
         </pre>
       </section>
       <section className="mb-8">
+        <h2 className="text-2xl font-semibold mb-2">Help Center</h2>
+        <div className="mb-6">
+          <h3 className="text-xl font-bold mb-2">Guides</h3>
+          <ul className="list-disc list-inside text-gray-700 dark:text-gray-200 mb-4">
+            <li><b>How to Generate a Resume:</b> Go to the Resume Builder, fill in your details, and click "Generate" to create a tailored resume.</li>
+            <li><b>Using Job Analysis:</b> Paste a job description in the Job Analysis tool to get personalized suggestions for your resume.</li>
+            <li><b>Managing Templates:</b> Browse and select templates in the Resume Builder. Your choice will be applied instantly.</li>
+          </ul>
+        </div>
+        <div className="mb-6">
+          <h3 className="text-xl font-bold mb-2">Troubleshooting</h3>
+          <ul className="list-disc list-inside text-gray-700 dark:text-gray-200 mb-4">
+            <li><b>Resume not generating?</b> Ensure all required fields are filled and try again. If the issue persists, refresh the page or log out and back in.</li>
+            <li><b>API errors?</b> Double-check your API token and endpoint URLs. Tokens can be regenerated in your profile.</li>
+            <li><b>Payment issues?</b> Verify your card details and ensure your subscription is active. Contact support if problems continue.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 className="text-xl font-bold mb-2">Tips</h3>
+          <ul className="list-disc list-inside text-gray-700 dark:text-gray-200">
+            <li>Use industry keywords in your resume for better ATS results.</li>
+            <li>Regularly update your profile and resume to reflect your latest experience.</li>
+            <li>Try different templates to see which best fits your target job.</li>
+            <li>Check the FAQ and Support links in the footer for more help.</li>
+          </ul>
+        </div>
+      </section>
+      <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-2">Support & Resources</h2>
         <ul className="list-disc list-inside text-gray-700 dark:text-gray-200">
-          <li>For help, visit the <b>Help Center</b> or <b>FAQ</b> in the footer.</li>
-          <li>Contact support via the <b>Contact Us</b> link.</li>
+          <li>Contact support via the <b>Contact Us</b> link in the footer.</li>
           <li>See <b>Privacy</b>, <b>Terms</b>, and <b>Security</b> for legal and security information.</li>
         </ul>
       </section>
