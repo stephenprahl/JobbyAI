@@ -34,6 +34,61 @@ export const getUserResumes = async (): Promise<ApiResponse<any[]>> => {
   return response.data
 }
 
+export const saveResume = async (resumeData: {
+  title: string
+  content: {
+    personalInfo: {
+      fullName: string
+      email: string
+      phone?: string
+      location?: string
+      website?: string
+      linkedin?: string
+    }
+    summary?: string
+    experiences: Array<{
+      id: string
+      title: string
+      company: string
+      location?: string
+      startDate: string
+      endDate?: string
+      current?: boolean
+      description?: string
+    }>
+    education: Array<{
+      id: string
+      institution: string
+      degree: string
+      fieldOfStudy?: string
+      startDate?: string
+      endDate?: string
+      gpa?: string
+      description?: string
+    }>
+    skills: Array<{
+      id: string
+      name: string
+      level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'
+    }>
+  }
+  templateId?: string
+  isPublic?: boolean
+}): Promise<ApiResponse<any>> => {
+  const response = await api.post('/users/me/resumes', resumeData)
+  return response.data
+}
+
+export const updateResume = async (resumeId: string, resumeData: {
+  title?: string
+  content?: any
+  templateId?: string
+  isPublic?: boolean
+}): Promise<ApiResponse<any>> => {
+  const response = await api.put(`/users/me/resumes/${resumeId}`, resumeData)
+  return response.data
+}
+
 export const getUserJobListings = async (): Promise<ApiResponse<any[]>> => {
   const response = await api.get('/users/me/jobs')
   return response.data

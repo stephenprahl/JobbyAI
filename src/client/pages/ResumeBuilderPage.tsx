@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FiBriefcase, FiCalendar, FiCheckCircle, FiDownload, FiEdit3, FiEye, FiFileText, FiMapPin, FiPlus, FiSave, FiStar, FiTrash2, FiUser, FiX, FiZap } from 'react-icons/fi'
 import { useAuth } from '../contexts/AuthContext'
+import { saveResume } from '../services/api'
 
 // Types for Resume Data
 interface PersonalInfo {
@@ -178,15 +179,35 @@ const ResumeBuilderPageTailwind: React.FC = () => {
   }
 
   // Save Resume
-  const saveResume = async () => {
+  const saveResumeHandler = async () => {
     setIsSaving(true)
     try {
-      // Here you would call your API to save the resume
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      console.log('Resume saved:', resumeData)
-      setLastSaved(new Date())
+      const resumePayload = {
+        title: resumeData.title,
+        content: {
+          personalInfo: resumeData.personalInfo,
+          summary: resumeData.summary,
+          experiences: resumeData.experiences,
+          education: resumeData.education,
+          skills: resumeData.skills
+        },
+        templateId: selectedTemplate,
+        isPublic: false
+      }
+
+      const response = await saveResume(resumePayload)
+
+      if (response.success) {
+        console.log('Resume saved successfully:', response.data)
+        setLastSaved(new Date())
+        // You could show a toast notification here
+        alert('Resume saved successfully!')
+      } else {
+        throw new Error(response.error || 'Failed to save resume')
+      }
     } catch (error) {
       console.error('Failed to save resume:', error)
+      alert('Failed to save resume. Please try again.')
     } finally {
       setIsSaving(false)
     }
@@ -300,7 +321,7 @@ const ResumeBuilderPageTailwind: React.FC = () => {
     if (!autoSaveEnabled) return
 
     const autoSaveTimer = setTimeout(() => {
-      saveResume()
+      saveResumeHandler()
       setLastSaved(new Date())
     }, 30000) // Auto-save every 30 seconds
 
@@ -1318,7 +1339,7 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                   <span>Preview</span>
                 </button>
                 <button
-                  onClick={saveResume}
+                  onClick={saveResumeHandler}
                   disabled={isSaving}
                   className="btn btn-primary flex items-center justify-center space-x-2 text-base py-3 px-6 font-bold shadow-xl disabled:opacity-50"
                 >

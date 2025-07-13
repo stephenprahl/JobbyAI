@@ -564,6 +564,189 @@ export const userRoutes = new Elysia({ prefix: '/users' })
         };
       }
     }
+  )
+
+  // Save/Create user resume
+  .post(
+    '/me/resumes',
+    async ({ headers, body, set }) => {
+      try {
+        const authHeader = headers.authorization;
+        if (!authHeader) {
+          set.status = 401;
+          return {
+            success: false,
+            error: 'Authorization header required'
+          };
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
+
+        const { title, content, templateId, isPublic = false } = body;
+
+        if (!title || !content) {
+          set.status = 400;
+          return {
+            success: false,
+            error: 'Title and content are required'
+          };
+        }
+
+        const resume = await prisma.userResume.create({
+          data: {
+            userId: user.id,
+            title,
+            content,
+            templateId: templateId || null,
+            isPublic
+          },
+          include: {
+            template: true
+          }
+        });
+
+        logger.info('Resume saved successfully', { userId: user.id, resumeId: resume.id, title });
+
+        return {
+          success: true,
+          data: resume,
+          message: 'Resume saved successfully'
+        };
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        logger.error('Error saving resume:', errorMessage);
+        set.status = 500;
+        return {
+          success: false,
+          error: errorMessage
+        };
+      }
+    },
+    {
+      body: t.Object({
+        title: t.String(),
+        content: t.Object({
+          personalInfo: t.Object({
+            fullName: t.String(),
+            email: t.String(),
+            phone: t.Optional(t.String()),
+            location: t.Optional(t.String()),
+            website: t.Optional(t.String()),
+            linkedin: t.Optional(t.String())
+          }),
+          summary: t.Optional(t.String()),
+          experiences: t.Array(t.Object({
+            id: t.String(),
+            title: t.String(),
+            company: t.String(),
+            location: t.Optional(t.String()),
+            startDate: t.String(),
+            endDate: t.Optional(t.String()),
+            current: t.Optional(t.Boolean()),
+            description: t.Optional(t.String())
+          })),
+          education: t.Array(t.Object({
+            id: t.String(),
+            institution: t.String(),
+            degree: t.String(),
+            fieldOfStudy: t.Optional(t.String()),
+            startDate: t.Optional(t.String()),
+            endDate: t.Optional(t.String()),
+            gpa: t.Optional(t.String()),
+            description: t.Optional(t.String())
+          })),
+          skills: t.Array(t.Object({
+            id: t.String(),
+            name: t.String(),
+            level: t.Union([
+              t.Literal('Beginner'),
+              t.Literal('Intermediate'),
+              t.Literal('Advanced'),
+              t.Literal('Expert')
+            ])
+          }))
+        }),
+        templateId: t.Optional(t.String()),
+        isPublic: t.Optional(t.Boolean())
+      })
+    }
+  )
+
+  // Update user resume
+  .put(
+    '/me/resumes/:id',
+    async ({ headers, body, params, set }) => {
+      try {
+        const authHeader = headers.authorization;
+        if (!authHeader) {
+          set.status = 401;
+          return {
+            success: false,
+            error: 'Authorization header required'
+          };
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
+
+        const { id } = params;
+        const { title, content, templateId, isPublic } = body;
+
+        // Check if resume exists and belongs to user
+        const existingResume = await prisma.userResume.findFirst({
+          where: { id, userId: user.id }
+        });
+
+        if (!existingResume) {
+          set.status = 404;
+          return {
+            success: false,
+            error: 'Resume not found'
+          };
+        }
+
+        const updatedResume = await prisma.userResume.update({
+          where: { id },
+          data: {
+            title: title || existingResume.title,
+            content: content || existingResume.content,
+            templateId: templateId !== undefined ? templateId : existingResume.templateId,
+            isPublic: isPublic !== undefined ? isPublic : existingResume.isPublic
+          },
+          include: {
+            template: true
+          }
+        });
+
+        logger.info('Resume updated successfully', { userId: user.id, resumeId: id, title });
+
+        return {
+          success: true,
+          data: updatedResume,
+          message: 'Resume updated successfully'
+        };
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+        logger.error('Error updating resume:', errorMessage);
+        set.status = 500;
+        return {
+          success: false,
+          error: errorMessage
+        };
+      }
+    },
+    {
+      params: t.Object({
+        id: t.String()
+      }),
+      body: t.Object({
+        title: t.Optional(t.String()),
+        content: t.Optional(t.Any()),
+        templateId: t.Optional(t.String()),
+        isPublic: t.Optional(t.Boolean())
+      })
+    }
   );
 
 export default userRoutes;
