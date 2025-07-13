@@ -2,39 +2,40 @@ import { DocumentationFile } from '../../types/documentation.js';
 
 export const readmeDocumentation: DocumentationFile = {
   id: 'readme',
-  title: 'Resume Plan AI',
-  description: 'A full-stack application for intelligent resume generation and job analysis, built with Elysia.js backend and React frontend.',
+  title: 'JobbyAI',
+  description: 'JobbyAI is a modern, full-stack platform for AI-powered resume generation, job analysis, and career management. Built with Bun, Elysia.js, React, Tailwind CSS, and Prisma/PostgreSQL, it offers a seamless experience for job seekers and professionals.',
   version: '1.0.0',
-  lastUpdated: '2025-07-10',
-  authors: ['Resume Plan AI Team'],
+  lastUpdated: '2025-07-13',
+  authors: ['JobbyAI Team'],
   tags: ['readme', 'getting-started', 'setup', 'overview'],
   status: 'approved',
   sections: [
     {
       id: 'overview',
       title: 'Project Overview',
-      content: 'A full-stack application for intelligent resume generation and job analysis, built with Elysia.js backend and React frontend.',
+      content: 'JobbyAI is a modern, full-stack platform for AI-powered resume generation, job analysis, and career management. Built with Bun, Elysia.js, React, Tailwind CSS, and Prisma/PostgreSQL.',
       type: 'text'
     },
     {
       id: 'project-structure',
       title: 'Project Structure',
-      content: `resume-plan-ai/
+      content: `jobbyai/
 ├── src/
-│   ├── client/          # React frontend
-│   │   ├── components/  # Reusable UI components
-│   │   ├── pages/       # Page components
-│   │   ├── services/    # API services
+│   ├── client/          # React + Tailwind frontend
+│   │   ├── components/  # UI components
+│   │   ├── pages/       # App pages (Landing, Docs, Auth, etc.)
+│   │   ├── services/    # API and business logic
 │   │   ├── contexts/    # React contexts
 │   │   └── types/       # TypeScript types
 │   └── server/          # Elysia.js backend
-│       ├── routes/      # API routes
+│       ├── routes/      # API endpoints
 │       ├── services/    # Business logic
-│       ├── middleware/  # Express middleware
-│       └── utils/       # Utility functions
-├── prisma/              # Database schema and migrations
-├── docker-compose.yml   # Docker services
-└── package.json         # Unified dependencies`,
+│       ├── middleware/  # API middleware
+│       └── utils/       # Utilities
+├── prisma/              # Prisma schema & migrations
+├── public/              # Static assets
+// ...existing code...
+└── package.json         # Project scripts & dependencies`,
       type: 'code',
       language: 'text'
     },
@@ -46,24 +47,24 @@ export const readmeDocumentation: DocumentationFile = {
       items: [
         'Node.js 18+',
         'Bun runtime',
-        'Docker (for database)'
+        'PostgreSQL 15+ (local or remote)'
       ]
     },
     {
       id: 'installation',
-      title: 'Installation Steps',
+      title: 'Installation & Usage',
       type: 'checklist',
       content: '',
       checklistItems: [
         {
           id: 'install-1',
-          text: 'Clone and install dependencies: `git clone <repository-url> && cd resume-plan-ai && bun install`',
+          text: 'Clone and install dependencies: `git clone <repository-url> && cd jobbyai && bun install`',
           completed: false,
           category: 'setup'
         },
         {
           id: 'install-2',
-          text: 'Start the database: `bun run docker:up`',
+          text: 'Set up PostgreSQL: Create a local database and update your `.env`',
           completed: false,
           category: 'setup'
         },
@@ -75,7 +76,19 @@ export const readmeDocumentation: DocumentationFile = {
         },
         {
           id: 'install-4',
-          text: 'Start development servers: `bun run dev`',
+          text: 'Seed the database: `bun run db:seed`',
+          completed: false,
+          category: 'setup'
+        },
+        {
+          id: 'install-5',
+          text: 'Start the dev servers: `bun run dev`',
+          completed: false,
+          category: 'setup'
+        },
+        {
+          id: 'install-6',
+          text: 'Access the app: Frontend: http://localhost:5173, Backend API: http://localhost:3001, Docs: http://localhost:5173/documentation, API Docs: http://localhost:3001/api/docs',
           completed: false,
           category: 'setup'
         }
@@ -87,9 +100,9 @@ export const readmeDocumentation: DocumentationFile = {
       type: 'list',
       content: '',
       items: [
-        'bun run dev - Start both frontend and backend',
-        'bun run dev:server - Start only backend',
-        'bun run dev:client - Start only frontend'
+        'bun run dev — Start frontend & backend in dev mode',
+        'bun run dev:server — Start backend only',
+        'bun run dev:client — Start frontend only'
       ]
     },
     {
@@ -98,95 +111,13 @@ export const readmeDocumentation: DocumentationFile = {
       type: 'list',
       content: '',
       items: [
-        'bun run db:migrate - Run Prisma migrations',
-        'bun run db:seed - Seed the database',
-        'bun run db:reset - Reset database and seed',
-        'bun run db:studio - Open Prisma Studio'
+        'bun run db:migrate — Run Prisma migrations',
+        'bun run db:seed — Seed the database',
+        'bun run db:reset — Reset and reseed database',
+        'bun run db:studio — Open Prisma Studio'
       ]
     },
-    {
-      id: 'build-deploy-scripts',
-      title: 'Build & Deploy Scripts',
-      type: 'list',
-      content: '',
-      items: [
-        'bun run build - Build both frontend and backend',
-        'bun run start - Start production server',
-        'bun run preview - Preview built frontend'
-      ]
-    },
-    {
-      id: 'docker-scripts',
-      title: 'Docker Scripts',
-      type: 'list',
-      content: '',
-      items: [
-        'bun run docker:up - Start PostgreSQL database',
-        'bun run docker:down - Stop all Docker services'
-      ]
-    },
-    {
-      id: 'utility-scripts',
-      title: 'Utility Scripts',
-      type: 'list',
-      content: '',
-      items: [
-        'bun run lint - Lint code',
-        'bun run format - Format code with Prettier',
-        'bun run clean - Clean build artifacts'
-      ]
-    },
-    {
-      id: 'backend-tech-stack',
-      title: 'Backend Technology Stack',
-      type: 'list',
-      content: '',
-      items: [
-        'Runtime: Bun',
-        'Framework: Elysia.js',
-        'Database: PostgreSQL with Prisma ORM',
-        'Authentication: JWT',
-        'Validation: Zod schemas'
-      ]
-    },
-    {
-      id: 'frontend-tech-stack',
-      title: 'Frontend Technology Stack',
-      type: 'list',
-      content: '',
-      items: [
-        'Framework: React 18 with TypeScript',
-        'Build Tool: Vite',
-        'UI Library: Chakra UI',
-        'State Management: React Query',
-        'Routing: React Router',
-        'Forms: React Hook Form'
-      ]
-    },
-    {
-      id: 'infrastructure-tech-stack',
-      title: 'Infrastructure Technology Stack',
-      type: 'list',
-      content: '',
-      items: [
-        'Database: PostgreSQL (Docker)',
-        'Containerization: Docker & Docker Compose',
-        'Process Management: Concurrently'
-      ]
-    },
-    {
-      id: 'features',
-      title: 'Features',
-      type: 'list',
-      content: '',
-      items: [
-        'Resume Generation: AI-powered resume creation',
-        'Job Analysis: Intelligent job posting analysis',
-        'User Authentication: Secure login and registration',
-        'Profile Management: User profile and preferences',
-        'Real-time Updates: Live development with hot reload'
-      ]
-    },
+    // ...existing code...
     {
       id: 'configuration',
       title: 'Configuration',
@@ -195,7 +126,7 @@ VITE_API_BASE_URL=http://localhost:3001/api
 
 # Backend
 PORT=3001
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/resume_plan_ai
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/jobbyai
 
 # CORS
 CORS_ORIGIN=http://localhost:5173`,
@@ -204,9 +135,9 @@ CORS_ORIGIN=http://localhost:5173`,
     },
     {
       id: 'api-documentation',
-      title: 'API Documentation',
-      content: 'When running in development, API documentation is available at: http://localhost:3001/api/docs',
-      type: 'text'
+      title: 'Documentation & API',
+      content: 'Frontend Docs: http://localhost:5173/documentation\nBackend API Docs: http://localhost:3001/api/docs',
+      type: 'text',
     },
     {
       id: 'contributing',

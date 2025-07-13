@@ -27,7 +27,7 @@ const DocumentationPage: React.FC = () => {
           <div className="bg-gradient-to-r from-primary-100 to-purple-100 dark:from-primary-900/30 dark:to-purple-900/30 rounded-2xl p-6 shadow mb-4">
             <h2 className="text-2xl font-bold mb-2 text-primary-700 dark:text-primary-300 font-sans">API Overview</h2>
             <p className="mb-4 text-gray-700 dark:text-gray-200">
-              Resume Plan AI provides a simple REST API for programmatic access to resume generation, job analysis, and template management. Authentication is required for all endpoints.
+              JobbyAI provides a simple REST API for programmatic access to resume generation, job analysis, and template management. Authentication is required for all endpoints.
             </p>
             <pre className="bg-gray-100 dark:bg-gray-900 rounded p-4 text-sm overflow-x-auto mb-2 font-mono">
               GET /api/v1/resume

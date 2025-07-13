@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { 
-  FiCheck, 
-  FiX, 
-  FiStar, 
-  FiZap, 
-  FiShield, 
-  FiAward,
-  FiCreditCard,
-  FiCalendar,
-  FiUsers,
-  FiTrendingUp,
-  FiHeart
-} from 'react-icons/fi';
 import { loadStripe } from '@stripe/stripe-js';
+import { useEffect, useState } from 'react';
+import {
+  FiAward,
+  FiCheck,
+  FiHeart,
+  FiShield,
+  FiStar,
+  FiTrendingUp,
+  FiX,
+  FiZap
+} from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -268,11 +265,10 @@ export default function SubscriptionPage() {
             return (
               <div
                 key={plan.id}
-                className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-2 transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
-                  plan.popular
+                className={`relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-2 transition-all duration-300 hover:shadow-2xl hover:scale-105 ${plan.popular
                     ? 'border-purple-500 dark:border-purple-400'
                     : 'border-gray-200 dark:border-gray-700'
-                } ${isCurrentPlan ? 'ring-4 ring-primary-500/20' : ''}`}
+                  } ${isCurrentPlan ? 'ring-4 ring-primary-500/20' : ''}`}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -337,13 +333,12 @@ export default function SubscriptionPage() {
                   <button
                     onClick={() => handleUpgrade(plan.id)}
                     disabled={isCurrentPlan || processingPlan === plan.id || !canUpgrade}
-                    className={`w-full py-3 px-6 rounded-xl font-bold transition-all duration-200 ${
-                      isCurrentPlan
+                    className={`w-full py-3 px-6 rounded-xl font-bold transition-all duration-200 ${isCurrentPlan
                         ? 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                         : plan.popular
-                        ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
-                        : 'bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl'
-                    } ${processingPlan === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          ? 'bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl'
+                          : 'bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white shadow-lg hover:shadow-xl'
+                      } ${processingPlan === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {processingPlan === plan.id ? (
                       <div className="flex items-center justify-center space-x-2">
@@ -368,7 +363,7 @@ export default function SubscriptionPage() {
         <div className="mt-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-black text-gray-950 dark:text-white mb-4">
-              Why Choose Resume Plan AI?
+              Why Choose JobbyAI?
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300">
               Join thousands of professionals who have transformed their careers

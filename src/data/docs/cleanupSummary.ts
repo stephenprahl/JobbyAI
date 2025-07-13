@@ -6,7 +6,7 @@ export const cleanupSummaryDoc: DocumentationFile = {
   description: 'Summary of cleaned files and folders, project structure improvements, and benefits of the cleanup process',
   version: '1.0.0',
   lastUpdated: '2025-07-10',
-  authors: ['Resume Plan AI Team'],
+  authors: ['JobbyAI Team'],
   tags: ['cleanup', 'project-structure', 'maintenance', 'organization'],
   status: 'approved',
   sections: [

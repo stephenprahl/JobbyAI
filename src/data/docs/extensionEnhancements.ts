@@ -2,18 +2,18 @@ import { DocumentationFile } from '../../types/documentation.js';
 
 export const extensionEnhancementsDocumentation: DocumentationFile = {
   id: 'extension-enhancements',
-  title: 'Resume Plan AI - Chrome Extension Enhancement Complete ✅',
-  description: 'Technical documentation detailing the complete transformation of the Resume Plan AI Chrome extension from a basic job analyzer into a comprehensive job search assistant.',
+  title: 'JobbyAI - Chrome Extension Enhancement Complete ✅',
+  description: 'Technical documentation detailing the complete transformation of the JobbyAI Chrome extension from a basic job analyzer into a comprehensive job search assistant.',
   version: '1.0.0',
   lastUpdated: '2025-07-10',
-  authors: ['Resume Plan AI Team'],
+  authors: ['JobbyAI Team'],
   tags: ['extension-enhancements', 'technical-documentation', 'chrome-extension', 'architecture'],
   status: 'approved',
   sections: [
     {
       id: 'enhancement-summary',
       title: 'Enhancement Summary',
-      content: 'The Resume Plan AI Chrome extension has been successfully transformed from a basic job analyzer into a comprehensive job search assistant with modern UI, advanced features, and full backend integration.',
+      content: 'The JobbyAI Chrome extension has been successfully transformed from a basic job analyzer into a comprehensive job search assistant with modern UI, advanced features, and full backend integration.',
       type: 'text'
     },
     {

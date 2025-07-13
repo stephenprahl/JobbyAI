@@ -692,7 +692,7 @@ export default function SubscriptionPage() {
         <div className="mt-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-black text-gray-950 dark:text-white mb-4">
-              Why Choose Resume Plan AI?
+              Why Choose JobbyAI?
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300">
               Join thousands of professionals who have transformed their careers

@@ -84,7 +84,7 @@ const LandingPageTailwind: React.FC = () => {
                 <FiFileText className="h-5 w-5 text-white" />
               </div>
               <h1 className="text-2xl font-bold text-gradient tracking-tight">
-                Resume Plan AI
+                JobbyAI
               </h1>
             </div>
             <div className="flex items-center space-x-6">
@@ -534,7 +534,7 @@ const LandingPageTailwind: React.FC = () => {
                 <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex items-center justify-center">
                   <FiFileText className="h-5 w-5 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gradient">Resume Plan AI</h3>
+                <h3 className="text-2xl font-bold text-gradient">JobbyAI</h3>
               </div>
               <p className="text-gray-300 leading-relaxed max-w-md mb-6">
                 Transform your career with AI-powered resume creation. Professional templates,
@@ -578,11 +578,11 @@ const LandingPageTailwind: React.FC = () => {
           <div className="border-t border-gray-800 mt-12 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-400 font-medium">
-                &copy; 2025 Resume Plan AI. All rights reserved.
+                &copy; 2025 JobbyAI. All rights reserved.
               </p>
               <div className="flex space-x-6 mt-4 md:mt-0">
                 <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Privacy', 'Read our privacy policy to learn how we protect your data.')}>Privacy</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Terms', 'Review our terms of service for using Resume Plan AI.')}>Terms</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Terms', 'Review our terms of service for using JobbyAI.')}>Terms</a>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Security', 'Learn about our security practices and data protection measures.')}>Security</a>
                 {/* Footer Info Modal */}
                 {footerModal && (

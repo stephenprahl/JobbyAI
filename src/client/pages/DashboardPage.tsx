@@ -128,7 +128,7 @@ const DashboardPageTailwind: React.FC = () => {
                     <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
                   </div>
                   <h2 className="text-2xl font-black text-blue-700 dark:text-blue-300 tracking-tight">
-                    Welcome to Resume Plan AI!
+                    Welcome to JobbyAI!
                   </h2>
                 </div>
                 <p className="text-lg text-blue-600 dark:text-blue-400 font-medium leading-relaxed">
