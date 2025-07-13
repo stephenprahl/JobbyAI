@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { FiCopy, FiDownload, FiEdit, FiEye, FiFileText, FiMinus, FiPlus, FiX } from 'react-icons/fi'
 import ReactMarkdown from 'react-markdown'
+import { useNavigate } from 'react-router-dom'
 import * as apiService from '../services/api'
 
 const ResumePage: React.FC = () => {
+  const navigate = useNavigate()
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedResume, setGeneratedResume] = useState<string | null>(null)
   const [resumeFormat, setResumeFormat] = useState('markdown')
@@ -208,7 +210,7 @@ const ResumePage: React.FC = () => {
                       </div>
                     </div>
                     <button
-                      onClick={() => window.location.href = '/resume/builder'}
+                      onClick={() => navigate('/resume/builder')}
                       className="btn btn-primary flex items-center space-x-2"
                     >
                       <FiPlus className="w-4 h-4" />
@@ -229,7 +231,7 @@ const ResumePage: React.FC = () => {
                       <h3 className="text-lg font-bold text-gray-950 dark:text-white mb-2">No resumes yet</h3>
                       <p className="text-gray-600 dark:text-gray-400 mb-6">Create your first professional resume using our AI-powered builder</p>
                       <button
-                        onClick={() => window.location.href = '/resume/builder'}
+                        onClick={() => navigate('/resume/builder')}
                         className="btn btn-primary"
                       >
                         Create Your First Resume
@@ -273,7 +275,7 @@ const ResumePage: React.FC = () => {
                               <span>View</span>
                             </button>
                             <button
-                              onClick={() => window.location.href = `/resume/builder?edit=${resume.id}`}
+                              onClick={() => navigate(`/resume/builder?edit=${resume.id}`)}
                               className="flex-1 btn btn-primary text-sm py-2 px-3 flex items-center justify-center space-x-1"
                             >
                               <FiEdit className="w-4 h-4" />
@@ -732,7 +734,7 @@ const ResumePage: React.FC = () => {
                   Close
                 </button>
                 <button
-                  onClick={() => window.location.href = `/resume/builder?edit=${selectedResume.id}`}
+                  onClick={() => navigate(`/resume/builder?edit=${selectedResume.id}`)}
                   className="btn btn-primary flex-1"
                 >
                   Edit Resume
