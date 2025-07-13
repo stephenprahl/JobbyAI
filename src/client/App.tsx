@@ -14,6 +14,11 @@ import ResumeBuilderPage from './pages/ResumeBuilderPage'
 import ResumePage from './pages/ResumePage'
 import SettingsPage from './pages/SettingsPage'
 
+import DocumentationPage from './pages/DocumentationPage'
+import SubscriptionPage from './pages/SubscriptionPage'; // Corrected import
+
+// ...existing code...
+
 // Import Tailwind layout
 import Layout from './components/Layout'
 
@@ -91,6 +96,14 @@ const App: React.FC = () => {
             </PublicRoute>
           }
         />
+        <Route
+          path="/documentation"
+          element={
+            <PublicRoute>
+              <DocumentationPage />
+            </PublicRoute>
+          }
+        />
 
         {/* Protected routes */}
         <Route
@@ -119,6 +132,16 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <Layout>
                 <SettingsPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <SubscriptionPage />
               </Layout>
             </ProtectedRoute>
           }

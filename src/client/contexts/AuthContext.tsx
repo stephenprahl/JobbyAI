@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean
   isAuthenticated: boolean
   isAutoLoggingIn: boolean
+  token: string | null
   login: (credentials: LoginRequest) => Promise<void>
   register: (data: RegisterRequest) => Promise<void>
   logout: () => void
@@ -194,6 +195,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isLoading: isLoading || loginMutation.isLoading || registerMutation.isLoading,
     isAuthenticated: !!user && !!tokens?.accessToken,
     isAutoLoggingIn,
+    token: tokens?.accessToken || null,
     login: async (credentials: LoginRequest) => {
       await loginMutation.mutateAsync(credentials)
     },

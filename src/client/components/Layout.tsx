@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import {
   FiBriefcase,
   FiChevronDown,
+  FiCreditCard,
   FiFileText,
   FiLogOut,
   FiMenu,
@@ -123,24 +124,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                 {/* User dropdown menu */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
-                    <div className="py-1">
-                      <RouterLink
-                        to="/settings"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        <FiSettings className="mr-3 h-4 w-4" />
-                        Settings
-                      </RouterLink>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <FiLogOut className="mr-3 h-4 w-4" />
-                        Sign out
-                      </button>
-                    </div>
+                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">                  <div className="py-1">
+                    <RouterLink
+                      to="/subscription"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <FiCreditCard className="mr-3 h-4 w-4" />
+                      Subscription
+                    </RouterLink>
+                    <RouterLink
+                      to="/settings"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <FiSettings className="mr-3 h-4 w-4" />
+                      Settings
+                    </RouterLink>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <FiLogOut className="mr-3 h-4 w-4" />
+                      Sign out
+                    </button>
+                  </div>
                   </div>
                 )}
               </div>

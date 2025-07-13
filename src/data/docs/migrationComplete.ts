@@ -6,7 +6,7 @@ export const migrationCompleteDoc: DocumentationFile = {
   description: 'Complete report documenting the successful migration from local PostgreSQL to Supabase',
   version: '1.0.0',
   lastUpdated: '2025-07-10',
-  authors: ['Resume Plan AI Team'],
+  authors: ['JobbyAI Team'],
   tags: ['migration', 'supabase', 'database', 'completion', 'verification'],
   status: 'approved',
   sections: [

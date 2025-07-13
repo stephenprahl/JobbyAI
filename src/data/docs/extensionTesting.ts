@@ -3,17 +3,17 @@ import { DocumentationFile } from '../../types/documentation.js';
 export const extensionTestingDocumentation: DocumentationFile = {
   id: 'extension-testing',
   title: 'Chrome Extension Testing Guide',
-  description: 'Comprehensive testing guide for the Resume Plan AI Chrome extension, including installation instructions, testing checklists, and debugging procedures.',
+  description: 'Comprehensive testing guide for the JobbyAI Chrome extension, including installation instructions, testing checklists, and debugging procedures.',
   version: '1.0.0',
   lastUpdated: '2025-07-10',
-  authors: ['Resume Plan AI Team'],
+  authors: ['JobbyAI Team'],
   tags: ['testing', 'chrome-extension', 'qa', 'debugging'],
   status: 'approved',
   sections: [
     {
       id: 'build-status',
       title: 'Extension Build Status',
-      content: '✅ EXTENSION BUILD COMPLETE - The enhanced Resume Plan AI Chrome extension has been successfully built and is ready for testing.',
+      content: '✅ EXTENSION BUILD COMPLETE - The enhanced JobbyAI Chrome extension has been successfully built and is ready for testing.',
       type: 'text'
     },
     {
@@ -333,7 +333,7 @@ ls -la /home/code/resume-plan-ai/extension/dist/`,
 
 Extension-Specific Debugging:
 1. Go to chrome://extensions/
-2. Click "Details" on Resume Plan AI extension
+2. Click "Details" on JobbyAI extension
 3. Click "Inspect views: service worker" for background script debugging
 4. Right-click extension popup > "Inspect" for popup debugging`,
       type: 'text'

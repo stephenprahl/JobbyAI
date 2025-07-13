@@ -178,8 +178,8 @@ export const integrationConfig = {
       steps: [
         'Open DevTools on any page (F12)',
         'Go to "Console" tab',
-        'Look for messages from "Resume Plan AI Extension"',
-        'Expected: "🚀 Resume Plan AI Extension ready - Backend connected"'
+        'Look for messages from "JobbyAI Extension"',
+        'Expected: "🚀 JobbyAI Extension ready - Backend connected"'
       ]
     },
     networkMonitoring: {

@@ -1,27 +1,31 @@
-# Resume Plan AI
+# JobbyAI
 
-A full-stack application for intelligent resume generation and job analysis, built with Elysia.js backend and React frontend.
+JobbyAI is a modern, full-stack platform for AI-powered resume generation, job analysis, and career management. Built with Bun, Elysia.js, React, Tailwind CSS, and Prisma/PostgreSQL, it offers a seamless experience for job seekers and professionals.
+
+---
 
 ## 🏗️ Project Structure
 
 ```bash
-resume-plan-ai/
+jobbyai/
 ├── src/
-│   ├── client/          # React frontend
-│   │   ├── components/  # Reusable UI components
-│   │   ├── pages/       # Page components
-│   │   ├── services/    # API services
+│   ├── client/          # React + Tailwind frontend
+│   │   ├── components/  # UI components
+│   │   ├── pages/       # App pages (Landing, Docs, Auth, etc.)
+│   │   ├── services/    # API and business logic
 │   │   ├── contexts/    # React contexts
 │   │   └── types/       # TypeScript types
 │   └── server/          # Elysia.js backend
-│       ├── routes/      # API routes
+│       ├── routes/      # API endpoints
 │       ├── services/    # Business logic
-│       ├── middleware/  # Express middleware
-│       └── utils/       # Utility functions
-├── prisma/              # Database schema and migrations
-├── docker-compose.yml   # Docker services
-└── package.json         # Unified dependencies
+│       ├── middleware/  # API middleware
+│       └── utils/       # Utilities
+├── prisma/              # Prisma schema & migrations
+├── public/              # Static assets
+└── package.json         # Project scripts & dependencies
 ```
+
+---
 
 ## 🚀 Quick Start
 
@@ -29,24 +33,21 @@ resume-plan-ai/
 
 - Node.js 18+
 - Bun runtime
-- Docker (for database)
+- PostgreSQL 15+ (local or remote)
 
-### Installation
+### Installation & Usage
 
 1. **Clone and install dependencies:**
 
    ```bash
    git clone <repository-url>
-   cd resume-plan-ai
+   cd jobbyai
    bun install
    ```
 
-2. **Start the database:**
-
-   ```bash
-   bun run docker:up
-   ```
-
+2. **Set up PostgreSQL:**
+   - Create a local PostgreSQL database (e.g., `jobbyai`)
+   - Update your `.env` with the correct `DATABASE_URL`
 3. **Run database migrations:**
 
    ```bash
@@ -59,139 +60,113 @@ resume-plan-ai/
    bun run db:seed
    ```
 
-5. **Start the development servers:**
+5. **Start the dev servers:**
 
    ```bash
    bun run dev
    ```
 
-6. **Access the application:**
-   - Frontend: <http://localhost:5173>
-   - Backend API: <http://localhost:3001>
-   - API Documentation: <http://localhost:3001/api/docs>
+6. **Access the app:**
+   - Frontend: [http://localhost:5173](http://localhost:5173)
+   - Backend API: [http://localhost:3001](http://localhost:3001)
+   - Docs: [http://localhost:5173/documentation](http://localhost:5173/documentation)
+   - API Docs: [http://localhost:3001/api/docs](http://localhost:3001/api/docs)
 
-## 🔐 Development Test Credentials
-
-When running in development mode, use these test accounts:
-
-**Admin User:**
-
-- Email: `admin@example.com`
-- Password: `admin123`
-
-**Regular User:**
-
-- Email: `user@example.com`
-- Password: `password123`
-
-## 🎨 Template System
-
-The application features 24 professional resume templates across 9 categories:
-
-- Professional (4 templates)
-- Creative (3 templates)
-- Minimal (3 templates)
-- Executive (3 templates)
-- Tech (3 templates)
-- Academic (3 templates)
-- Healthcare (2 templates)
-- Sales (2 templates)
-- Education (1 template)
-
-## 📝 Available Scripts
-
-### Development
-
-- `bun run dev` - Start both frontend and backend
-- `bun run dev:server` - Start only backend
-- `bun run dev:client` - Start only frontend
-
-### Database
-
-- `bun run db:migrate` - Run Prisma migrations
-- `bun run db:seed` - Seed the database
-- `bun run db:reset` - Reset database and seed
-- `bun run db:studio` - Open Prisma Studio
-
-### Build & Deploy
-
-- `bun run build` - Build both frontend and backend
-- `bun run start` - Start production server
-- `bun run preview` - Preview built frontend
-
-### Docker
-
-- `bun run docker:up` - Start PostgreSQL database
-- `bun run docker:down` - Stop all Docker services
-
-### Utilities
-
-- `bun run lint` - Lint code
-- `bun run format` - Format code with Prettier
-- `bun run clean` - Clean build artifacts
+---
 
 ## 🛠️ Technology Stack
 
-### Backend (Elysia.js)
+<div align="center">
+  <img src="public/vite.svg" alt="Vite" width="40"/>
+  <img src="https://raw.githubusercontent.com/stephenprahl/jobbyai/main/public/vite.svg" alt="Vite" width="40"/>
+  <img src="https://raw.githubusercontent.com/stephenprahl/jobbyai/main/extension/icons/icon.svg" alt="JobbyAI" width="40"/>
+</div>
 
-- **Runtime**: Bun
-- **Framework**: Elysia.js
-- **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: JWT
-- **Validation**: Zod schemas
+- **Frontend:** React 18, TypeScript, Tailwind CSS, React Router, React Hook Form
+- **Backend:** Bun, Elysia.js, Prisma ORM, Zod, JWT Auth
+- **Database:** PostgreSQL 15+
+- **Dev Tools:** Vite, Prisma Studio, Prettier, ESLint
 
-### Frontend (React)
-
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **UI Library**: Chakra UI
-- **State Management**: React Query
-- **Routing**: React Router
-- **Forms**: React Hook Form
-
-### Infrastructure
-
-- **Database**: PostgreSQL (Docker)
-- **Containerization**: Docker & Docker Compose
-- **Process Management**: Concurrently
+---
 
 ## 🌟 Features
 
-- **Resume Generation**: AI-powered resume creation
-- **Job Analysis**: Intelligent job posting analysis
-- **User Authentication**: Secure login and registration
-- **Profile Management**: User profile and preferences
-- **Real-time Updates**: Live development with hot reload
+<div align="center">
+  <img src="https://img.shields.io/badge/AI%20Resume%20Builder-✨-blueviolet"/>
+  <img src="https://img.shields.io/badge/Job%20Analysis-📊-blue"/>
+  <img src="https://img.shields.io/badge/Templates-24%2B-green"/>
+  <img src="https://img.shields.io/badge/Direct%20Payments-💳-orange"/>
+  <img src="https://img.shields.io/badge/API%20Access-REST-yellow"/>
+  <img src="https://img.shields.io/badge/Help%20Center-🆘-red"/>
+</div>
+
+- ✨ **AI Resume Builder:** Generate tailored, ATS-friendly resumes in seconds
+- 📊 **Job Analysis:** Analyze job postings and optimize your resume
+- 🎨 **Template System:** 24+ professional templates, unlocked by plan
+- 💳 **Direct Card Payments:** Secure, Stripe-free subscription management
+- 👤 **User Profiles:** Manage your info, preferences, and API tokens
+- 📄 **API Access:** REST API for programmatic resume and job analysis
+- 🆘 **Help Center:** In-app guides, troubleshooting, and support form
+- 🔒 **Authentication:** Secure login, registration, and JWT sessions
+- 📝 **Documentation:** Modern docs at `/documentation` in the app
+
+---
+
+## 📝 Scripts
+
+- `bun run dev` — Start frontend & backend in dev mode
+- `bun run dev:server` — Start backend only
+- `bun run dev:client` — Start frontend only
+- `bun run build` — Build frontend & backend
+- `bun run start` — Start production server
+- `bun run preview` — Preview built frontend
+- `bun run db:migrate` — Run Prisma migrations
+- `bun run db:seed` — Seed the database
+- `bun run db:reset` — Reset and reseed database
+- `bun run db:studio` — Open Prisma Studio
+- `bun run lint` — Lint code
+- `bun run format` — Format code
+- `bun run clean` — Clean build artifacts
+
+---
 
 ## 🔧 Configuration
 
 Environment variables are managed in `.env`:
 
-```bash
+```env
 # Frontend
 VITE_API_BASE_URL=http://localhost:3001/api
 
 # Backend
 PORT=3001
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/resume_plan_ai
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/jobbyai
 
 # CORS
 CORS_ORIGIN=http://localhost:5173
 ```
 
-## 📚 API Documentation
+> 💡 **Tip:** For local development, ensure your PostgreSQL instance is running and accessible. You can use tools like [pgAdmin](https://www.pgadmin.org/) or [TablePlus](https://tableplus.com/) to manage your database visually.
 
-When running in development, API documentation is available at:
-<http://localhost:3001/api/docs>
+---
+
+## 📚 Documentation & API
+
+- **Frontend Docs:** [http://localhost:5173/documentation](http://localhost:5173/documentation)
+- **Backend API Docs:** [http://localhost:3001/api/docs](http://localhost:3001/api/docs)
+
+---
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+4. Push to your branch
+5. Open a Pull Request
+
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+MIT License

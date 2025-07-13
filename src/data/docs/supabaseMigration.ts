@@ -3,10 +3,10 @@ import { DocumentationFile } from '../../types/documentation';
 export const supabaseMigrationDoc: DocumentationFile = {
   id: 'supabase-migration',
   title: 'Supabase Migration Guide',
-  description: 'Complete guide for migrating Resume Plan AI application from local PostgreSQL to Supabase while keeping Prisma as ORM',
+  description: 'Complete guide for migrating JobbyAI application from local PostgreSQL to Supabase while keeping Prisma as ORM',
   version: '1.0.0',
   lastUpdated: '2025-07-10',
-  authors: ['Resume Plan AI Team'],
+  authors: ['JobbyAI Team'],
   tags: ['migration', 'supabase', 'database', 'guide', 'setup'],
   status: 'approved',
   sections: [

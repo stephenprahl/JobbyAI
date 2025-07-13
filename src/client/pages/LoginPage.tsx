@@ -169,7 +169,7 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
             Back to Home
           </RouterLink>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent">
-            Resume Plan AI
+            JobbyAI
           </h1>
           <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
             {isLogin ? 'Sign in to your account' : 'Create your account'}
