@@ -26,7 +26,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanDetails[] = [
     features: [
       '3 resume generations per month',
       '5 job analyses per month',
-      '3 basic templates',
+      '3 basic resume templates',
       'Email support',
       '14-day trial of Pro features'
     ],
@@ -45,14 +45,14 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanDetails[] = [
     features: [
       '25 resume generations per month',
       '50 job analyses per month',
-      'All templates',
+      '15 professional resume templates',
       'Priority email support',
       'Chrome extension'
     ],
     limits: {
       resumeGenerations: 25,
       jobAnalyses: 50,
-      templates: null,
+      templates: 15,
       aiAnalyses: 50
     }
   },
@@ -64,7 +64,8 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanDetails[] = [
     features: [
       'Unlimited resume generations',
       'Unlimited job analyses',
-      'All premium templates',
+      '50+ premium resume templates',
+      'Industry-specific templates',
       'Priority support',
       'Chrome extension',
       'Advanced AI insights',
@@ -73,7 +74,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanDetails[] = [
     limits: {
       resumeGenerations: null,
       jobAnalyses: null,
-      templates: null,
+      templates: 50,
       aiAnalyses: null
     },
     popular: true
@@ -85,6 +86,9 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanDetails[] = [
     price: 4999, // $49.99
     features: [
       'Everything in Pro',
+      'Unlimited premium templates',
+      'Custom template creation',
+      'Team template sharing',
       'Team management',
       'Bulk operations',
       'API access',
@@ -185,6 +189,14 @@ export class SubscriptionService {
         feature: 'job_analysis',
         usage: 0,
         limit: planDetails.limits.jobAnalyses,
+        resetDate
+      },
+      {
+        userId,
+        subscriptionId,
+        feature: 'templates',
+        usage: 0,
+        limit: planDetails.limits.templates,
         resetDate
       },
       {
@@ -340,6 +352,11 @@ export class SubscriptionService {
     await prisma.usageRecord.updateMany({
       where: { userId, feature: 'job_analysis' },
       data: { limit: planDetails.limits.jobAnalyses }
+    });
+
+    await prisma.usageRecord.updateMany({
+      where: { userId, feature: 'templates' },
+      data: { limit: planDetails.limits.templates }
     });
 
     await prisma.usageRecord.updateMany({
