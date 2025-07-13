@@ -1,4 +1,5 @@
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import React, { useEffect, useRef, useState } from 'react'
 import {
   FiArrowRight,
@@ -14,6 +15,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import DemoModal from '../components/DemoModal'
 import { ThemeToggle } from '../components/ThemeToggle'
 
+
 const LandingPageTailwind: React.FC = () => {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false)
   const [footerModal, setFooterModal] = useState<{ title: string; content: React.ReactNode } | null>(null)
@@ -21,31 +23,176 @@ const LandingPageTailwind: React.FC = () => {
   // GSAP animation refs
   const heroRef = useRef<HTMLDivElement>(null)
   const featuresRef = useRef<HTMLDivElement>(null)
+  const benefitsRef = useRef<HTMLDivElement>(null)
+  const pricingRef = useRef<HTMLDivElement>(null)
+  const trustRef = useRef<HTMLDivElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
+  const bgTopRef = useRef<HTMLDivElement>(null)
+  const bgBottomRef = useRef<HTMLDivElement>(null)
+  // Add refs for header, footer, and modal for GSAP
+  const headerRef = useRef<HTMLDivElement>(null)
+  const footerRef = useRef<HTMLDivElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger)
+    // Animate header (on mount)
+    if (headerRef.current) {
+      gsap.fromTo(headerRef.current, { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 1, ease: 'power2.out', delay: 0.05 })
+    }
+    // Animate background shapes for subtle movement (parallax)
+    if (bgTopRef.current) {
+      gsap.fromTo(bgTopRef.current, { opacity: 0, y: -60 }, { opacity: 0.7, y: 0, duration: 1.2, ease: 'power2.out', delay: 0.2 })
+    }
+    if (bgBottomRef.current) {
+      gsap.fromTo(bgBottomRef.current, { opacity: 0, y: 60 }, { opacity: 0.7, y: 0, duration: 1.2, ease: 'power2.out', delay: 0.3 })
+    }
+    // Hero section: fade/slide/scale in children (on mount)
     if (heroRef.current) {
       gsap.fromTo(
         heroRef.current.children,
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, stagger: 0.12, duration: 1.1, ease: 'power3.out', delay: 0.1 }
+        { opacity: 0, y: 40, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, stagger: 0.12, duration: 1, ease: 'power3.out', delay: 0.25 }
       )
     }
+    // Features section: scroll-triggered
     if (featuresRef.current) {
       gsap.fromTo(
         featuresRef.current.querySelectorAll('.card-hover'),
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, stagger: 0.08, duration: 1, ease: 'power2.out', delay: 0.5 }
+        { opacity: 0, y: 40, scale: 0.96 },
+        {
+          opacity: 1, y: 0, scale: 1, stagger: 0.10, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: featuresRef.current,
+            start: 'top 80%',
+            once: true
+          }
+        }
+      )
+      gsap.fromTo(
+        featuresRef.current.querySelector('h2'),
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: featuresRef.current,
+            start: 'top 85%',
+            once: true
+          }
+        }
       )
     }
+    // Benefits section: scroll-triggered
+    if (benefitsRef.current) {
+      const left = benefitsRef.current.querySelector('div > div')
+      const right = benefitsRef.current.querySelector('.card')
+      if (left) {
+        gsap.fromTo(left, { opacity: 0, x: -40 }, {
+          opacity: 1, x: 0, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: left,
+            start: 'top 80%',
+            once: true
+          }
+        })
+      }
+      if (right) {
+        gsap.fromTo(right, { opacity: 0, scale: 0.95 }, {
+          opacity: 1, scale: 1, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: right,
+            start: 'top 80%',
+            once: true
+          }
+        })
+      }
+    }
+    // Pricing section: scroll-triggered
+    if (pricingRef.current) {
+      gsap.fromTo(
+        pricingRef.current.querySelectorAll('.card-hover'),
+        { opacity: 0, y: 40, scale: 0.96 },
+        {
+          opacity: 1, y: 0, scale: 1, stagger: 0.10, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: pricingRef.current,
+            start: 'top 80%',
+            once: true
+          }
+        }
+      )
+      gsap.fromTo(
+        pricingRef.current.querySelector('h2'),
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: pricingRef.current,
+            start: 'top 85%',
+            once: true
+          }
+        }
+      )
+    }
+    // Trust section: scroll-triggered
+    if (trustRef.current) {
+      gsap.fromTo(
+        trustRef.current.querySelectorAll('.text-center'),
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, stagger: 0.10, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: trustRef.current,
+            start: 'top 80%',
+            once: true
+          }
+        }
+      )
+      gsap.fromTo(
+        trustRef.current.querySelector('h2'),
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: trustRef.current,
+            start: 'top 85%',
+            once: true
+          }
+        }
+      )
+    }
+    // CTA section: scroll-triggered
     if (ctaRef.current) {
       gsap.fromTo(
-        ctaRef.current.children,
+        ctaRef.current.querySelectorAll('h2, p, .flex, .mt-12'),
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, stagger: 0.10, duration: 1, ease: 'power2.out', delay: 1.1 }
+        {
+          opacity: 1, y: 0, stagger: 0.10, duration: 1, ease: 'power2.out',
+          scrollTrigger: {
+            trigger: ctaRef.current,
+            start: 'top 80%',
+            once: true
+          }
+        }
       )
     }
-  }, [])
+    // Footer (on mount)
+    if (footerRef.current) {
+      gsap.fromTo(
+        footerRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 1, ease: 'power2.out', delay: 1.5 }
+      )
+    }
+    // Modal (on open)
+    if (modalRef.current && isDemoModalOpen) {
+      gsap.fromTo(
+        modalRef.current,
+        { opacity: 0, scale: 0.95 },
+        { opacity: 1, scale: 1, duration: 0.6, ease: 'power2.out' }
+      )
+    }
+  }, [isDemoModalOpen])
 
   const handleFooterInfo = (title: string, content: React.ReactNode) => {
     setFooterModal({ title, content })
@@ -106,7 +253,7 @@ const LandingPageTailwind: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50">
+      <header ref={headerRef} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -143,11 +290,23 @@ const LandingPageTailwind: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-purple-50 to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-20 pb-32">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="absolute top-10 right-10 w-72 h-72 bg-primary-200 dark:bg-primary-900 rounded-full blur-3xl opacity-20"></div>
-        <div className="absolute bottom-10 left-10 w-96 h-96 bg-purple-200 dark:bg-purple-900 rounded-full blur-3xl opacity-20"></div>
+      {/* Animated background shapes */}
+      <div ref={bgTopRef} className="pointer-events-none absolute top-0 left-0 w-full h-40 bg-gradient-to-r from-primary-400/30 to-purple-400/20 blur-2xl opacity-70 z-0" />
+      <div ref={bgBottomRef} className="pointer-events-none absolute bottom-0 right-0 w-full h-40 bg-gradient-to-l from-secondary-400/30 to-primary-400/10 blur-2xl opacity-70 z-0" />
+
+      <section ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-purple-50 to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-20 pb-32 z-10">
+        {/* Background decoration: netting grid */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <svg width="100%" height="100%" className="w-full h-full" style={{ position: 'absolute', inset: 0 }}>
+            <defs>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#a3a3a3" strokeWidth="0.5" opacity="0.15" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" />
+          </svg>
+        </div>
+        {/* Removed large colored circles for a cleaner look */}
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="max-w-4xl mx-auto">
@@ -201,7 +360,7 @@ const LandingPageTailwind: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section ref={featuresRef} className="py-24 bg-white dark:bg-gray-800 relative">
+      <section ref={featuresRef} className="py-24 bg-white dark:bg-gray-800 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <div className="inline-flex items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/30 rounded-full text-primary-600 dark:text-primary-400 font-medium text-sm mb-6">
@@ -242,7 +401,7 @@ const LandingPageTailwind: React.FC = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-primary-50/30 dark:from-gray-900 dark:to-gray-800">
+      <section ref={benefitsRef} className="py-24 bg-gradient-to-br from-gray-50 to-primary-50/30 dark:from-gray-900 dark:to-gray-800 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -289,15 +448,14 @@ const LandingPageTailwind: React.FC = () => {
                 </div>
               </div>
               {/* Floating decoration */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-3xl opacity-20 blur-xl"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-500 rounded-3xl opacity-20 blur-xl"></div>
+              {/* Floating decoration removed for cleaner look */}
             </div>
           </div>
         </div>
       </section>
 
       {/* Pricing Preview Section */}
-      <section className="py-24 bg-white dark:bg-gray-800">
+      <section ref={pricingRef} className="py-24 bg-white dark:bg-gray-800 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-4 py-2 bg-purple-50 dark:bg-purple-900/30 rounded-full text-purple-600 dark:text-purple-400 font-medium text-sm mb-6">
@@ -458,7 +616,7 @@ const LandingPageTailwind: React.FC = () => {
       </section>
 
       {/* Trust & Security Section */}
-      <section className="py-16 bg-gradient-to-r from-gray-50 to-primary-50/20 dark:from-gray-900 dark:to-gray-800">
+      <section ref={trustRef} className="py-16 bg-gradient-to-r from-gray-50 to-primary-50/20 dark:from-gray-900 dark:to-gray-800 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
@@ -506,7 +664,7 @@ const LandingPageTailwind: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section ref={ctaRef} className="py-24 bg-gradient-to-r from-primary-600 via-purple-600 to-secondary-600 relative overflow-hidden">
+      <section ref={ctaRef} className="py-24 bg-gradient-to-r from-primary-600 via-purple-600 to-secondary-600 relative overflow-hidden z-10">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
@@ -556,7 +714,7 @@ const LandingPageTailwind: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
+      <footer ref={footerRef} className="bg-gray-900 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="md:col-span-2">
@@ -631,10 +789,12 @@ const LandingPageTailwind: React.FC = () => {
       </footer>
 
       {/* Demo Modal */}
-      <DemoModal
-        isOpen={isDemoModalOpen}
-        onClose={() => setIsDemoModalOpen(false)}
-      />
+      <div ref={modalRef}>
+        <DemoModal
+          isOpen={isDemoModalOpen}
+          onClose={() => setIsDemoModalOpen(false)}
+        />
+      </div>
     </div>
   )
 }
