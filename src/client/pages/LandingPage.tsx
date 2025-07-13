@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import gsap from 'gsap'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   FiArrowRight,
   FiBriefcase,
@@ -16,6 +17,35 @@ import { ThemeToggle } from '../components/ThemeToggle'
 const LandingPageTailwind: React.FC = () => {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false)
   const [footerModal, setFooterModal] = useState<{ title: string; content: React.ReactNode } | null>(null)
+
+  // GSAP animation refs
+  const heroRef = useRef<HTMLDivElement>(null)
+  const featuresRef = useRef<HTMLDivElement>(null)
+  const ctaRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (heroRef.current) {
+      gsap.fromTo(
+        heroRef.current.children,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, stagger: 0.12, duration: 1.1, ease: 'power3.out', delay: 0.1 }
+      )
+    }
+    if (featuresRef.current) {
+      gsap.fromTo(
+        featuresRef.current.querySelectorAll('.card-hover'),
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, stagger: 0.08, duration: 1, ease: 'power2.out', delay: 0.5 }
+      )
+    }
+    if (ctaRef.current) {
+      gsap.fromTo(
+        ctaRef.current.children,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, stagger: 0.10, duration: 1, ease: 'power2.out', delay: 1.1 }
+      )
+    }
+  }, [])
 
   const handleFooterInfo = (title: string, content: React.ReactNode) => {
     setFooterModal({ title, content })
@@ -113,7 +143,7 @@ const LandingPageTailwind: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-purple-50 to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-20 pb-32">
+      <section ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-purple-50 to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-20 pb-32">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="absolute top-10 right-10 w-72 h-72 bg-primary-200 dark:bg-primary-900 rounded-full blur-3xl opacity-20"></div>
@@ -171,7 +201,7 @@ const LandingPageTailwind: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-white dark:bg-gray-800 relative">
+      <section ref={featuresRef} className="py-24 bg-white dark:bg-gray-800 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
             <div className="inline-flex items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/30 rounded-full text-primary-600 dark:text-primary-400 font-medium text-sm mb-6">
@@ -476,7 +506,7 @@ const LandingPageTailwind: React.FC = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-primary-600 via-purple-600 to-secondary-600 relative overflow-hidden">
+      <section ref={ctaRef} className="py-24 bg-gradient-to-r from-primary-600 via-purple-600 to-secondary-600 relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
