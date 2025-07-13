@@ -540,12 +540,12 @@ const ResumeBuilderPageTailwind: React.FC = () => {
 
   const completionPercentage = calculateCompletionPercentage()
 
-  // Experience Form Component
-  const ExperienceForm: React.FC<{
+  // Experience Form Component - Memoized to prevent re-creation
+  const ExperienceForm = React.memo<{
     onSubmit: (exp: Omit<WorkExperience, 'id'>) => void
     onCancel: () => void
     initialData?: WorkExperience
-  }> = ({ onSubmit, onCancel, initialData }) => {
+  }>(({ onSubmit, onCancel, initialData }) => {
     const [formData, setFormData] = useState({
       title: initialData?.title || '',
       company: initialData?.company || '',
@@ -675,14 +675,14 @@ const ResumeBuilderPageTailwind: React.FC = () => {
         </div>
       </div>
     )
-  }
+  })
 
-  // Education Form Component
-  const EducationForm: React.FC<{
+  // Education Form Component - Memoized to prevent re-creation
+  const EducationForm = React.memo<{
     onSubmit: (edu: Omit<Education, 'id'>) => void
     onCancel: () => void
     initialData?: Education
-  }> = ({ onSubmit, onCancel, initialData }) => {
+  }>(({ onSubmit, onCancel, initialData }) => {
     const [formData, setFormData] = useState({
       institution: initialData?.institution || '',
       degree: initialData?.degree || '',
@@ -805,13 +805,13 @@ const ResumeBuilderPageTailwind: React.FC = () => {
         </div>
       </div>
     )
-  }
+  })
 
-  // Skill Form Component
-  const SkillForm: React.FC<{
+  // Skill Form Component - Memoized to prevent re-creation
+  const SkillForm = React.memo<{
     onSubmit: (skill: Omit<Skill, 'id'>) => void
     onCancel: () => void
-  }> = ({ onSubmit, onCancel }) => {
+  }>(({ onSubmit, onCancel }) => {
     const [formData, setFormData] = useState({
       name: '',
       level: 'Intermediate' as Skill['level']
@@ -881,7 +881,7 @@ const ResumeBuilderPageTailwind: React.FC = () => {
         </div>
       </div>
     )
-  }
+  })
 
   if (authLoading) {
     return (
