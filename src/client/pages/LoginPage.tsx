@@ -119,11 +119,12 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
         // Navigation will be handled by the auth context and route protection
       }
     } catch (error) {
+      console.error('Authentication error:', error);
       // If login fails, don't save credentials regardless of remember me state
       if (isLogin) {
         clearCredentials()
       }
-      setErrors({ submit: error instanceof Error ? error.message : 'An error occurred' })
+      setErrors({ submit: error instanceof Error ? error.message : 'Authentication failed. Please check your credentials and try again.' })
     } finally {
       setIsLoading(false)
     }
@@ -187,7 +188,7 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow-xl rounded-lg sm:px-10 border border-gray-200 dark:border-gray-700">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             {!isLogin && (
               <div>
                 <label htmlFor="name" className="block text-sm font-bold text-gray-900 dark:text-gray-100">

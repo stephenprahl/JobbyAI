@@ -1,6 +1,6 @@
-import { PrismaClient, SkillLevel } from '../node_modules/.prisma/client';
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
+import { PrismaClient, SkillLevel } from '../node_modules/.prisma/client';
 
 const { hash } = bcrypt;
 dotenv.config();
@@ -184,53 +184,256 @@ async function main() {
 
   // Create resume templates
   console.log('Creating resume templates...');
-  const template = await prisma.resumeTemplate.create({
-    data: {
-      name: 'Professional',
-      description: 'Clean and professional resume template',
-      templateHtml: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Professional Resume</title>
-          <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; }
-            h1 { color: #2c3e50; }
-            .section { margin-bottom: 20px; }
-            .header { text-align: center; margin-bottom: 30px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>{{name}}</h1>
-            <p>{{headline}}</p>
-            <p>{{email}} | {{phone}} | {{location}}</p>
-          </div>
-          <div class="section">
-            <h2>Summary</h2>
-            <p>{{summary}}</p>
-          </div>
-          <!-- More sections will be dynamically added -->
-        </body>
-        </html>
-      `,
-      templateCss: `
-        body { max-width: 800px; margin: 0 auto; padding: 20px; }
-        .section { margin-bottom: 25px; }
-        h2 { color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
-        .experience-item, .education-item { margin-bottom: 15px; }
-      `,
-      isPublic: true,
-      createdById: admin.id,
+
+  const templates = [
+    {
+      id: 'classic-professional',
+      name: 'Classic Professional',
+      description: 'Traditional corporate design with clean lines and professional typography',
+      category: 'professional'
     },
-  });
+    {
+      id: 'modern-professional',
+      name: 'Modern Professional',
+      description: 'Contemporary professional design with subtle color accents',
+      category: 'professional'
+    },
+    {
+      id: 'executive-modern',
+      name: 'Executive Modern',
+      description: 'Sleek professional design for modern executives',
+      category: 'professional'
+    },
+    {
+      id: 'creative-designer',
+      name: 'Creative Designer',
+      description: 'Bold and creative layout perfect for design professionals',
+      category: 'creative'
+    },
+    {
+      id: 'creative-marketing',
+      name: 'Creative Marketing',
+      description: 'Dynamic layout for marketing and creative professionals',
+      category: 'creative'
+    },
+    {
+      id: 'creative-media',
+      name: 'Creative Media',
+      description: 'Vibrant design for media and entertainment professionals',
+      category: 'creative'
+    },
+    {
+      id: 'creative-arts',
+      name: 'Creative Arts',
+      description: 'Artistic layout for creative arts professionals',
+      category: 'creative'
+    },
+    {
+      id: 'minimal-clean',
+      name: 'Minimal Clean',
+      description: 'Ultra-clean design focusing on content with minimal distractions',
+      category: 'minimal'
+    },
+    {
+      id: 'minimal-modern',
+      name: 'Minimal Modern',
+      description: 'Contemporary minimal design with strategic use of space',
+      category: 'minimal'
+    },
+    {
+      id: 'minimal-elegant',
+      name: 'Minimal Elegant',
+      description: 'Sophisticated minimal design with elegant typography',
+      category: 'minimal'
+    },
+    {
+      id: 'executive-senior',
+      name: 'Executive Senior',
+      description: 'Sophisticated design for senior leadership positions',
+      category: 'executive'
+    },
+    {
+      id: 'executive-corporate',
+      name: 'Executive Corporate',
+      description: 'Premium corporate design for high-level positions',
+      category: 'executive'
+    },
+    {
+      id: 'tech-developer',
+      name: 'Tech Developer',
+      description: 'Code-friendly design optimized for software developers',
+      category: 'tech'
+    },
+    {
+      id: 'tech-engineer',
+      name: 'Tech Engineer',
+      description: 'Engineering-focused design for technical professionals',
+      category: 'tech'
+    },
+    {
+      id: 'tech-data',
+      name: 'Tech Data Science',
+      description: 'Data-focused design for data scientists and analysts',
+      category: 'tech'
+    },
+    {
+      id: 'academic-researcher',
+      name: 'Academic Researcher',
+      description: 'Research-focused design for academic professionals',
+      category: 'academic'
+    },
+    {
+      id: 'academic-professor',
+      name: 'Academic Professor',
+      description: 'Comprehensive academic design for faculty positions',
+      category: 'academic'
+    },
+    {
+      id: 'healthcare-medical',
+      name: 'Healthcare Medical',
+      description: 'Professional medical design for healthcare professionals',
+      category: 'healthcare'
+    },
+    {
+      id: 'healthcare-wellness',
+      name: 'Healthcare Wellness',
+      description: 'Wellness-focused design for health and wellness professionals',
+      category: 'healthcare'
+    },
+    {
+      id: 'sales-professional',
+      name: 'Sales Professional',
+      description: 'Results-driven design for sales professionals',
+      category: 'sales'
+    },
+    {
+      id: 'sales-executive',
+      name: 'Sales Executive',
+      description: 'Executive sales design for senior sales leadership',
+      category: 'sales'
+    },
+    {
+      id: 'education-teacher',
+      name: 'Education Teacher',
+      description: 'Educational design for teachers and educators',
+      category: 'education'
+    },
+    {
+      id: 'education-administration',
+      name: 'Education Administration',
+      description: 'Administrative design for education leadership',
+      category: 'education'
+    }
+  ];
+
+  const createdTemplates: any[] = [];
+
+  for (const templateData of templates) {
+    const template = await prisma.resumeTemplate.create({
+      data: {
+        id: templateData.id,
+        name: templateData.name,
+        description: templateData.description,
+        templateHtml: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>${templateData.name} Resume</title>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
+              .container { max-width: 800px; margin: 0 auto; }
+              h1 { color: #2c3e50; margin-bottom: 10px; }
+              h2 { color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top: 25px; }
+              .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+              .section { margin-bottom: 25px; }
+              .contact-info { margin: 10px 0; color: #666; }
+              .experience-item, .education-item { margin-bottom: 15px; padding-left: 15px; border-left: 3px solid #3498db; }
+              .job-title { font-weight: bold; color: #2c3e50; }
+              .company { color: #666; font-style: italic; }
+              .date { color: #888; font-size: 0.9em; }
+              .skills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+              .skill { background: #f0f0f0; padding: 5px 10px; border-radius: 15px; font-size: 0.9em; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>{{fullName}}</h1>
+                <div class="contact-info">{{email}} | {{phone}} | {{location}}</div>
+                {{#if headline}}<p>{{headline}}</p>{{/if}}
+              </div>
+
+              {{#if summary}}
+              <div class="section">
+                <h2>Professional Summary</h2>
+                <p>{{summary}}</p>
+              </div>
+              {{/if}}
+
+              {{#if experiences}}
+              <div class="section">
+                <h2>Work Experience</h2>
+                {{#each experiences}}
+                <div class="experience-item">
+                  <div class="job-title">{{title}}</div>
+                  <div class="company">{{company}} - {{location}}</div>
+                  <div class="date">{{startDate}} - {{#if current}}Present{{else}}{{endDate}}{{/if}}</div>
+                  {{#if description}}<p>{{description}}</p>{{/if}}
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+
+              {{#if education}}
+              <div class="section">
+                <h2>Education</h2>
+                {{#each education}}
+                <div class="education-item">
+                  <div class="job-title">{{degree}}{{#if fieldOfStudy}} in {{fieldOfStudy}}{{/if}}</div>
+                  <div class="company">{{institution}}</div>
+                  <div class="date">{{startDate}} - {{endDate}}</div>
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+
+              {{#if skills}}
+              <div class="section">
+                <h2>Skills</h2>
+                <div class="skills">
+                  {{#each skills}}
+                  <span class="skill">{{this}}</span>
+                  {{/each}}
+                </div>
+              </div>
+              {{/if}}
+            </div>
+          </body>
+          </html>
+        `,
+        templateCss: `
+          /* ${templateData.category} theme styles */
+          .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+          .section { margin-bottom: 25px; }
+          h2 { color: #3498db; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+          .experience-item, .education-item { margin-bottom: 15px; }
+        `,
+        isPublic: true,
+        createdById: admin.id,
+      },
+    });
+    createdTemplates.push(template);
+  }
+
+  // Get the classic professional template for the sample resume
+  const classicTemplate = createdTemplates.find(t => t.id === 'classic-professional');
 
   // Create a sample resume for the user
   console.log('Creating sample resume...');
   await prisma.userResume.create({
     data: {
       userId: user.id,
-      templateId: template.id,
+      templateId: classicTemplate?.id || createdTemplates[0].id,
       title: 'Professional Resume',
       content: {
         name: `${user.firstName} ${user.lastName}`,

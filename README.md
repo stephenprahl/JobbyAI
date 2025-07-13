@@ -53,16 +53,50 @@ resume-plan-ai/
    bun run db:migrate
    ```
 
-4. **Start the development servers:**
+4. **Seed the database:**
+
+   ```bash
+   bun run db:seed
+   ```
+
+5. **Start the development servers:**
 
    ```bash
    bun run dev
    ```
 
-This starts both:
+6. **Access the application:**
+   - Frontend: <http://localhost:5173>
+   - Backend API: <http://localhost:3001>
+   - API Documentation: <http://localhost:3001/api/docs>
 
-- **Backend (Elysia.js)**: <http://localhost:3001>
-- **Frontend (React/Vite)**: <http://localhost:5173>
+## 🔐 Development Test Credentials
+
+When running in development mode, use these test accounts:
+
+**Admin User:**
+
+- Email: `admin@example.com`
+- Password: `admin123`
+
+**Regular User:**
+
+- Email: `user@example.com`
+- Password: `password123`
+
+## 🎨 Template System
+
+The application features 24 professional resume templates across 9 categories:
+
+- Professional (4 templates)
+- Creative (3 templates)
+- Minimal (3 templates)
+- Executive (3 templates)
+- Tech (3 templates)
+- Academic (3 templates)
+- Healthcare (2 templates)
+- Sales (2 templates)
+- Education (1 template)
 
 ## 📝 Available Scripts
 

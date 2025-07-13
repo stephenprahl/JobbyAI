@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { FiBriefcase, FiCalendar, FiCheckCircle, FiDownload, FiEdit3, FiEye, FiFileText, FiMapPin, FiPlus, FiSave, FiStar, FiTrash2, FiUser, FiX, FiZap } from 'react-icons/fi'
+import { FiCalendar, FiCheckCircle, FiDownload, FiEdit3, FiEye, FiFileText, FiMapPin, FiPlus, FiSave, FiStar, FiTrash2, FiUser, FiX, FiZap } from 'react-icons/fi'
+import { getTemplateById } from '../components/templates/ResumeTemplates'
+import TemplatePicker from '../components/templates/TemplatePicker'
+import TemplatePreviewModal from '../components/templates/TemplatePreviewModal'
 import { useAuth } from '../contexts/AuthContext'
 import { saveResume } from '../services/api'
 
@@ -77,7 +80,7 @@ const ResumeBuilderPageTailwind: React.FC = () => {
   const [editingEducation, setEditingEducation] = useState<Education | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
-  const [selectedTemplate, setSelectedTemplate] = useState('professional')
+  const [selectedTemplate, setSelectedTemplate] = useState('classic-professional')
   const [isExporting, setIsExporting] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
@@ -88,6 +91,23 @@ const ResumeBuilderPageTailwind: React.FC = () => {
   const [showVersionHistory, setShowVersionHistory] = useState(false)
   const [targetJobTitle, setTargetJobTitle] = useState('')
   const [targetCompany, setTargetCompany] = useState('')
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false)
+  const [previewTemplateId, setPreviewTemplateId] = useState<string | null>(null)
+
+  // Template Functions
+  const handleTemplateSelect = (templateId: string) => {
+    setSelectedTemplate(templateId)
+    setShowTemplateSelector(false)
+  }
+
+  const handleTemplatePreview = (templateId: string) => {
+    setPreviewTemplateId(templateId)
+  }
+
+  const getSelectedTemplateName = () => {
+    const template = getTemplateById(selectedTemplate)
+    return template?.name || 'Professional'
+  }
 
   // Generate unique IDs
   const generateId = () => Math.random().toString(36).substr(2, 9)
@@ -965,46 +985,32 @@ const ResumeBuilderPageTailwind: React.FC = () => {
 
               {/* Template Selector */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Select Template
-                </label>
-                <div className="flex space-x-2">
+                <div className="flex items-center justify-between mb-4">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Selected Template
+                  </label>
                   <button
-                    onClick={() => setSelectedTemplate('professional')}
-                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2
-                    ${selectedTemplate === 'professional' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
-                    `}
+                    onClick={() => setShowTemplateSelector(true)}
+                    className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-sm font-semibold"
                   >
-                    <FiFileText className="w-5 h-5" />
-                    <span>Professional</span>
+                    Change Template
                   </button>
-                  <button
-                    onClick={() => setSelectedTemplate('creative')}
-                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2
-                    ${selectedTemplate === 'creative' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
-                    `}
-                  >
-                    <FiStar className="w-5 h-5" />
-                    <span>Creative</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedTemplate('minimalist')}
-                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2
-                    ${selectedTemplate === 'minimalist' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
-                    `}
-                  >
-                    <FiZap className="w-5 h-5" />
-                    <span>Minimalist</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedTemplate('executive')}
-                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2
-                    ${selectedTemplate === 'executive' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
-                    `}
-                  >
-                    <FiBriefcase className="w-5 h-5" />
-                    <span>Executive</span>
-                  </button>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-primary-100 dark:bg-primary-900/30 p-2 rounded-lg">
+                      <FiFileText className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                        {getSelectedTemplateName()}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {getTemplateById(selectedTemplate)?.description || 'Professional resume template'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1981,6 +1987,51 @@ const ResumeBuilderPageTailwind: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Template Selection Modal */}
+      {showTemplateSelector && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowTemplateSelector(false)}></div>
+            <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-8">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h2 className="text-3xl font-black text-gray-950 dark:text-white tracking-tight">
+                      Choose Your Template
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-300 text-lg">
+                      Select a professionally designed template that matches your style
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowTemplateSelector(false)}
+                    className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-2"
+                  >
+                    <FiX className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <TemplatePicker
+                  selectedTemplateId={selectedTemplate}
+                  onTemplateSelect={handleTemplateSelect}
+                  onPreview={handleTemplatePreview}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Template Preview Modal */}
+      <TemplatePreviewModal
+        templateId={previewTemplateId}
+        isOpen={!!previewTemplateId}
+        onClose={() => setPreviewTemplateId(null)}
+        onSelect={handleTemplateSelect}
+        selectedTemplateId={selectedTemplate}
+        resumeData={resumeData}
+      />
     </div>
   )
 }
