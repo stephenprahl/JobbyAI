@@ -40,7 +40,28 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   const isActivePath = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(path + '/')
+    // Exact match first
+    if (location.pathname === path) {
+      return true
+    }
+
+    // Special handling for specific routes to avoid conflicts
+    if (path === '/resume' && location.pathname.startsWith('/resume/')) {
+      // Only match /resume for exact /resume path, not /resume/builder or other sub-paths
+      return location.pathname === '/resume'
+    }
+
+    if (path === '/resume/builder') {
+      // Match /resume/builder and any sub-paths of the builder
+      return location.pathname === '/resume/builder' || location.pathname.startsWith('/resume/builder/')
+    }
+
+    // For other paths, allow sub-path matching
+    if (path !== '/' && location.pathname.startsWith(path + '/')) {
+      return true
+    }
+
+    return false
   }
 
   return (
