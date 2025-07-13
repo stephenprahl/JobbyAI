@@ -1,16 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { FiCopy, FiDownload, FiEye, FiFileText, FiMinus, FiPlus } from 'react-icons/fi'
+import { FiCopy, FiDownload, FiEdit, FiEye, FiFileText, FiMinus, FiPlus, FiX } from 'react-icons/fi'
 import ReactMarkdown from 'react-markdown'
+import { useNavigate } from 'react-router-dom'
 import * as apiService from '../services/api'
 
 const ResumePage: React.FC = () => {
+  const navigate = useNavigate()
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedResume, setGeneratedResume] = useState<string | null>(null)
   const [resumeFormat, setResumeFormat] = useState('markdown')
   const [activeTab, setActiveTab] = useState(0)
   const [showPreview, setShowPreview] = useState(false)
   const [showToast, setShowToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null)
+  const [savedResumes, setSavedResumes] = useState<any[]>([])
+  const [isLoadingResumes, setIsLoadingResumes] = useState(false)
+  const [selectedResume, setSelectedResume] = useState<any | null>(null)
 
   const { register, handleSubmit, watch } = useForm({
     defaultValues: {
@@ -42,6 +47,41 @@ const ResumePage: React.FC = () => {
     setTimeout(() => setShowToast(null), 3000)
   }
 
+  // Load saved resumes on component mount
+  useEffect(() => {
+    loadSavedResumes()
+  }, [])
+
+  const loadSavedResumes = async () => {
+    setIsLoadingResumes(true)
+    try {
+      const response = await apiService.getUserResumes()
+      if (response.success) {
+        setSavedResumes(response.data || [])
+      } else {
+        showToastMessage('Failed to load saved resumes', 'error')
+      }
+    } catch (error) {
+      console.error('Error loading resumes:', error)
+      showToastMessage('Failed to load saved resumes', 'error')
+    } finally {
+      setIsLoadingResumes(false)
+    }
+  }
+
+  const viewResumeDetails = (resume: any) => {
+    setSelectedResume(resume)
+    setShowPreview(true)
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
   const onSubmit = async (data: any) => {
     setIsGenerating(true)
 
@@ -52,7 +92,7 @@ const ResumePage: React.FC = () => {
       if (response.success && response.data) {
         setGeneratedResume(response.data.content)
         setResumeFormat(response.data.format)
-        setActiveTab(2) // Switch to Generated Resume tab
+        setActiveTab(3) // Switch to Generated Resume tab
 
         showToastMessage('Your tailored resume has been successfully generated.', 'success')
       } else {
@@ -87,6 +127,7 @@ const ResumePage: React.FC = () => {
   }
 
   const tabs = [
+    'My Resumes',
     'Job Information',
     'Resume Options',
     ...(generatedResume ? ['Generated Resume'] : [])
@@ -139,8 +180,8 @@ const ResumePage: React.FC = () => {
                   key={tab}
                   onClick={() => setActiveTab(index)}
                   className={`flex-1 py-4 px-6 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 ${activeTab === index
-                      ? 'bg-gradient-to-r from-primary-500 to-purple-600 text-white shadow-lg transform scale-[1.02]'
-                      : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                    ? 'bg-gradient-to-r from-primary-500 to-purple-600 text-white shadow-lg transform scale-[1.02]'
+                    : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50'
                     }`}
                 >
                   {tab}
@@ -150,8 +191,107 @@ const ResumePage: React.FC = () => {
           </div>
           {/* Enhanced Tab Content */}
           <div className="mt-10">
-            {/* Job Information Tab */}
+            {/* My Resumes Tab */}
             {activeTab === 0 && (
+              <div className="space-y-8">
+                <div className="card card-hover">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-xl">
+                        <FiFileText className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-black text-gray-950 dark:text-white tracking-tight">
+                          My Resumes
+                        </h2>
+                        <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                          {savedResumes.length} resume{savedResumes.length !== 1 ? 's' : ''} saved
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => navigate('/resume/builder')}
+                      className="btn btn-primary flex items-center space-x-2"
+                    >
+                      <FiPlus className="w-4 h-4" />
+                      <span>Create New Resume</span>
+                    </button>
+                  </div>
+
+                  {isLoadingResumes ? (
+                    <div className="flex items-center justify-center py-12">
+                      <div className="animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full"></div>
+                      <span className="ml-3 text-gray-600 dark:text-gray-400">Loading your resumes...</span>
+                    </div>
+                  ) : savedResumes.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="bg-gray-100 dark:bg-gray-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FiFileText className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-950 dark:text-white mb-2">No resumes yet</h3>
+                      <p className="text-gray-600 dark:text-gray-400 mb-6">Create your first professional resume using our AI-powered builder</p>
+                      <button
+                        onClick={() => navigate('/resume/builder')}
+                        className="btn btn-primary"
+                      >
+                        Create Your First Resume
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {savedResumes.map((resume) => (
+                        <div key={resume.id} className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                                {resume.title}
+                              </h3>
+                              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                                Created {formatDate(resume.createdAt)}
+                              </p>
+                              {resume.updatedAt !== resume.createdAt && (
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  Updated {formatDate(resume.updatedAt)}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="mb-4">
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              <span className="font-medium">{resume.content?.personalInfo?.fullName || 'No name'}</span>
+                              {resume.content?.personalInfo?.email && (
+                                <span className="block">{resume.content.personalInfo.email}</span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => viewResumeDetails(resume)}
+                              className="flex-1 btn btn-outline text-sm py-2 px-3 flex items-center justify-center space-x-1"
+                            >
+                              <FiEye className="w-4 h-4" />
+                              <span>View</span>
+                            </button>
+                            <button
+                              onClick={() => navigate(`/resume/builder?edit=${resume.id}`)}
+                              className="flex-1 btn btn-primary text-sm py-2 px-3 flex items-center justify-center space-x-1"
+                            >
+                              <FiEdit className="w-4 h-4" />
+                              <span>Edit</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Job Information Tab */}
+            {activeTab === 1 && (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 <div className="card card-hover">
                   <div className="flex items-center space-x-3 mb-6">
@@ -219,7 +359,7 @@ const ResumePage: React.FC = () => {
             )}
 
             {/* Resume Options Tab */}
-            {activeTab === 1 && (
+            {activeTab === 2 && (
               <div className="space-y-8">
                 <div className="card card-hover">
                   <div className="flex items-center space-x-3 mb-6">
@@ -362,7 +502,7 @@ const ResumePage: React.FC = () => {
             )}
 
             {/* Enhanced Generated Resume Tab */}
-            {activeTab === 2 && generatedResume && (
+            {activeTab === 3 && generatedResume && (
               <div className="space-y-8">
                 <div className="card card-hover relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-400 to-primary-500 rounded-full blur-3xl opacity-10"></div>
@@ -476,6 +616,134 @@ const ResumePage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Resume Preview Modal */}
+      {showPreview && selectedResume && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {selectedResume.title}
+                </h3>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="border-b pb-4">
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {selectedResume.content?.personalInfo?.fullName}
+                  </h2>
+                  <div className="mt-2 flex flex-wrap gap-4 text-gray-600 dark:text-gray-400">
+                    {selectedResume.content?.personalInfo?.email && (
+                      <span>{selectedResume.content.personalInfo.email}</span>
+                    )}
+                    {selectedResume.content?.personalInfo?.phone && (
+                      <span>{selectedResume.content.personalInfo.phone}</span>
+                    )}
+                    {selectedResume.content?.personalInfo?.location && (
+                      <span>{selectedResume.content.personalInfo.location}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Summary */}
+                {selectedResume.content?.summary && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Professional Summary</h3>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                      {selectedResume.content.summary}
+                    </p>
+                  </div>
+                )}
+
+                {/* Experience */}
+                {selectedResume.content?.experiences?.length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Work Experience</h3>
+                    <div className="space-y-4">
+                      {selectedResume.content.experiences.map((exp: any) => (
+                        <div key={exp.id} className="border-l-2 border-blue-200 pl-4">
+                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{exp.title}</h4>
+                          <p className="text-blue-600 dark:text-blue-400 font-medium">{exp.company}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                            {exp.location && ` • ${exp.location}`}
+                          </p>
+                          {exp.description && (
+                            <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                              {exp.description}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Education */}
+                {selectedResume.content?.education?.length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Education</h3>
+                    <div className="space-y-3">
+                      {selectedResume.content.education.map((edu: any) => (
+                        <div key={edu.id}>
+                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            {edu.degree} {edu.fieldOfStudy && `in ${edu.fieldOfStudy}`}
+                          </h4>
+                          <p className="text-blue-600 dark:text-blue-400 font-medium">{edu.institution}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {edu.startDate} - {edu.endDate}
+                            {edu.gpa && ` • GPA: ${edu.gpa}`}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Skills */}
+                {selectedResume.content?.skills?.length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Skills</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedResume.content.skills.map((skill: any) => (
+                        <span
+                          key={skill.id}
+                          className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm font-medium"
+                        >
+                          {skill.name} ({skill.level})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-8 flex space-x-3">
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="btn btn-outline flex-1"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => navigate(`/resume/builder?edit=${selectedResume.id}`)}
+                  className="btn btn-primary flex-1"
+                >
+                  Edit Resume
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
