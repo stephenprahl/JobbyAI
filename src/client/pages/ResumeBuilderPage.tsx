@@ -80,6 +80,13 @@ const ResumeBuilderPageTailwind: React.FC = () => {
   const [isExporting, setIsExporting] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
+  const [showAIAssistant, setShowAIAssistant] = useState(false)
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([])
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false)
+  const [resumeVersions, setResumeVersions] = useState<Array<{ id: string, name: string, data: ResumeData, timestamp: Date }>>([])
+  const [showVersionHistory, setShowVersionHistory] = useState(false)
+  const [targetJobTitle, setTargetJobTitle] = useState('')
+  const [targetCompany, setTargetCompany] = useState('')
 
   // Generate unique IDs
   const generateId = () => Math.random().toString(36).substr(2, 9)
@@ -353,6 +360,124 @@ const ResumeBuilderPageTailwind: React.FC = () => {
     if (hasActionVerbs) score += 5
 
     return Math.min(score, maxScore)
+  }
+
+  // AI Content Generation
+  const generateAISuggestions = async (section: string, context: string) => {
+    setIsGeneratingAI(true)
+    try {
+      // Simulate AI API call
+      const suggestions = await simulateAISuggestions(section, context)
+      setAiSuggestions(suggestions)
+      setShowAIAssistant(true)
+    } catch (error) {
+      console.error('Failed to generate AI suggestions:', error)
+    } finally {
+      setIsGeneratingAI(false)
+    }
+  }
+
+  // Simulate AI suggestions (replace with real AI API)
+  const simulateAISuggestions = async (section: string, context: string): Promise<string[]> => {
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    const suggestionSets = {
+      summary: [
+        'Results-driven professional with proven track record of delivering innovative solutions',
+        'Experienced leader with expertise in driving cross-functional team collaboration',
+        'Strategic thinker with strong analytical skills and attention to detail',
+        'Passionate professional dedicated to continuous learning and growth'
+      ],
+      experience: [
+        'Led cross-functional team of 8 developers to deliver project 3 weeks ahead of schedule',
+        'Implemented automated testing framework, reducing bug reports by 65%',
+        'Optimized database queries resulting in 40% improvement in application performance',
+        'Mentored 5 junior developers, contributing to 90% team retention rate'
+      ],
+      skills: [
+        'React', 'TypeScript', 'Node.js', 'Python', 'AWS', 'Docker', 'Kubernetes', 'MongoDB',
+        'Project Management', 'Team Leadership', 'Agile/Scrum', 'Data Analysis'
+      ]
+    }
+
+    return suggestionSets[section as keyof typeof suggestionSets] || []
+  }
+
+  // Version Management
+  const saveResumeVersion = (name: string) => {
+    const newVersion = {
+      id: generateId(),
+      name,
+      data: { ...resumeData },
+      timestamp: new Date()
+    }
+    setResumeVersions(prev => [newVersion, ...prev].slice(0, 10)) // Keep last 10 versions
+  }
+
+  const loadResumeVersion = (versionId: string) => {
+    const version = resumeVersions.find(v => v.id === versionId)
+    if (version) {
+      setResumeData(version.data)
+      setShowVersionHistory(false)
+    }
+  }
+
+  // Enhanced Export Functions
+  const exportToWord = async () => {
+    setIsExporting(true)
+    try {
+      // Create a comprehensive Word document content
+      const wordContent = generateWordContent()
+      const blob = new Blob([wordContent], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.docx`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Failed to export to Word:', error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  const generateWordContent = () => {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+    <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+      <w:body>
+        <w:p><w:r><w:t>${resumeData.personalInfo.fullName}</w:t></w:r></w:p>
+        <w:p><w:r><w:t>${resumeData.personalInfo.email} | ${resumeData.personalInfo.phone}</w:t></w:r></w:p>
+        <w:p><w:r><w:t>${resumeData.personalInfo.location}</w:t></w:r></w:p>
+        ${resumeData.summary ? `<w:p><w:r><w:t>PROFESSIONAL SUMMARY</w:t></w:r></w:p><w:p><w:r><w:t>${resumeData.summary}</w:t></w:r></w:p>` : ''}
+        ${resumeData.experiences.length > 0 ? `<w:p><w:r><w:t>WORK EXPERIENCE</w:t></w:r></w:p>` : ''}
+        ${resumeData.experiences.map(exp => `
+          <w:p><w:r><w:t>${exp.title} - ${exp.company}</w:t></w:r></w:p>
+          <w:p><w:r><w:t>${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}</w:t></w:r></w:p>
+          <w:p><w:r><w:t>${exp.description}</w:t></w:r></w:p>
+        `).join('')}
+      </w:body>
+    </w:document>`
+  }
+
+  // Auto-suggestions based on target job
+  const generateJobSpecificSuggestions = () => {
+    if (!targetJobTitle) return []
+
+    const jobSuggestions = {
+      'software engineer': ['React', 'JavaScript', 'Python', 'Git', 'Agile'],
+      'data scientist': ['Python', 'SQL', 'Machine Learning', 'TensorFlow', 'Statistics'],
+      'product manager': ['Product Strategy', 'Roadmap Planning', 'Stakeholder Management', 'Analytics'],
+      'marketing manager': ['Digital Marketing', 'SEO', 'Content Strategy', 'Analytics', 'Social Media']
+    }
+
+    const normalizedTitle = targetJobTitle.toLowerCase()
+    for (const [job, skills] of Object.entries(jobSuggestions)) {
+      if (normalizedTitle.includes(job)) {
+        return skills
+      }
+    }
+    return []
   }
 
   // Add sample data for testing
@@ -1029,6 +1154,139 @@ const ResumeBuilderPageTailwind: React.FC = () => {
         </div>
       )}
 
+      {/* AI Assistant Modal */}
+      {showAIAssistant && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="bg-gradient-to-r from-purple-500 to-primary-600 p-2 rounded-xl">
+                    <FiZap className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">AI Content Assistant</h3>
+                </div>
+                <button
+                  onClick={() => setShowAIAssistant(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                    💡 AI-generated suggestions based on industry best practices and your target role
+                  </p>
+                </div>
+
+                {isGeneratingAI ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin w-8 h-8 border-4 border-primary-600 border-t-transparent rounded-full"></div>
+                    <span className="ml-3 text-gray-600 dark:text-gray-400">Generating AI suggestions...</span>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {aiSuggestions.map((suggestion, index) => (
+                      <div key={index} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        <div className="flex items-start justify-between">
+                          <p className="text-gray-900 dark:text-white text-sm leading-relaxed flex-1">{suggestion}</p>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(suggestion)
+                              // You could add a toast notification here
+                            }}
+                            className="ml-3 p-2 text-gray-400 hover:text-primary-600 transition-colors"
+                            title="Copy to clipboard"
+                          >
+                            <FiFileText className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    onClick={() => setShowAIAssistant(false)}
+                    className="btn btn-outline flex-1"
+                  >
+                    Close
+                  </button>
+                  <button
+                    onClick={() => generateAISuggestions('summary', resumeData.summary)}
+                    disabled={isGeneratingAI}
+                    className="btn btn-primary flex-1"
+                  >
+                    Generate More
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Version History Modal */}
+      {showVersionHistory && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Resume Versions</h3>
+                <button
+                  onClick={() => setShowVersionHistory(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  onClick={() => {
+                    const versionName = prompt('Enter a name for this version:')
+                    if (versionName) {
+                      saveResumeVersion(versionName)
+                    }
+                  }}
+                  className="w-full btn btn-primary"
+                >
+                  Save Current Version
+                </button>
+
+                {resumeVersions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500 dark:text-gray-400">No saved versions yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {resumeVersions.map((version) => (
+                      <div key={version.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div>
+                          <h4 className="font-semibold text-gray-900 dark:text-white">{version.name}</h4>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {version.timestamp.toLocaleDateString()} at {version.timestamp.toLocaleTimeString()}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => loadResumeVersion(version.id)}
+                          className="btn btn-outline"
+                        >
+                          Load
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="space-y-10">
           {/* Enhanced Header */}
@@ -1203,7 +1461,7 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                     </div>
                     <h2 className="text-2xl font-black text-gray-950 dark:text-white tracking-tight">Work Experience</h2>
                   </div>
-                  <button className="btn btn-primary flex items-center space-x-2 py-3 px-5 font-bold shadow-lg" onClick={() => setShowExperienceForm(true)}>
+                  <button className="btn btn-primary flex items-center space-x-2 py-3 px-5 font-bold" onClick={() => setShowExperienceForm(true)}>
                     <FiPlus className="w-4 h-4" />
                     <span>Add Experience</span>
                   </button>
@@ -1286,7 +1544,7 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                     </div>
                     <h2 className="text-2xl font-black text-gray-950 dark:text-white tracking-tight">Education</h2>
                   </div>
-                  <button className="btn btn-primary flex items-center space-x-2 py-3 px-5 font-bold shadow-lg" onClick={() => setShowEducationForm(true)}>
+                  <button className="btn btn-primary flex items-center space-x-2 py-3 px-5 font-bold" onClick={() => setShowEducationForm(true)}>
                     <FiPlus className="w-4 h-4" />
                     <span>Add Education</span>
                   </button>
@@ -1367,7 +1625,7 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                     </div>
                     <h2 className="text-2xl font-black text-gray-950 dark:text-white tracking-tight">Skills</h2>
                   </div>
-                  <button className="btn btn-primary flex items-center space-x-2 py-3 px-5 font-bold shadow-lg" onClick={() => setShowSkillForm(true)}>
+                  <button className="btn btn-primary flex items-center space-x-2 py-3 px-5 font-bold" onClick={() => setShowSkillForm(true)}>
                     <FiPlus className="w-4 h-4" />
                     <span>Add Skill</span>
                   </button>
@@ -1674,62 +1932,28 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                       <FiDownload className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div className="text-left">
-                      <div className="font-bold text-gray-950 dark:text-white">Download PDF</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Export as PDF file</div>
+                      <div className="font-bold text-gray-950 dark:text-white">
+                        {isExporting ? 'Exporting...' : 'Download PDF'}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Ready to print</div>
                     </div>
                   </button>
-                </div>
-              </div>
 
-              {/* Resume Templates */}
-              <div className="card">
-                <h3 className="text-2xl font-black text-gray-950 dark:text-white mb-6 tracking-tight">Templates</h3>
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="border-2 border-primary-200 dark:border-primary-800 rounded-2xl p-5 bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 cursor-pointer hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-200 hover:shadow-lg group">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-base font-black text-primary-700 dark:text-primary-300">Professional</div>
-                        <div className="text-sm text-primary-600 dark:text-primary-400 font-medium mt-1">Clean & Modern</div>
-                      </div>
-                      <div className="w-3 h-3 bg-primary-500 rounded-full group-hover:scale-125 transition-transform duration-200"></div>
-                    </div>
-                  </div>
-                  <div
-                    onClick={() => setSelectedTemplate('creative')}
-                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:shadow-lg group ${selectedTemplate === 'creative' ? 'border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 hover:border-primary-300 dark:hover:border-primary-700' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}
+                  <button
+                    onClick={exportToWord}
+                    disabled={isExporting}
+                    className="w-full flex items-center px-6 py-4 border-2 border-blue-200 dark:border-blue-800 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 font-semibold group disabled:opacity-50"
                   >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className={`text-base font-black ${selectedTemplate === 'creative' ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>Creative</div>
-                        <div className={`text-sm font-medium mt-1 ${selectedTemplate === 'creative' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400'}`}>Bold & Colorful</div>
-                      </div>
-                      <div className={`w-3 h-3 rounded-full group-hover:scale-125 transition-transform duration-200 ${selectedTemplate === 'creative' ? 'bg-primary-500' : 'bg-gray-400'}`}></div>
+                    <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-xl mr-3 group-hover:scale-110 transition-transform duration-200">
+                      <FiFileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     </div>
-                  </div>
-                  <div
-                    onClick={() => setSelectedTemplate('minimalist')}
-                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:shadow-lg group ${selectedTemplate === 'minimalist' ? 'border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 hover:border-primary-300 dark:hover:border-primary-700' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className={`text-base font-black ${selectedTemplate === 'minimalist' ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>Minimalist</div>
-                        <div className={`text-sm font-medium mt-1 ${selectedTemplate === 'minimalist' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400'}`}>Simple & Clean</div>
+                    <div className="text-left">
+                      <div className="font-bold text-gray-950 dark:text-white">
+                        {isExporting ? 'Exporting...' : 'Download Word'}
                       </div>
-                      <div className={`w-3 h-3 rounded-full group-hover:scale-125 transition-transform duration-200 ${selectedTemplate === 'minimalist' ? 'bg-primary-500' : 'bg-gray-400'}`}></div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Editable format</div>
                     </div>
-                  </div>
-                  <div
-                    onClick={() => setSelectedTemplate('executive')}
-                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:shadow-lg group ${selectedTemplate === 'executive' ? 'border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 hover:border-primary-300 dark:hover:border-primary-700' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className={`text-base font-black ${selectedTemplate === 'executive' ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>Executive</div>
-                        <div className={`text-sm font-medium mt-1 ${selectedTemplate === 'executive' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400'}`}>Formal & Classic</div>
-                      </div>
-                      <div className={`w-3 h-3 rounded-full group-hover:scale-125 transition-transform duration-200 ${selectedTemplate === 'executive' ? 'bg-primary-500' : 'bg-gray-400'}`}></div>
-                    </div>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
