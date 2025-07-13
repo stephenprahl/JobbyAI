@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   FiArrowRight,
   FiBriefcase,
@@ -10,9 +10,11 @@ import {
   FiZap
 } from 'react-icons/fi'
 import { Link as RouterLink } from 'react-router-dom'
+import DemoModal from '../components/DemoModal'
 import { ThemeToggle } from '../components/ThemeToggle'
 
 const LandingPageTailwind: React.FC = () => {
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false)
   const features = [
     {
       icon: FiFileText,
@@ -121,12 +123,12 @@ const LandingPageTailwind: React.FC = () => {
                 Start Building Now
                 <FiArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </RouterLink>
-              <RouterLink
-                to="/demo"
+              <button
+                onClick={() => setIsDemoModalOpen(true)}
                 className="btn btn-outline text-lg px-8 py-4 hover:bg-white dark:hover:bg-gray-800"
               >
                 Watch Demo
-              </RouterLink>
+              </button>
             </div>
 
             {/* Stats */}
@@ -341,6 +343,12 @@ const LandingPageTailwind: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* Demo Modal */}
+      <DemoModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+      />
     </div>
   )
 }
