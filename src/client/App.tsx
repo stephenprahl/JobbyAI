@@ -13,7 +13,11 @@ import ProfilePage from './pages/ProfilePage'
 import ResumeBuilderPage from './pages/ResumeBuilderPage'
 import ResumePage from './pages/ResumePage'
 import SettingsPage from './pages/SettingsPage'
-import SubscriptionPage from './pages/SubscriptionPage'
+
+import DocumentationPage from './pages/DocumentationPage'
+import SubscriptionPage from './pages/SubscriptionPage'; // Corrected import
+
+// ...existing code...
 
 // Import Tailwind layout
 import Layout from './components/Layout'
@@ -89,6 +93,14 @@ const App: React.FC = () => {
           element={
             <PublicRoute>
               <LoginPage mode="register" />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/documentation"
+          element={
+            <PublicRoute>
+              <DocumentationPage />
             </PublicRoute>
           }
         />

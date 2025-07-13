@@ -15,6 +15,14 @@ import { ThemeToggle } from '../components/ThemeToggle'
 
 const LandingPageTailwind: React.FC = () => {
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false)
+  const [footerModal, setFooterModal] = useState<{ title: string; content: React.ReactNode } | null>(null)
+
+  const handleFooterInfo = (title: string, content: React.ReactNode) => {
+    setFooterModal({ title, content })
+  }
+
+  const closeFooterModal = () => setFooterModal(null)
+
   const features = [
     {
       icon: FiFileText,
@@ -81,6 +89,12 @@ const LandingPageTailwind: React.FC = () => {
             </div>
             <div className="flex items-center space-x-6">
               <ThemeToggle />
+              <RouterLink
+                to="/documentation"
+                className="text-gray-800 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Documentation
+              </RouterLink>
               <RouterLink
                 to="/login"
                 className="text-gray-800 dark:text-gray-100 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -543,10 +557,10 @@ const LandingPageTailwind: React.FC = () => {
                 Product
               </h4>
               <ul className="space-y-4">
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">Features</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Features', 'Explore AI-powered resume building, job analysis, and smart template selection.')}>Features</a></li>
                 <li><RouterLink to="/subscription" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">Pricing</RouterLink></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">Templates</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">API</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Templates', 'Choose from a wide range of professional templates for every industry and career stage.')}>Templates</a></li>
+                <li><RouterLink to="/documentation" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">API</RouterLink></li>
               </ul>
             </div>
             <div>
@@ -554,10 +568,10 @@ const LandingPageTailwind: React.FC = () => {
                 Support
               </h4>
               <ul className="space-y-4">
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">Help Center</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">Contact Us</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">FAQ</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium">Status</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Help Center', 'Visit our Help Center for guides, troubleshooting, and tips.')}>Help Center</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Contact Us', 'Contact our support team at support@resumeplan.ai or use the in-app chat.')}>Contact Us</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('FAQ', 'Find answers to common questions about plans, payments, and features.')}>FAQ</a></li>
+                <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Status', 'Check the current status of our platform and services.')}>Status</a></li>
               </ul>
             </div>
           </div>
@@ -567,9 +581,19 @@ const LandingPageTailwind: React.FC = () => {
                 &copy; 2025 Resume Plan AI. All rights reserved.
               </p>
               <div className="flex space-x-6 mt-4 md:mt-0">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium">Privacy</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium">Terms</a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium">Security</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Privacy', 'Read our privacy policy to learn how we protect your data.')}>Privacy</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Terms', 'Review our terms of service for using Resume Plan AI.')}>Terms</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200 font-medium" onClick={() => handleFooterInfo('Security', 'Learn about our security practices and data protection measures.')}>Security</a>
+                {/* Footer Info Modal */}
+                {footerModal && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full relative">
+                      <button onClick={closeFooterModal} className="absolute top-3 right-3 text-gray-400 hover:text-primary-500 text-2xl font-bold">&times;</button>
+                      <h2 className="text-2xl font-bold mb-4 text-gradient">{footerModal.title}</h2>
+                      <div className="text-gray-700 dark:text-gray-200 text-base">{footerModal.content}</div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
