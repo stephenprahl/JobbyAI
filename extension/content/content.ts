@@ -839,10 +839,19 @@ function displayAnalysisResults(data: any) {
 
 // Auto-analyze when page loads (with delay to ensure content is loaded)
 setTimeout(() => {
+  function tryAnalyzeJobPost() {
+    const jobData = extractJobData();
+    // Only show widget if job post detected (title and company present)
+    if (jobData.title && jobData.company) {
+      analyzeJobListing();
+    } else {
+      console.log('Resume Plan AI: Not a job post page, widget will not show.');
+    }
+  }
   if (document.readyState === 'complete') {
-    analyzeJobListing();
+    tryAnalyzeJobPost();
   } else {
-    window.addEventListener('load', analyzeJobListing);
+    window.addEventListener('load', tryAnalyzeJobPost);
   }
 }, 2000);
 
@@ -861,7 +870,12 @@ setInterval(() => {
     currentUrl = window.location.href;
     // Delay to allow page content to load
     setTimeout(() => {
-      analyzeJobListing();
+      const jobData = extractJobData();
+      if (jobData.title && jobData.company) {
+        analyzeJobListing();
+      } else {
+        console.log('Resume Plan AI: Not a job post page, widget will not show.');
+      }
     }, 3000);
   }
 }, 1000);
