@@ -5,6 +5,7 @@ import { createLogger, format, transports } from 'winston';
 import { analysisPrismaRoutes } from './routes/analysis.prisma';
 import { authRoutes } from './routes/auth.routes';
 import { resumeRoutes } from './routes/resume.routes';
+import { subscriptionRoutes } from './routes/subscription.routes';
 import { userRoutes } from './routes/user.routes';
 import prisma, { connect, disconnect } from './services/prisma.service';
 
@@ -71,6 +72,7 @@ const app = new Elysia()
       .use(authRoutes)
       .use(analysisPrismaRoutes)
       .use(userRoutes)
+      .use(subscriptionRoutes)
       .get('/health', () => ({
         status: 'ok',
         timestamp: new Date().toISOString(),

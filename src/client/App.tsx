@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage'
 import ResumeBuilderPage from './pages/ResumeBuilderPage'
 import ResumePage from './pages/ResumePage'
 import SettingsPage from './pages/SettingsPage'
+import SubscriptionPage from './pages/SubscriptionPage'
 
 // Import Tailwind layout
 import Layout from './components/Layout'
@@ -119,6 +120,16 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <Layout>
                 <SettingsPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/subscription"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <SubscriptionPage />
               </Layout>
             </ProtectedRoute>
           }
