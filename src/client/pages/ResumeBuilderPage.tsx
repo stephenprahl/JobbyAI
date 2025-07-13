@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { FiCalendar, FiDownload, FiEdit3, FiEye, FiFileText, FiMapPin, FiPlus, FiSave, FiStar, FiTrash2, FiUser, FiX, FiZap } from 'react-icons/fi'
+import React, { useEffect, useState } from 'react'
+import { FiBriefcase, FiCalendar, FiCheckCircle, FiDownload, FiEdit3, FiEye, FiFileText, FiMapPin, FiPlus, FiSave, FiStar, FiTrash2, FiUser, FiX, FiZap } from 'react-icons/fi'
 import { useAuth } from '../contexts/AuthContext'
 
 // Types for Resume Data
@@ -75,6 +75,11 @@ const ResumeBuilderPageTailwind: React.FC = () => {
   const [editingExperience, setEditingExperience] = useState<WorkExperience | null>(null)
   const [editingEducation, setEditingEducation] = useState<Education | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
+  const [selectedTemplate, setSelectedTemplate] = useState('professional')
+  const [isExporting, setIsExporting] = useState(false)
+  const [lastSaved, setLastSaved] = useState<Date | null>(null)
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(true)
 
   // Generate unique IDs
   const generateId = () => Math.random().toString(36).substr(2, 9)
@@ -172,12 +177,128 @@ const ResumeBuilderPageTailwind: React.FC = () => {
       // Here you would call your API to save the resume
       await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
       console.log('Resume saved:', resumeData)
+      setLastSaved(new Date())
     } catch (error) {
       console.error('Failed to save resume:', error)
     } finally {
       setIsSaving(false)
     }
   }
+
+  // Export to PDF
+  const exportToPDF = async () => {
+    setIsExporting(true)
+    try {
+      // Create a simple HTML version of the resume
+      const htmlContent = generateHTMLResume()
+
+      // Use the browser's print functionality to create PDF
+      const printWindow = window.open('', '_blank')
+      if (printWindow) {
+        printWindow.document.write(htmlContent)
+        printWindow.document.close()
+        printWindow.print()
+      }
+    } catch (error) {
+      console.error('Failed to export PDF:', error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  // Generate HTML version of resume for PDF export
+  const generateHTMLResume = () => {
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>${resumeData.title}</title>
+      <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; color: #333; line-height: 1.6; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
+        .name { font-size: 28px; font-weight: bold; margin-bottom: 10px; }
+        .contact { font-size: 14px; color: #666; }
+        .section { margin: 25px 0; }
+        .section-title { font-size: 18px; font-weight: bold; color: #333; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 15px; }
+        .experience, .education { margin-bottom: 20px; }
+        .job-title { font-weight: bold; color: #333; }
+        .company { color: #666; font-style: italic; }
+        .date { color: #888; font-size: 12px; }
+        .description { margin-top: 8px; white-space: pre-line; }
+        .skills { display: flex; flex-wrap: wrap; gap: 10px; }
+        .skill { background: #f0f0f0; padding: 5px 10px; border-radius: 15px; font-size: 12px; }
+        @media print { body { margin: 0; } }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <div class="name">${resumeData.personalInfo.fullName}</div>
+        <div class="contact">
+          ${resumeData.personalInfo.email} • ${resumeData.personalInfo.phone} • ${resumeData.personalInfo.location}
+          ${resumeData.personalInfo.website ? ` • ${resumeData.personalInfo.website}` : ''}
+        </div>
+      </div>
+
+      ${resumeData.summary ? `
+      <div class="section">
+        <div class="section-title">Professional Summary</div>
+        <div>${resumeData.summary}</div>
+      </div>
+      ` : ''}
+
+      ${resumeData.experiences.length > 0 ? `
+      <div class="section">
+        <div class="section-title">Work Experience</div>
+        ${resumeData.experiences.map(exp => `
+          <div class="experience">
+            <div class="job-title">${exp.title}</div>
+            <div class="company">${exp.company} • ${exp.location}</div>
+            <div class="date">${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}</div>
+            <div class="description">${exp.description}</div>
+          </div>
+        `).join('')}
+      </div>
+      ` : ''}
+
+      ${resumeData.education.length > 0 ? `
+      <div class="section">
+        <div class="section-title">Education</div>
+        ${resumeData.education.map(edu => `
+          <div class="education">
+            <div class="job-title">${edu.degree} in ${edu.fieldOfStudy}</div>
+            <div class="company">${edu.institution}</div>
+            <div class="date">${edu.startDate} - ${edu.endDate}</div>
+            ${edu.gpa ? `<div>GPA: ${edu.gpa}</div>` : ''}
+            ${edu.description ? `<div class="description">${edu.description}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+      ` : ''}
+
+      ${resumeData.skills.length > 0 ? `
+      <div class="section">
+        <div class="section-title">Skills</div>
+        <div class="skills">
+          ${resumeData.skills.map(skill => `<div class="skill">${skill.name} (${skill.level})</div>`).join('')}
+        </div>
+      </div>
+      ` : ''}
+    </body>
+    </html>
+    `
+  }
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!autoSaveEnabled) return
+
+    const autoSaveTimer = setTimeout(() => {
+      saveResume()
+      setLastSaved(new Date())
+    }, 30000) // Auto-save every 30 seconds
+
+    return () => clearTimeout(autoSaveTimer)
+  }, [resumeData, autoSaveEnabled])
 
   // Calculate resume completion percentage
   const calculateCompletionPercentage = () => {
@@ -192,6 +313,46 @@ const ResumeBuilderPageTailwind: React.FC = () => {
     if (resumeData.skills.length > 0) completed++
 
     return Math.round((completed / total) * 100)
+  }
+
+  // ATS Score calculation
+  const calculateATSScore = () => {
+    let score = 0
+    let maxScore = 100
+
+    // Basic info completeness (30 points)
+    if (resumeData.personalInfo.fullName.trim()) score += 5
+    if (resumeData.personalInfo.email.trim()) score += 5
+    if (resumeData.personalInfo.phone.trim()) score += 5
+    if (resumeData.personalInfo.location.trim()) score += 5
+    if (resumeData.summary.trim()) score += 10
+
+    // Experience section (25 points)
+    if (resumeData.experiences.length > 0) {
+      score += 15
+      const hasQuantifiedAchievements = resumeData.experiences.some(exp =>
+        exp.description.match(/\d+(%|\+|million|k|thousand)/i)
+      )
+      if (hasQuantifiedAchievements) score += 10
+    }
+
+    // Education (15 points)
+    if (resumeData.education.length > 0) score += 15
+
+    // Skills (20 points)
+    if (resumeData.skills.length >= 5) score += 20
+    else if (resumeData.skills.length > 0) score += 10
+
+    // Format optimization (10 points)
+    const hasGoodLength = resumeData.summary.length > 100 && resumeData.summary.length < 300
+    if (hasGoodLength) score += 5
+
+    const hasActionVerbs = resumeData.experiences.some(exp =>
+      exp.description.match(/\b(led|managed|developed|created|implemented|improved|increased|reduced|achieved)\b/i)
+    )
+    if (hasActionVerbs) score += 5
+
+    return Math.min(score, maxScore)
   }
 
   // Add sample data for testing
@@ -639,6 +800,235 @@ const ResumeBuilderPageTailwind: React.FC = () => {
         />
       )}
 
+      {/* Preview Modal */}
+      {showPreview && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Resume Preview
+                </h3>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FiX className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Template Selector */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Select Template
+                </label>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setSelectedTemplate('professional')}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2
+                    ${selectedTemplate === 'professional' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
+                    `}
+                  >
+                    <FiFileText className="w-5 h-5" />
+                    <span>Professional</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedTemplate('creative')}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2
+                    ${selectedTemplate === 'creative' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
+                    `}
+                  >
+                    <FiStar className="w-5 h-5" />
+                    <span>Creative</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedTemplate('minimalist')}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2
+                    ${selectedTemplate === 'minimalist' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
+                    `}
+                  >
+                    <FiZap className="w-5 h-5" />
+                    <span>Minimalist</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedTemplate('executive')}
+                    className={`flex-1 px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center space-x-2
+                    ${selectedTemplate === 'executive' ? 'bg-primary-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'}
+                    `}
+                  >
+                    <FiBriefcase className="w-5 h-5" />
+                    <span>Executive</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Resume Content - This will be dynamic based on selected template */}
+              <div className="space-y-8">
+                {/* Header */}
+                <div className="border-b pb-4 mb-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+                        {resumeData.personalInfo.fullName}
+                      </h2>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {resumeData.personalInfo.location} • {resumeData.personalInfo.phone} • {resumeData.personalInfo.email}
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <img
+                        src="/path/to/profile-pic.jpg"
+                        alt="Profile Picture"
+                        className="w-16 h-16 rounded-full object-cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Experience Section */}
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    Work Experience
+                  </h3>
+                  {resumeData.experiences.length === 0 ? (
+                    <p className="text-gray-500 dark:text-gray-400">
+                      No work experience added yet.
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {resumeData.experiences.map((experience) => (
+                        <div key={experience.id} className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                {experience.title}
+                              </h4>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {experience.company} • {experience.location}
+                              </p>
+                            </div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {new Date(experience.startDate).toLocaleString('default', { month: 'short', year: 'numeric' })} - {experience.current ? 'Present' : new Date(experience.endDate).toLocaleString('default', { month: 'short', year: 'numeric' })}
+                            </div>
+                          </div>
+                          <div className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+                            {experience.description}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Education Section */}
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    Education
+                  </h3>
+                  {resumeData.education.length === 0 ? (
+                    <p className="text-gray-500 dark:text-gray-400">
+                      No education added yet.
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      {resumeData.education.map((edu) => (
+                        <div key={edu.id} className="border rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
+                          <div className="flex items-center justify-between mb-2">
+                            <div>
+                              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                {edu.degree} in {edu.fieldOfStudy}
+                              </h4>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">
+                                {edu.institution}
+                              </p>
+                            </div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">
+                              {new Date(edu.startDate).toLocaleString('default', { month: 'short', year: 'numeric' })} - {new Date(edu.endDate).toLocaleString('default', { month: 'short', year: 'numeric' })}
+                            </div>
+                          </div>
+                          {edu.gpa && (
+                            <div className="text-sm text-gray-700 dark:text-gray-300">
+                              GPA: {edu.gpa}
+                            </div>
+                          )}
+                          <div className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-line">
+                            {edu.description}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Skills Section */}
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                    Skills
+                  </h3>
+                  {resumeData.skills.length === 0 ? (
+                    <p className="text-gray-500 dark:text-gray-400">
+                      No skills added yet.
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                      {resumeData.skills.map(skill => {
+                        const levelColors = {
+                          'Beginner': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+                          'Intermediate': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+                          'Advanced': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+                          'Expert': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                        }
+
+                        const levelWidth = {
+                          'Beginner': 'w-1/4',
+                          'Intermediate': 'w-1/2',
+                          'Advanced': 'w-3/4',
+                          'Expert': 'w-full'
+                        }
+
+                        return (
+                          <div key={skill.id} className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-md transition-all duration-200 hover:shadow-lg border border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center justify-between mb-3">
+                              <h3 className="text-base font-bold text-gray-950 dark:text-white">{skill.name}</h3>
+                              <button
+                                onClick={() => removeSkill(skill.id)}
+                                className="p-1 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded hover:bg-red-50 dark:hover:bg-red-900/20"
+                              >
+                                <FiX className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${levelColors[skill.level]}`}>
+                                  {skill.level}
+                                </span>
+                              </div>
+                              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                <div className={`bg-primary-500 h-2 rounded-full transition-all duration-300 ${levelWidth[skill.level]}`}></div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="w-full btn btn-primary flex items-center justify-center space-x-2 text-base py-3 px-6 font-bold"
+                >
+                  <FiDownload className="w-5 h-5" />
+                  <span>Download Resume</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="space-y-10">
           {/* Enhanced Header */}
@@ -662,7 +1052,10 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                <button className="btn btn-outline flex items-center justify-center space-x-2 text-base py-3 px-6 font-bold">
+                <button
+                  onClick={() => setShowPreview(true)}
+                  className="btn btn-outline flex items-center justify-center space-x-2 text-base py-3 px-6 font-bold"
+                >
                   <FiEye className="w-5 h-5" />
                   <span>Preview</span>
                 </button>
@@ -1095,7 +1488,124 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                   </div>
                 )}
               </div>
-              {/* AI Resume Generator */}
+              {/* ATS Score */}
+              <div className="card">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-black text-gray-950 dark:text-white">ATS Score</h3>
+                  <div className="flex items-center space-x-2">
+                    <span className={`text-2xl font-bold ${calculateATSScore() >= 80 ? 'text-green-600 dark:text-green-400' : calculateATSScore() >= 60 ? 'text-yellow-600 dark:text-yellow-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {calculateATSScore()}
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">/100</span>
+                  </div>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-4">
+                  <div
+                    className={`h-3 rounded-full transition-all duration-500 ease-out ${calculateATSScore() >= 80 ? 'bg-gradient-to-r from-green-500 to-emerald-600' : calculateATSScore() >= 60 ? 'bg-gradient-to-r from-yellow-500 to-orange-600' : 'bg-gradient-to-r from-red-500 to-pink-600'}`}
+                    style={{ width: `${calculateATSScore()}%` }}
+                  ></div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <FiCheckCircle className={`w-4 h-4 ${resumeData.personalInfo.fullName.trim() && resumeData.personalInfo.email.trim() ? 'text-green-600' : 'text-gray-400'}`} />
+                      <span className="text-gray-600 dark:text-gray-400">Contact Information</span>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500">15/15</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <FiCheckCircle className={`w-4 h-4 ${resumeData.summary.length > 100 ? 'text-green-600' : 'text-gray-400'}`} />
+                      <span className="text-gray-600 dark:text-gray-400">Professional Summary</span>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500">10/10</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <FiCheckCircle className={`w-4 h-4 ${resumeData.experiences.length > 0 ? 'text-green-600' : 'text-gray-400'}`} />
+                      <span className="text-gray-600 dark:text-gray-400">Work Experience</span>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500">25/25</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <FiCheckCircle className={`w-4 h-4 ${resumeData.skills.length >= 5 ? 'text-green-600' : 'text-yellow-600'}`} />
+                      <span className="text-gray-600 dark:text-gray-400">Skills Section</span>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500">{resumeData.skills.length >= 5 ? '20/20' : '10/20'}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <FiCheckCircle className={`w-4 h-4 ${resumeData.experiences.some(exp => exp.description.match(/\b(led|managed|developed|created|imimplemented|improved|increased|reduced|achieved)\b/i)) ? 'text-green-600' : 'text-yellow-600'}`} />
+                      <span className="text-gray-600 dark:text-gray-400">Action Verbs</span>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500">10/10</span>
+                  </div>
+                </div>
+                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <p className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                    💡 Tips: Add quantified achievements and use action verbs to improve your ATS score.
+                  </p>
+                </div>
+              </div>
+
+              {/* Resume Analytics */}
+              <div className="card">
+                <h3 className="text-xl font-black text-gray-950 dark:text-white mb-4">Resume Analytics</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Word Count</span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">
+                      {(resumeData.summary + ' ' + resumeData.experiences.map(exp => exp.description).join(' ') + ' ' + resumeData.education.map(edu => edu.description || '').join(' ')).split(' ').length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Total Sections</span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">
+                      {[resumeData.summary, resumeData.experiences, resumeData.education, resumeData.skills].filter(section => Array.isArray(section) ? section.length > 0 : section.trim()).length}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Experience Years</span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">
+                      {resumeData.experiences.reduce((total, exp) => {
+                        if (!exp.startDate) return total
+                        const startYear = new Date(exp.startDate + '-01').getFullYear()
+                        const endYear = exp.current ? new Date().getFullYear() : (exp.endDate ? new Date(exp.endDate + '-01').getFullYear() : startYear)
+                        return total + (endYear - startYear)
+                      }, 0)} years
+                    </span>
+                  </div>
+                  {lastSaved && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Last Saved</span>
+                      <span className="text-sm font-bold text-gray-900 dark:text-white">
+                        {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Auto-save Toggle */}
+              <div className="card">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-950 dark:text-white">Auto-save</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Automatically save changes every 30 seconds</p>
+                  </div>
+                  <button
+                    onClick={() => setAutoSaveEnabled(!autoSaveEnabled)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${autoSaveEnabled ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-700'}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${autoSaveEnabled ? 'translate-x-6' : 'translate-x-1'}`}
+                    />
+                  </button>
+                </div>
+              </div>
+
+              {/* Enhanced AI Resume Generator */}
               <div className="card relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400 to-primary-500 rounded-full blur-3xl opacity-10"></div>
                 <div className="relative">
@@ -1143,7 +1653,10 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                       <div className="text-sm text-gray-600 dark:text-gray-400">See example resume content</div>
                     </div>
                   </button>
-                  <button className="w-full flex items-center px-6 py-4 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 font-semibold group">
+                  <button
+                    onClick={() => setShowPreview(true)}
+                    className="w-full flex items-center px-6 py-4 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 font-semibold group"
+                  >
                     <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-xl mr-4 group-hover:scale-110 transition-transform duration-200">
                       <FiEye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
@@ -1152,7 +1665,11 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                       <div className="text-sm text-gray-600 dark:text-gray-400">See how your resume looks</div>
                     </div>
                   </button>
-                  <button className="w-full flex items-center px-6 py-4 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 font-semibold group">
+                  <button
+                    onClick={exportToPDF}
+                    disabled={isExporting}
+                    className="w-full flex items-center px-6 py-4 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 font-semibold group disabled:opacity-50"
+                  >
                     <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-xl mr-4 group-hover:scale-110 transition-transform duration-200">
                       <FiDownload className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
@@ -1177,31 +1694,40 @@ const ResumeBuilderPageTailwind: React.FC = () => {
                       <div className="w-3 h-3 bg-primary-500 rounded-full group-hover:scale-125 transition-transform duration-200"></div>
                     </div>
                   </div>
-                  <div className="border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-5 cursor-pointer hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 hover:shadow-lg group">
+                  <div
+                    onClick={() => setSelectedTemplate('creative')}
+                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:shadow-lg group ${selectedTemplate === 'creative' ? 'border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 hover:border-primary-300 dark:hover:border-primary-700' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}
+                  >
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-base font-black text-gray-700 dark:text-gray-300">Creative</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">Bold & Colorful</div>
+                        <div className={`text-base font-black ${selectedTemplate === 'creative' ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>Creative</div>
+                        <div className={`text-sm font-medium mt-1 ${selectedTemplate === 'creative' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400'}`}>Bold & Colorful</div>
                       </div>
-                      <div className="w-3 h-3 bg-gray-400 rounded-full group-hover:scale-125 transition-transform duration-200"></div>
+                      <div className={`w-3 h-3 rounded-full group-hover:scale-125 transition-transform duration-200 ${selectedTemplate === 'creative' ? 'bg-primary-500' : 'bg-gray-400'}`}></div>
                     </div>
                   </div>
-                  <div className="border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-5 cursor-pointer hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 hover:shadow-lg group">
+                  <div
+                    onClick={() => setSelectedTemplate('minimalist')}
+                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:shadow-lg group ${selectedTemplate === 'minimalist' ? 'border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 hover:border-primary-300 dark:hover:border-primary-700' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}
+                  >
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-base font-black text-gray-700 dark:text-gray-300">Minimalist</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">Simple & Clean</div>
+                        <div className={`text-base font-black ${selectedTemplate === 'minimalist' ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>Minimalist</div>
+                        <div className={`text-sm font-medium mt-1 ${selectedTemplate === 'minimalist' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400'}`}>Simple & Clean</div>
                       </div>
-                      <div className="w-3 h-3 bg-gray-400 rounded-full group-hover:scale-125 transition-transform duration-200"></div>
+                      <div className={`w-3 h-3 rounded-full group-hover:scale-125 transition-transform duration-200 ${selectedTemplate === 'minimalist' ? 'bg-primary-500' : 'bg-gray-400'}`}></div>
                     </div>
                   </div>
-                  <div className="border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-5 cursor-pointer hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 hover:shadow-lg group">
+                  <div
+                    onClick={() => setSelectedTemplate('executive')}
+                    className={`border-2 rounded-2xl p-5 cursor-pointer transition-all duration-200 hover:shadow-lg group ${selectedTemplate === 'executive' ? 'border-primary-200 dark:border-primary-800 bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 hover:border-primary-300 dark:hover:border-primary-700' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'}`}
+                  >
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="text-base font-black text-gray-700 dark:text-gray-300">Executive</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">Formal & Classic</div>
+                        <div className={`text-base font-black ${selectedTemplate === 'executive' ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>Executive</div>
+                        <div className={`text-sm font-medium mt-1 ${selectedTemplate === 'executive' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400'}`}>Formal & Classic</div>
                       </div>
-                      <div className="w-3 h-3 bg-gray-400 rounded-full group-hover:scale-125 transition-transform duration-200"></div>
+                      <div className={`w-3 h-3 rounded-full group-hover:scale-125 transition-transform duration-200 ${selectedTemplate === 'executive' ? 'bg-primary-500' : 'bg-gray-400'}`}></div>
                     </div>
                   </div>
                 </div>
