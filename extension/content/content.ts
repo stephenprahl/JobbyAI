@@ -422,7 +422,7 @@ function displayAnalysisWidget(analysis: any) {
         <button class="resume-plan-ai-btn" id="close-widget" title="Close">✕</button>
       </div>
     </div>
-    <div class="resume-plan-ai-content" id="widget-content" style="${widgetState.isMinimized ? 'display: none;' : ''}">
+    <div class="resume-plan-ai-content" id="widget-content" style="${widgetState.isMinimized ? 'display: none;' : ''}; max-height: 70vh; overflow-y: auto;">
       <div class="resume-plan-ai-match-score">
         <div class="resume-plan-ai-score-header">
           <div class="resume-plan-ai-score-label">
@@ -534,10 +534,13 @@ function setWidgetPosition(widget: HTMLElement) {
     // Mobile: stick to bottom
     widget.style.position = 'fixed';
     widget.style.bottom = '20px';
-    widget.style.left = '20px';
-    widget.style.right = '20px';
+    widget.style.left = '10px';
+    widget.style.right = '10px';
     widget.style.top = 'auto';
     widget.style.width = 'auto';
+    widget.style.maxHeight = '80vh';
+    widget.style.overflowY = 'auto';
+    widget.style.zIndex = '2147483647';
   } else {
     // Desktop: use stored position or default
     widget.style.position = 'fixed';
@@ -546,6 +549,9 @@ function setWidgetPosition(widget: HTMLElement) {
     widget.style.bottom = 'auto';
     widget.style.left = 'auto';
     widget.style.width = '420px';
+    widget.style.maxHeight = '80vh';
+    widget.style.overflowY = 'auto';
+    widget.style.zIndex = '2147483647';
   }
 
   if (widgetState.isMinimized) {
@@ -839,10 +845,19 @@ function displayAnalysisResults(data: any) {
 
 // Auto-analyze when page loads (with delay to ensure content is loaded)
 setTimeout(() => {
+  function tryAnalyzeJobPost() {
+    const jobData = extractJobData();
+    // Only show widget if job post detected (title and company present)
+    if (jobData.title && jobData.company) {
+      analyzeJobListing();
+    } else {
+      console.log('Resume Plan AI: Not a job post page, widget will not show.');
+    }
+  }
   if (document.readyState === 'complete') {
-    analyzeJobListing();
+    tryAnalyzeJobPost();
   } else {
-    window.addEventListener('load', analyzeJobListing);
+    window.addEventListener('load', tryAnalyzeJobPost);
   }
 }, 2000);
 
@@ -861,7 +876,12 @@ setInterval(() => {
     currentUrl = window.location.href;
     // Delay to allow page content to load
     setTimeout(() => {
-      analyzeJobListing();
+      const jobData = extractJobData();
+      if (jobData.title && jobData.company) {
+        analyzeJobListing();
+      } else {
+        console.log('Resume Plan AI: Not a job post page, widget will not show.');
+      }
     }, 3000);
   }
 }, 1000);

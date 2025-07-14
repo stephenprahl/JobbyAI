@@ -1,3 +1,62 @@
+// Add Skill
+export const addUserSkill = async (skill: {
+  name: string
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT'
+  yearsOfExperience: number
+}): Promise<ApiResponse<any>> => {
+  const response = await api.post('/users/me/skills', skill)
+  return response.data
+}
+
+// Update Skill
+export const updateUserSkill = async (skillId: string, skill: {
+  name: string
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT'
+  yearsOfExperience: number
+}): Promise<ApiResponse<any>> => {
+  const response = await api.put(`/users/me/skills/${skillId}`, skill)
+  return response.data
+}
+
+// Delete Skill
+export const deleteUserSkill = async (skillId: string): Promise<ApiResponse<any>> => {
+  const response = await api.delete(`/users/me/skills/${skillId}`)
+  return response.data
+}
+
+// Add Experience
+export const addUserExperience = async (exp: {
+  title: string
+  companyName: string
+  location?: string
+  startDate: string
+  endDate?: string
+  current: boolean
+  description?: string
+}): Promise<ApiResponse<any>> => {
+  const response = await api.post('/users/me/experiences', exp)
+  return response.data
+}
+
+// Update Experience
+export const updateUserExperience = async (expId: string, exp: {
+  title: string
+  companyName: string
+  location?: string
+  startDate: string
+  endDate?: string
+  current: boolean
+  description?: string
+}): Promise<ApiResponse<any>> => {
+  const response = await api.put(`/users/me/experiences/${expId}`, exp)
+  return response.data
+}
+
+// Delete Experience
+export const deleteUserExperience = async (expId: string): Promise<ApiResponse<any>> => {
+  const response = await api.delete(`/users/me/experiences/${expId}`)
+  return response.data
+}
 import { ApiResponse, GeneratedResume, JobAnalysis, User } from '../types'
 import api from './auth'
 

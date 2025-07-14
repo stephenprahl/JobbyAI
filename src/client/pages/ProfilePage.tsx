@@ -16,10 +16,72 @@ import {
   FiX
 } from 'react-icons/fi'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { ExperienceFormData, ExperienceModal } from '../components/profile/ExperienceModal'
+import { SkillFormData, SkillModal } from '../components/profile/SkillModal'
 import { useAuth } from '../contexts/AuthContext'
-import { getCurrentUser, getUserSkills, updateUserProfile } from '../services/api'
+import {
+  addUserExperience,
+  addUserSkill,
+  deleteUserExperience,
+  deleteUserSkill,
+  getCurrentUser,
+  getUserSkills,
+  updateUserExperience,
+  updateUserProfile,
+  updateUserSkill
+} from '../services/api'
 
 const ProfilePage: React.FC = () => {
+  // Skill modal state
+  // Experience modal state
+  const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false)
+  const [editingExperience, setEditingExperience] = useState<any | null>(null)
+  const [isExperienceSaving, setIsExperienceSaving] = useState(false)
+  // Handlers for Experience Modal
+  const handleAddExperience = () => {
+    setEditingExperience(null)
+    setIsExperienceModalOpen(true)
+  }
+  const handleEditExperience = (exp: any) => {
+    setEditingExperience(exp)
+    setIsExperienceModalOpen(true)
+  }
+  const handleCloseExperienceModal = () => {
+    setIsExperienceModalOpen(false)
+    setEditingExperience(null)
+  }
+  // Add/Edit Experience handler (real API)
+  const handleSubmitExperience = async (data: ExperienceFormData) => {
+    setIsExperienceSaving(true)
+    try {
+      if (editingExperience && editingExperience.id) {
+        await updateUserExperience(editingExperience.id, data)
+      } else {
+        await addUserExperience(data)
+      }
+      queryClient.invalidateQueries(['user-profile'])
+      setIsExperienceModalOpen(false)
+      setEditingExperience(null)
+    } catch (error) {
+      console.error('Error saving experience:', error)
+    } finally {
+      setIsExperienceSaving(false)
+    }
+  }
+
+  // Delete Experience handler (real API)
+  const handleDeleteExperience = async (experienceId: string) => {
+    if (!window.confirm('Are you sure you want to delete this experience?')) return
+    try {
+      await deleteUserExperience(experienceId)
+      queryClient.invalidateQueries(['user-profile'])
+    } catch (error) {
+      console.error('Error deleting experience:', error)
+    }
+  }
+  const [isSkillModalOpen, setIsSkillModalOpen] = useState(false)
+  const [editingSkill, setEditingSkill] = useState<any | null>(null)
+  const [isSkillSaving, setIsSkillSaving] = useState(false)
   const { user, isLoading: authLoading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
@@ -145,6 +207,49 @@ const ProfilePage: React.FC = () => {
   const userName = user?.firstName && user?.lastName
     ? `${user.firstName} ${user.lastName}`
     : user?.email || 'User'
+
+  // Handlers for Skill Modal
+  const handleAddSkill = () => {
+    setEditingSkill(null)
+    setIsSkillModalOpen(true)
+  }
+  const handleEditSkill = (skill: any) => {
+    setEditingSkill(skill)
+    setIsSkillModalOpen(true)
+  }
+  const handleCloseSkillModal = () => {
+    setIsSkillModalOpen(false)
+    setEditingSkill(null)
+  }
+  // Add/Edit Skill handler (real API)
+  const handleSubmitSkill = async (data: SkillFormData) => {
+    setIsSkillSaving(true)
+    try {
+      if (editingSkill && editingSkill.skillId) {
+        await updateUserSkill(editingSkill.skillId, data)
+      } else {
+        await addUserSkill(data)
+      }
+      queryClient.invalidateQueries(['user-skills'])
+      setIsSkillModalOpen(false)
+      setEditingSkill(null)
+    } catch (error) {
+      console.error('Error saving skill:', error)
+    } finally {
+      setIsSkillSaving(false)
+    }
+  }
+
+  // Delete Skill handler (real API)
+  const handleDeleteSkill = async (skillId: string) => {
+    if (!window.confirm('Are you sure you want to delete this skill?')) return
+    try {
+      await deleteUserSkill(skillId)
+      queryClient.invalidateQueries(['user-skills'])
+    } catch (error) {
+      console.error('Error deleting skill:', error)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-indigo-900">
@@ -370,7 +475,10 @@ const ProfilePage: React.FC = () => {
                   Your technical and professional skills
                 </p>
               </div>
-              <button className="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-purple-700 hover:from-primary-500 hover:via-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-primary-500/50 backdrop-blur-sm flex items-center space-x-2">
+              <button
+                className="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-purple-700 hover:from-primary-500 hover:via-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-primary-500/50 backdrop-blur-sm flex items-center space-x-2"
+                onClick={handleAddSkill}
+              >
                 <FiPlus className="w-5 h-5" />
                 <span>Add Skill</span>
               </button>
@@ -395,10 +503,16 @@ const ProfilePage: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex space-x-2">
-                        <button className="p-2 text-gray-700 dark:text-gray-200 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
+                        <button
+                          className="p-2 text-gray-700 dark:text-gray-200 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                          onClick={() => handleEditSkill(skill)}
+                        >
                           <FiEdit className="w-4 h-4" />
                         </button>
-                        <button className="p-2 text-gray-700 dark:text-gray-200 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                        <button
+                          className="p-2 text-gray-700 dark:text-gray-200 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          onClick={() => handleDeleteSkill(skill.skillId)}
+                        >
                           <FiTrash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -415,7 +529,10 @@ const ProfilePage: React.FC = () => {
                 <p className="text-gray-700 dark:text-gray-200 mb-4 font-medium">
                   Add your technical and professional skills to showcase your expertise.
                 </p>
-                <button className="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-purple-700 hover:from-primary-500 hover:via-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-primary-500/50 backdrop-blur-sm flex items-center space-x-2 mx-auto">
+                <button
+                  className="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-purple-700 hover:from-primary-500 hover:via-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-primary-500/50 backdrop-blur-sm flex items-center space-x-2 mx-auto"
+                  onClick={handleAddSkill}
+                >
                   <FiPlus className="w-5 h-5" />
                   <span>Add Your First Skill</span>
                 </button>
@@ -434,7 +551,10 @@ const ProfilePage: React.FC = () => {
                   Your professional work history
                 </p>
               </div>
-              <button className="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-purple-700 hover:from-primary-500 hover:via-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-primary-500/50 backdrop-blur-sm flex items-center space-x-2">
+              <button
+                className="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-purple-700 hover:from-primary-500 hover:via-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-primary-500/50 backdrop-blur-sm flex items-center space-x-2"
+                onClick={handleAddExperience}
+              >
                 <FiPlus className="w-5 h-5" />
                 <span>Add Experience</span>
               </button>
@@ -483,10 +603,16 @@ const ProfilePage: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button className="p-3 text-gray-700 dark:text-gray-200 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors">
+                        <button
+                          className="p-3 text-gray-700 dark:text-gray-200 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                          onClick={() => handleEditExperience(exp)}
+                        >
                           <FiEdit className="w-4 h-4" />
                         </button>
-                        <button className="p-3 text-gray-700 dark:text-gray-200 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
+                        <button
+                          className="p-3 text-gray-700 dark:text-gray-200 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          onClick={() => handleDeleteExperience(exp.id)}
+                        >
                           <FiTrash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -506,7 +632,10 @@ const ProfilePage: React.FC = () => {
                 <p className="text-gray-700 dark:text-gray-200 mb-4 font-medium">
                   Add your work experience to showcase your professional background.
                 </p>
-                <button className="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-purple-700 hover:from-primary-500 hover:via-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-primary-500/50 backdrop-blur-sm flex items-center space-x-2 mx-auto">
+                <button
+                  className="group relative bg-gradient-to-r from-primary-600 via-primary-700 to-purple-700 hover:from-primary-500 hover:via-primary-600 hover:to-purple-600 text-white font-bold py-3 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-primary-500/50 backdrop-blur-sm flex items-center space-x-2 mx-auto"
+                  onClick={handleAddExperience}
+                >
                   <FiPlus className="w-5 h-5" />
                   <span>Add Your First Experience</span>
                 </button>
@@ -514,6 +643,34 @@ const ProfilePage: React.FC = () => {
             )}
           </div>
         </div>
+        {/* Experience Modal Integration */}
+        <ExperienceModal
+          isOpen={isExperienceModalOpen}
+          onClose={handleCloseExperienceModal}
+          onSubmit={handleSubmitExperience}
+          initialData={editingExperience ? {
+            title: editingExperience.title,
+            companyName: editingExperience.companyName,
+            location: editingExperience.location,
+            startDate: editingExperience.startDate,
+            endDate: editingExperience.endDate,
+            current: editingExperience.current,
+            description: editingExperience.description,
+          } : undefined}
+          isLoading={isExperienceSaving}
+        />
+        {/* Skill Modal Integration */}
+        <SkillModal
+          isOpen={isSkillModalOpen}
+          onClose={handleCloseSkillModal}
+          onSubmit={handleSubmitSkill}
+          initialData={editingSkill ? {
+            name: editingSkill.name,
+            level: editingSkill.level,
+            yearsOfExperience: editingSkill.yearsOfExperience,
+          } : undefined}
+          isLoading={isSkillSaving}
+        />
       </div>
     </div>
   )
