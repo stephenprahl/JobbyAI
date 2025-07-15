@@ -5,13 +5,22 @@ import {
   FiAward,
   FiBarChart,
   FiBook,
+  FiBriefcase,
+  FiCalendar,
   FiCheckCircle,
   FiClock,
+  FiDollarSign,
   FiGift,
+  FiGlobe,
+  FiLayers,
+  FiMapPin,
+  FiMessageCircle,
+  FiPieChart,
   FiPlay,
   FiStar,
   FiTarget,
   FiTrendingUp,
+  FiUsers,
   FiZap
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
@@ -79,14 +88,110 @@ interface LearningStep {
   completed: boolean;
 }
 
+interface SalaryData {
+  currentSalary: number;
+  targetSalary: number;
+  marketAverage: number;
+  projectedGrowth: number;
+  industryBenchmark: number;
+  location: string;
+}
+
+interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  earned: boolean;
+  earnedDate?: string;
+  category: 'learning' | 'career' | 'networking' | 'skill';
+  points: number;
+}
+
+interface NetworkingContact {
+  id: string;
+  name: string;
+  title: string;
+  company: string;
+  industry: string;
+  connectionStrength: 'weak' | 'medium' | 'strong';
+  lastContact: string;
+  potentialValue: string;
+  profileUrl?: string;
+}
+
+interface IndustryTrend {
+  id: string;
+  skill: string;
+  trend: 'rising' | 'stable' | 'declining';
+  demandGrowth: number;
+  averageSalary: number;
+  jobPostings: number;
+  description: string;
+}
+
+interface CareerAssessment {
+  id: string;
+  title: string;
+  questions: AssessmentQuestion[];
+  completed: boolean;
+  score?: number;
+  recommendations?: string[];
+}
+
+interface AssessmentQuestion {
+  id: string;
+  question: string;
+  type: 'multiple-choice' | 'rating' | 'text';
+  options?: string[];
+  answer?: string | number;
+}
+
+interface NetworkingEvent {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  type: 'conference' | 'meetup' | 'workshop' | 'webinar' | 'networking';
+  isVirtual: boolean;
+  attendees: number;
+  tags: string[];
+  price: string;
+  organizer: string;
+  registrationUrl?: string;
+  relevanceScore: number;
+}
+
+interface NetworkingOpportunity {
+  id: string;
+  title: string;
+  description: string;
+  type: 'job_referral' | 'mentorship' | 'collaboration' | 'speaking' | 'interview_prep';
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  timeCommitment: string;
+  benefits: string[];
+  requirements: string[];
+  contact?: string;
+  deadline?: string;
+}
+
 export default function CareerDevelopmentPage() {
   const { user, token } = useAuth();
   const [skillGaps, setSkillGaps] = useState<SkillGap[]>([]);
   const [careerGoals, setCareerGoals] = useState<CareerGoal[]>([]);
   const [learningPaths, setLearningPaths] = useState<LearningPath[]>([]);
   const [selectedPath, setSelectedPath] = useState<LearningPath | null>(null);
+  const [salaryData, setSalaryData] = useState<SalaryData | null>(null);
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+  const [networkingContacts, setNetworkingContacts] = useState<NetworkingContact[]>([]);
+  const [networkingEvents, setNetworkingEvents] = useState<NetworkingEvent[]>([]);
+  const [networkingOpportunities, setNetworkingOpportunities] = useState<NetworkingOpportunity[]>([]);
+  const [industryTrends, setIndustryTrends] = useState<IndustryTrend[]>([]);
+  const [careerAssessment, setCareerAssessment] = useState<CareerAssessment | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'goals' | 'skills' | 'learning'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'goals' | 'skills' | 'learning' | 'salary' | 'networking' | 'trends' | 'assessment'>('overview');
 
   useEffect(() => {
     if (user) {
@@ -120,9 +225,20 @@ export default function CareerDevelopmentPage() {
               price: '$89.99',
               url: '#',
               skills: ['TypeScript', 'JavaScript', 'React']
+            },
+            {
+              id: '2',
+              title: 'Advanced TypeScript Patterns',
+              provider: 'Frontend Masters',
+              duration: '6 hours',
+              difficulty: 'Advanced',
+              rating: 4.8,
+              price: '$39/month',
+              url: '#',
+              skills: ['TypeScript', 'Design Patterns', 'Advanced Types']
             }
           ],
-          relatedJobs: ['Senior Frontend Developer', 'Full Stack Engineer']
+          relatedJobs: ['Senior Frontend Developer', 'Full Stack Engineer', 'TypeScript Specialist']
         },
         {
           skill: 'System Design',
@@ -132,7 +248,7 @@ export default function CareerDevelopmentPage() {
           estimatedLearningTime: '6-8 months',
           courses: [
             {
-              id: '2',
+              id: '3',
               title: 'System Design Interview Prep',
               provider: 'Tech Interview Pro',
               duration: '40 hours',
@@ -141,9 +257,84 @@ export default function CareerDevelopmentPage() {
               price: '$199',
               url: '#',
               skills: ['System Design', 'Architecture', 'Scalability']
+            },
+            {
+              id: '4',
+              title: 'Designing Data-Intensive Applications',
+              provider: 'Coursera',
+              duration: '60 hours',
+              difficulty: 'Advanced',
+              rating: 4.7,
+              price: '$49/month',
+              url: '#',
+              skills: ['Distributed Systems', 'Database Design', 'Microservices']
             }
           ],
-          relatedJobs: ['Senior Software Engineer', 'Tech Lead', 'Principal Engineer']
+          relatedJobs: ['Senior Software Engineer', 'Tech Lead', 'Principal Engineer', 'Solutions Architect']
+        },
+        {
+          skill: 'Leadership & Management',
+          currentLevel: 1,
+          targetLevel: 3,
+          demand: 78,
+          estimatedLearningTime: '4-6 months',
+          courses: [
+            {
+              id: '5',
+              title: 'Tech Leadership Essentials',
+              provider: 'LinkedIn Learning',
+              duration: '12 hours',
+              difficulty: 'Intermediate',
+              rating: 4.5,
+              price: '$29.99/month',
+              url: '#',
+              skills: ['Leadership', 'Team Management', 'Communication']
+            },
+            {
+              id: '6',
+              title: 'Engineering Management 101',
+              provider: 'Pluralsight',
+              duration: '8 hours',
+              difficulty: 'Beginner',
+              rating: 4.4,
+              price: '$35/month',
+              url: '#',
+              skills: ['People Management', 'Project Management', 'Decision Making']
+            }
+          ],
+          relatedJobs: ['Engineering Manager', 'Tech Lead', 'Team Lead', 'Senior Developer']
+        },
+        {
+          skill: 'Cloud Architecture (AWS)',
+          currentLevel: 2,
+          targetLevel: 4,
+          demand: 89,
+          estimatedLearningTime: '5-7 months',
+          courses: [
+            {
+              id: '7',
+              title: 'AWS Solutions Architect Professional',
+              provider: 'AWS Training',
+              duration: '50 hours',
+              difficulty: 'Advanced',
+              rating: 4.6,
+              price: '$300',
+              url: '#',
+              skills: ['AWS', 'Cloud Architecture', 'DevOps', 'Security']
+            },
+            {
+              id: '8',
+              title: 'Complete AWS DevOps Engineer',
+              provider: 'A Cloud Guru',
+              duration: '35 hours',
+              difficulty: 'Intermediate',
+              rating: 4.7,
+              price: '$47/month',
+              url: '#',
+              skills: ['AWS', 'CI/CD', 'Infrastructure as Code', 'Monitoring']
+            }
+          ],
+          relatedJobs: ['Cloud Architect', 'DevOps Engineer', 'Senior Backend Engineer', 'Platform Engineer']
         }
       ]);
 
@@ -207,8 +398,468 @@ export default function CareerDevelopmentPage() {
               resources: []
             }
           ]
+        },
+        {
+          id: '2',
+          title: 'AI/ML Engineering Path',
+          description: 'Master artificial intelligence and machine learning for modern applications',
+          estimatedTime: '8-12 months',
+          difficulty: 'Advanced',
+          skills: ['Python', 'TensorFlow', 'PyTorch', 'Data Science', 'MLOps'],
+          outcomes: ['Build ML models', 'Deploy AI systems', 'Data analysis expertise'],
+          steps: [
+            {
+              id: '1',
+              title: 'Python for Data Science',
+              type: 'course',
+              duration: '8 weeks',
+              completed: false,
+              resources: []
+            },
+            {
+              id: '2',
+              title: 'Machine Learning Fundamentals',
+              type: 'course',
+              duration: '10 weeks',
+              completed: false,
+              resources: []
+            },
+            {
+              id: '3',
+              title: 'Deep Learning with TensorFlow',
+              type: 'course',
+              duration: '12 weeks',
+              completed: false,
+              resources: []
+            }
+          ]
+        },
+        {
+          id: '3',
+          title: 'Cloud Architecture Mastery',
+          description: 'Become proficient in cloud architecture and DevOps practices',
+          estimatedTime: '5-7 months',
+          difficulty: 'Intermediate',
+          skills: ['AWS', 'Docker', 'Kubernetes', 'Terraform', 'CI/CD'],
+          outcomes: ['Design cloud solutions', 'Implement DevOps pipelines', 'Scale applications'],
+          steps: [
+            {
+              id: '1',
+              title: 'AWS Fundamentals',
+              type: 'certification',
+              duration: '4 weeks',
+              completed: false,
+              resources: []
+            },
+            {
+              id: '2',
+              title: 'Docker & Containerization',
+              type: 'course',
+              duration: '3 weeks',
+              completed: false,
+              resources: []
+            },
+            {
+              id: '3',
+              title: 'Kubernetes Administration',
+              type: 'course',
+              duration: '6 weeks',
+              completed: false,
+              resources: []
+            }
+          ]
         }
       ]);
+
+      // Mock salary data
+      setSalaryData({
+        currentSalary: 85000,
+        targetSalary: 120000,
+        marketAverage: 95000,
+        projectedGrowth: 15,
+        industryBenchmark: 110000,
+        location: 'San Francisco, CA'
+      });
+
+      // Mock achievements
+      setAchievements([
+        {
+          id: '1',
+          title: 'First Learning Path Completed',
+          description: 'Successfully completed your first learning path',
+          icon: 'book',
+          earned: true,
+          earnedDate: '2025-06-15',
+          category: 'learning',
+          points: 100
+        },
+        {
+          id: '2',
+          title: 'Skill Gap Champion',
+          description: 'Identified and started working on 3+ skill gaps',
+          icon: 'target',
+          earned: true,
+          earnedDate: '2025-07-01',
+          category: 'skill',
+          points: 150
+        },
+        {
+          id: '3',
+          title: 'Network Builder',
+          description: 'Connect with 10+ industry professionals',
+          icon: 'users',
+          earned: false,
+          category: 'networking',
+          points: 200
+        },
+        {
+          id: '4',
+          title: 'Assessment Master',
+          description: 'Complete your career development assessment',
+          icon: 'award',
+          earned: false,
+          category: 'career',
+          points: 125
+        },
+        {
+          id: '5',
+          title: 'Goal Achiever',
+          description: 'Complete your first career goal',
+          icon: 'trophy',
+          earned: false,
+          category: 'career',
+          points: 300
+        },
+        {
+          id: '6',
+          title: 'Learning Streak',
+          description: 'Maintain a 30-day learning streak',
+          icon: 'zap',
+          earned: true,
+          earnedDate: '2025-07-10',
+          category: 'learning',
+          points: 175
+        }
+      ]);
+
+      // Mock networking contacts
+      setNetworkingContacts([
+        {
+          id: '1',
+          name: 'Sarah Chen',
+          title: 'Senior Engineering Manager',
+          company: 'Google',
+          industry: 'Technology',
+          connectionStrength: 'medium',
+          lastContact: '2025-07-10',
+          potentialValue: 'Mentorship & Career Guidance'
+        },
+        {
+          id: '2',
+          name: 'Michael Rodriguez',
+          title: 'Tech Lead',
+          company: 'Meta',
+          industry: 'Technology',
+          connectionStrength: 'strong',
+          lastContact: '2025-07-12',
+          potentialValue: 'Technical Skills & Project Collaboration'
+        },
+        {
+          id: '3',
+          name: 'Emily Johnson',
+          title: 'Principal Software Engineer',
+          company: 'Amazon',
+          industry: 'Technology',
+          connectionStrength: 'medium',
+          lastContact: '2025-06-28',
+          potentialValue: 'System Design Expertise & Referrals'
+        },
+        {
+          id: '4',
+          name: 'David Kim',
+          title: 'CTO',
+          company: 'Startup Inc',
+          industry: 'Technology',
+          connectionStrength: 'weak',
+          lastContact: '2025-06-15',
+          potentialValue: 'Leadership Insights & Startup Opportunities'
+        },
+        {
+          id: '5',
+          name: 'Lisa Wang',
+          title: 'Senior Data Scientist',
+          company: 'Netflix',
+          industry: 'Technology',
+          connectionStrength: 'strong',
+          lastContact: '2025-07-14',
+          potentialValue: 'AI/ML Knowledge & Cross-domain Skills'
+        }
+      ]);
+
+      // Mock networking events (simulating real event data)
+      setNetworkingEvents([
+        {
+          id: '1',
+          title: 'React Conf 2025',
+          description: 'Annual React conference featuring the latest updates, best practices, and networking opportunities with React core team and community leaders.',
+          date: '2025-03-15',
+          time: '09:00 AM',
+          location: 'San Francisco, CA',
+          type: 'conference',
+          isVirtual: false,
+          attendees: 2500,
+          tags: ['React', 'Frontend', 'JavaScript', 'Web Development'],
+          price: '$299',
+          organizer: 'React Community',
+          registrationUrl: 'https://reactconf.com',
+          relevanceScore: 95
+        },
+        {
+          id: '2',
+          title: 'Bay Area System Design Meetup',
+          description: 'Monthly meetup focused on system design patterns, scalability challenges, and architectural best practices. Great for senior engineers.',
+          date: '2025-07-25',
+          time: '06:30 PM',
+          location: 'Palo Alto, CA',
+          type: 'meetup',
+          isVirtual: false,
+          attendees: 150,
+          tags: ['System Design', 'Architecture', 'Scalability', 'Engineering'],
+          price: 'Free',
+          organizer: 'Bay Area Tech Community',
+          relevanceScore: 88
+        },
+        {
+          id: '3',
+          title: 'AI/ML Engineering Workshop',
+          description: 'Hands-on workshop covering machine learning deployment, MLOps best practices, and building production-ready AI systems.',
+          date: '2025-08-10',
+          time: '10:00 AM',
+          location: 'Virtual',
+          type: 'workshop',
+          isVirtual: true,
+          attendees: 300,
+          tags: ['AI', 'Machine Learning', 'MLOps', 'Python', 'TensorFlow'],
+          price: '$149',
+          organizer: 'AI Engineering Institute',
+          relevanceScore: 82
+        },
+        {
+          id: '4',
+          title: 'Women in Tech Leadership Summit',
+          description: 'Leadership development summit focusing on career advancement, executive presence, and building inclusive teams in technology.',
+          date: '2025-09-05',
+          time: '09:00 AM',
+          location: 'Seattle, WA',
+          type: 'conference',
+          isVirtual: false,
+          attendees: 800,
+          tags: ['Leadership', 'Diversity', 'Career Development', 'Management'],
+          price: '$199',
+          organizer: 'Women in Tech Global',
+          relevanceScore: 76
+        },
+        {
+          id: '5',
+          title: 'Cloud Architecture Deep Dive',
+          description: 'Technical webinar series covering AWS, Azure, and GCP architecture patterns, with live Q&A from cloud architects.',
+          date: '2025-07-30',
+          time: '02:00 PM',
+          location: 'Virtual',
+          type: 'webinar',
+          isVirtual: true,
+          attendees: 500,
+          tags: ['Cloud', 'AWS', 'Azure', 'Architecture', 'DevOps'],
+          price: 'Free',
+          organizer: 'Cloud Architecture Alliance',
+          relevanceScore: 91
+        },
+        {
+          id: '6',
+          title: 'Local TypeScript User Group',
+          description: 'Monthly TypeScript meetup with lightning talks, code reviews, and networking. Perfect for developers looking to improve TypeScript skills.',
+          date: '2025-08-15',
+          time: '07:00 PM',
+          location: 'San Francisco, CA',
+          type: 'meetup',
+          isVirtual: false,
+          attendees: 80,
+          tags: ['TypeScript', 'JavaScript', 'Frontend', 'Programming'],
+          price: 'Free',
+          organizer: 'SF TypeScript Community',
+          relevanceScore: 89
+        }
+      ]);
+
+      // Mock networking opportunities
+      setNetworkingOpportunities([
+        {
+          id: '1',
+          title: 'FAANG Company Referral Program',
+          description: 'Get referred to senior software engineering positions at major tech companies through our verified network of current employees.',
+          type: 'job_referral',
+          difficulty: 'intermediate',
+          timeCommitment: '2-3 hours for interview prep',
+          benefits: [
+            'Direct referral to hiring managers',
+            'Resume review by current employees',
+            'Interview preparation sessions',
+            'Salary negotiation guidance'
+          ],
+          requirements: [
+            '3+ years of software engineering experience',
+            'Strong system design knowledge',
+            'Experience with modern web technologies',
+            'Previous leadership or mentoring experience preferred'
+          ],
+          contact: 'Sarah Chen (Google)',
+          deadline: '2025-08-31'
+        },
+        {
+          id: '2',
+          title: 'Senior Engineer Mentorship Program',
+          description: 'Be mentored by principal engineers and tech leads from top companies. Focus on career advancement and technical leadership skills.',
+          type: 'mentorship',
+          difficulty: 'intermediate',
+          timeCommitment: '1 hour/week for 6 months',
+          benefits: [
+            'Personalized career roadmap',
+            'Technical skill development',
+            'Leadership coaching',
+            'Network expansion',
+            'Mock interview practice'
+          ],
+          requirements: [
+            '2+ years of professional experience',
+            'Commitment to regular meetings',
+            'Specific career goals defined',
+            'Willingness to give back to community'
+          ],
+          contact: 'Michael Rodriguez (Meta)',
+          deadline: '2025-07-25'
+        },
+        {
+          id: '3',
+          title: 'Open Source Project Collaboration',
+          description: 'Contribute to high-impact open source projects used by millions of developers. Build your portfolio and network with maintainers.',
+          type: 'collaboration',
+          difficulty: 'beginner',
+          timeCommitment: '5-10 hours/week',
+          benefits: [
+            'GitHub portfolio enhancement',
+            'Real-world project experience',
+            'Community recognition',
+            'Learning cutting-edge technologies',
+            'Potential job opportunities'
+          ],
+          requirements: [
+            'Basic Git/GitHub knowledge',
+            'Proficiency in JavaScript/TypeScript',
+            'Good communication skills',
+            'Commitment to quality code'
+          ],
+          contact: 'Open Source Community',
+          deadline: '2025-12-31'
+        },
+        {
+          id: '4',
+          title: 'Tech Conference Speaking Opportunity',
+          description: 'Share your expertise at regional tech conferences. Great for building personal brand and establishing thought leadership.',
+          type: 'speaking',
+          difficulty: 'advanced',
+          timeCommitment: '20-30 hours preparation',
+          benefits: [
+            'Industry recognition',
+            'Personal brand building',
+            'Network expansion',
+            'Speaking fee compensation',
+            'Travel opportunities'
+          ],
+          requirements: [
+            'Deep expertise in specific technology',
+            'Previous speaking experience preferred',
+            'Strong presentation skills',
+            'Unique insights or case studies'
+          ],
+          contact: 'Conference Organizers',
+          deadline: '2025-09-15'
+        },
+        {
+          id: '5',
+          title: 'Mock Interview Exchange Program',
+          description: 'Practice technical interviews with peers preparing for similar roles. Improve your interviewing skills through peer feedback.',
+          type: 'interview_prep',
+          difficulty: 'beginner',
+          timeCommitment: '2-3 hours/week',
+          benefits: [
+            'Interview skill improvement',
+            'Peer feedback and tips',
+            'Reduced interview anxiety',
+            'Learning different approaches',
+            'Building interview confidence'
+          ],
+          requirements: [
+            'Actively job searching or preparing',
+            'Commitment to help others',
+            'Basic algorithmic knowledge',
+            'Professional communication skills'
+          ],
+          contact: 'Interview Prep Community',
+          deadline: '2025-12-31'
+        }
+      ]);
+
+      // Mock industry trends
+      setIndustryTrends([
+        {
+          id: '1',
+          skill: 'AI/Machine Learning',
+          trend: 'rising',
+          demandGrowth: 45,
+          averageSalary: 130000,
+          jobPostings: 15420,
+          description: 'Explosive growth in AI applications across all industries'
+        },
+        {
+          id: '2',
+          skill: 'Cloud Architecture',
+          trend: 'rising',
+          demandGrowth: 32,
+          averageSalary: 125000,
+          jobPostings: 12850,
+          description: 'Continued migration to cloud-native solutions'
+        },
+        {
+          id: '3',
+          skill: 'DevOps/Platform Engineering',
+          trend: 'stable',
+          demandGrowth: 18,
+          averageSalary: 115000,
+          jobPostings: 8960,
+          description: 'Steady demand for infrastructure automation experts'
+        }
+      ]);
+
+      // Mock career assessment
+      setCareerAssessment({
+        id: '1',
+        title: 'Career Readiness Assessment',
+        completed: false,
+        questions: [
+          {
+            id: '1',
+            question: 'How would you rate your current technical skills?',
+            type: 'rating',
+            options: ['1', '2', '3', '4', '5']
+          },
+          {
+            id: '2',
+            question: 'What is your primary career goal for the next 2 years?',
+            type: 'multiple-choice',
+            options: ['Promotion to Senior Level', 'Leadership Role', 'Career Change', 'Start Own Business']
+          }
+        ]
+      });
 
     } catch (error) {
       console.error('Error fetching career data:', error);
@@ -218,13 +869,150 @@ export default function CareerDevelopmentPage() {
   };
 
   const createNewGoal = () => {
-    // Implementation for creating new career goal
-    console.log('Creating new career goal...');
+    const newGoal: CareerGoal = {
+      id: String(careerGoals.length + 1),
+      title: 'New Career Goal',
+      targetRole: 'Senior Software Engineer',
+      company: 'Target Company',
+      deadline: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      progress: 0,
+      status: 'active',
+      requiredSkills: ['Leadership', 'Technical Skills'],
+      milestones: [
+        {
+          id: '1',
+          title: 'Define specific objectives',
+          description: 'Set clear and measurable career objectives',
+          completed: false,
+          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          type: 'skill'
+        }
+      ]
+    };
+    setCareerGoals([...careerGoals, newGoal]);
   };
 
   const enrollInPath = (pathId: string) => {
     console.log(`Enrolling in learning path: ${pathId}`);
-    // Implementation for enrolling in learning path
+    // Update the learning path to show enrollment
+    setLearningPaths(paths =>
+      paths.map(path =>
+        path.id === pathId
+          ? { ...path, steps: path.steps.map(step => ({ ...step, completed: false })) }
+          : path
+      )
+    );
+
+    // Show success message (in a real app, this would be a toast notification)
+    alert('Successfully enrolled in learning path! Check your progress in the Learning tab.');
+  };
+
+  const startAssessment = () => {
+    if (careerAssessment) {
+      setCareerAssessment({
+        ...careerAssessment,
+        completed: true,
+        score: 85,
+        recommendations: [
+          'Focus on developing leadership skills to advance to senior roles',
+          'Consider obtaining cloud architecture certifications to increase market value',
+          'Build a stronger professional network in your target companies',
+          'Practice system design skills through mock interviews and projects'
+        ]
+      });
+    }
+  };
+
+  const toggleMilestone = (goalId: string, milestoneId: string) => {
+    setCareerGoals(goals =>
+      goals.map(goal =>
+        goal.id === goalId
+          ? {
+            ...goal,
+            milestones: goal.milestones.map(milestone =>
+              milestone.id === milestoneId
+                ? { ...milestone, completed: !milestone.completed }
+                : milestone
+            ),
+            progress: goal.milestones.filter(m =>
+              m.id === milestoneId ? !goal.milestones.find(ms => ms.id === milestoneId)?.completed
+                : m.completed
+            ).length / goal.milestones.length * 100
+          }
+          : goal
+      )
+    );
+  };
+
+  const messageContact = (contactId: string) => {
+    // In a real app, this would open a messaging interface
+    const contact = networkingContacts.find(c => c.id === contactId);
+    alert(`Message feature would open for ${contact?.name}. This would integrate with LinkedIn, email, or internal messaging.`);
+  };
+
+  const scheduleContact = (contactId: string) => {
+    // In a real app, this would open calendar scheduling
+    const contact = networkingContacts.find(c => c.id === contactId);
+    alert(`Calendar scheduling would open for ${contact?.name}. This would integrate with calendar apps.`);
+  };
+
+  const addNetworkingContact = () => {
+    const newContact: NetworkingContact = {
+      id: String(networkingContacts.length + 1),
+      name: 'New Contact',
+      title: 'Software Engineer',
+      company: 'Tech Company',
+      industry: 'Technology',
+      connectionStrength: 'weak',
+      lastContact: new Date().toISOString().split('T')[0],
+      potentialValue: 'Industry insights and networking'
+    };
+    setNetworkingContacts([...networkingContacts, newContact]);
+  };
+
+  const registerForEvent = (eventId: string) => {
+    const event = networkingEvents.find(e => e.id === eventId);
+    if (event) {
+      if (event.registrationUrl) {
+        // In a real app, this would open the registration URL
+        alert(`Registration would open for "${event.title}". You would be redirected to: ${event.registrationUrl}`);
+      } else {
+        alert(`Registration confirmed for "${event.title}"! Check your email for details.`);
+      }
+
+      // Update event to show registered status (in real app, this would be persisted)
+      console.log(`Registered for event: ${event.title}`);
+    }
+  };
+
+  const applyToOpportunity = (opportunityId: string) => {
+    const opportunity = networkingOpportunities.find(o => o.id === opportunityId);
+    if (opportunity) {
+      alert(`Application submitted for "${opportunity.title}"! The organizer will contact you within 3-5 business days.`);
+      console.log(`Applied to opportunity: ${opportunity.title}`);
+    }
+  };
+
+  const getEventIcon = (type: string) => {
+    switch (type) {
+      case 'conference': return FiUsers;
+      case 'meetup': return FiMessageCircle;
+      case 'workshop': return FiBook;
+      case 'webinar': return FiGlobe;
+      case 'networking': return FiUsers;
+      default: return FiCalendar;
+    }
+  };
+
+  const getOpportunityIcon = (type: string) => {
+    switch (type) {
+      case 'job_referral': return FiBriefcase;
+      case 'mentorship': return FiUsers;
+      case 'collaboration': return FiGlobe;
+      case 'speaking': return FiMessageCircle;
+      case 'interview_prep': return FiTarget;
+      default: return FiAward;
+    }
   };
 
   if (loading) {
@@ -260,19 +1048,23 @@ export default function CareerDevelopmentPage() {
 
         {/* Navigation Tabs */}
         <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
-          <nav className="-mb-px flex space-x-8">
+          <nav className="-mb-px flex space-x-8 overflow-x-auto">
             {[
               { id: 'overview', label: 'Overview', icon: FiTrendingUp },
               { id: 'goals', label: 'Career Goals', icon: FiTarget },
               { id: 'skills', label: 'Skill Gaps', icon: FiAward },
-              { id: 'learning', label: 'Learning Paths', icon: FiBook }
+              { id: 'learning', label: 'Learning Paths', icon: FiBook },
+              { id: 'salary', label: 'Salary Tracker', icon: FiDollarSign },
+              { id: 'networking', label: 'Networking', icon: FiUsers },
+              { id: 'trends', label: 'Industry Trends', icon: FiGlobe },
+              { id: 'assessment', label: 'Assessment', icon: FiLayers }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${activeTab === tab.id
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                   }`}
               >
                 <tab.icon className="w-4 h-4 mr-2" />
@@ -286,7 +1078,7 @@ export default function CareerDevelopmentPage() {
         {activeTab === 'overview' && (
           <div className="space-y-8">
             {/* Career Progress Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center mb-4">
                   <FiTarget className="w-8 h-8 text-green-500" />
@@ -303,7 +1095,7 @@ export default function CareerDevelopmentPage() {
                   {careerGoals.filter(goal => goal.status === 'active').length}
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  65% average progress
+                  {Math.round(careerGoals.reduce((acc, goal) => acc + goal.progress, 0) / careerGoals.length || 0)}% average progress
                 </p>
               </div>
 
@@ -346,6 +1138,68 @@ export default function CareerDevelopmentPage() {
                   Personalized recommendations
                 </p>
               </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center mb-4">
+                  <FiDollarSign className="w-8 h-8 text-blue-500" />
+                  <div className="ml-3">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Salary Growth
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Expected increase
+                    </p>
+                  </div>
+                </div>
+                <div className="text-3xl font-bold text-blue-600 mb-2">
+                  +{salaryData?.projectedGrowth || 0}%
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Based on your goals
+                </p>
+              </div>
+            </div>
+
+            {/* Achievements Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <FiAward className="w-5 h-5 mr-2 text-yellow-500" />
+                Recent Achievements
+                <span className="ml-auto text-sm bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded-full">
+                  {achievements.filter(a => a.earned).reduce((sum, a) => sum + a.points, 0)} points earned
+                </span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {achievements.slice(0, 3).map((achievement) => (
+                  <div
+                    key={achievement.id}
+                    className={`p-4 rounded-lg border ${achievement.earned
+                      ? 'bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-yellow-200 dark:border-yellow-700'
+                      : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
+                      }`}
+                  >
+                    <div className="flex items-center mb-2">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${achievement.earned
+                        ? 'bg-yellow-500 text-white'
+                        : 'bg-gray-300 dark:bg-gray-600 text-gray-500'
+                        }`}>
+                        <FiAward className="w-4 h-4" />
+                      </div>
+                      <div className="ml-3">
+                        <p className="font-medium text-gray-900 dark:text-white text-sm">
+                          {achievement.title}
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          {achievement.points} points
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {achievement.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Quick Actions */}
@@ -355,7 +1209,10 @@ export default function CareerDevelopmentPage() {
                   Recommended Actions
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <div
+                    className="flex items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                    onClick={() => setActiveTab('learning')}
+                  >
                     <FiZap className="w-5 h-5 text-blue-500 mr-3" />
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">
@@ -367,7 +1224,10 @@ export default function CareerDevelopmentPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <div
+                    className="flex items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                    onClick={() => setActiveTab('goals')}
+                  >
                     <FiTarget className="w-5 h-5 text-green-500 mr-3" />
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">
@@ -375,6 +1235,21 @@ export default function CareerDevelopmentPage() {
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         Review your Senior Engineer goal progress
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    className="flex items-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+                    onClick={() => setActiveTab('networking')}
+                  >
+                    <FiUsers className="w-5 h-5 text-purple-500 mr-3" />
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        Expand Professional Network
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Connect with 5 new industry professionals this month
                       </p>
                     </div>
                   </div>
@@ -393,8 +1268,8 @@ export default function CareerDevelopmentPage() {
                       <div
                         key={i}
                         className={`w-8 h-8 rounded-full flex items-center justify-center ${i < 5
-                            ? 'bg-green-500 text-white'
-                            : 'bg-gray-200 dark:bg-gray-600'
+                          ? 'bg-green-500 text-white'
+                          : 'bg-gray-200 dark:bg-gray-600'
                           }`}
                       >
                         {i < 5 && <FiCheckCircle className="w-4 h-4" />}
@@ -457,27 +1332,33 @@ export default function CareerDevelopmentPage() {
                 <div className="space-y-3">
                   <h4 className="font-semibold text-gray-900 dark:text-white">
                     Milestones:
-                  </h4>
-                  {goal.milestones.map((milestone) => (
+                  </h4>                  {goal.milestones.map((milestone) => (
                     <div
                       key={milestone.id}
-                      className={`flex items-center p-3 rounded-lg ${milestone.completed
-                          ? 'bg-green-50 dark:bg-green-900/20'
-                          : 'bg-gray-50 dark:bg-gray-700'
+                      className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${milestone.completed
+                        ? 'bg-green-50 dark:bg-green-900/20'
+                        : 'bg-gray-50 dark:bg-gray-700'
                         }`}
+                      onClick={() => toggleMilestone(goal.id, milestone.id)}
                     >
-                      <div className={`w-5 h-5 rounded-full mr-3 flex items-center justify-center ${milestone.completed
-                          ? 'bg-green-500 text-white'
-                          : 'bg-gray-300 dark:bg-gray-600'
+                      <div className={`w-5 h-5 rounded-full mr-3 flex items-center justify-center transition-colors ${milestone.completed
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
                         }`}>
                         {milestone.completed && <FiCheckCircle className="w-3 h-3" />}
                       </div>
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
+                      <div className="flex-1">
+                        <p className={`font-medium ${milestone.completed
+                          ? 'text-green-800 dark:text-green-200 line-through'
+                          : 'text-gray-900 dark:text-white'
+                          }`}>
                           {milestone.title}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           {milestone.description}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                          Due: {new Date(milestone.dueDate).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -647,6 +1528,790 @@ export default function CareerDevelopmentPage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Salary Tracker Tab */}
+        {activeTab === 'salary' && salaryData && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Salary Growth Tracker
+            </h2>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Current vs Target Salary */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <FiDollarSign className="w-5 h-5 mr-2 text-green-500" />
+                  Salary Progression
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Current Salary</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                      ${salaryData.currentSalary.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                    <div
+                      className="bg-gradient-to-r from-green-500 to-blue-500 h-3 rounded-full transition-all duration-300"
+                      style={{ width: `${(salaryData.currentSalary / salaryData.targetSalary) * 100}%` }}
+                    ></div>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Target Salary</span>
+                    <span className="text-xl font-bold text-blue-600">
+                      ${salaryData.targetSalary.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm text-blue-800 dark:text-blue-300">
+                      <strong>Gap to close:</strong> ${(salaryData.targetSalary - salaryData.currentSalary).toLocaleString()}
+                    </p>
+                    <p className="text-sm text-blue-800 dark:text-blue-300 mt-1">
+                      <strong>Projected timeline:</strong> 18-24 months with current skill development plan
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Market Comparison */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <FiBarChart className="w-5 h-5 mr-2 text-purple-500" />
+                  Market Benchmarks
+                </h3>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <span className="text-gray-600 dark:text-gray-400">Market Average</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      ${salaryData.marketAverage.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <span className="text-gray-600 dark:text-gray-400">Industry Benchmark</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      ${salaryData.industryBenchmark.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <span className="text-green-700 dark:text-green-300">Your Position</span>
+                    <span className="font-semibold text-green-700 dark:text-green-300">
+                      {salaryData.currentSalary > salaryData.marketAverage ? 'Above' : 'Below'} Market
+                    </span>
+                  </div>
+
+                  <div className="mt-4 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                    <p className="text-sm text-purple-800 dark:text-purple-300">
+                      <FiMapPin className="w-4 h-4 inline mr-1" />
+                      Location: {salaryData.location}
+                    </p>
+                    <p className="text-sm text-purple-800 dark:text-purple-300 mt-1">
+                      Expected growth with skill improvements: <strong>+{salaryData.projectedGrowth}%</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Salary Improvement Recommendations */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Salary Improvement Strategies
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-900 dark:text-white">
+                    High-Impact Actions:
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <FiZap className="w-4 h-4 text-green-500 mr-3" />
+                      <span className="text-sm text-gray-900 dark:text-white">
+                        Complete TypeScript certification (+$8K potential)
+                      </span>
+                    </div>
+                    <div className="flex items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <FiTarget className="w-4 h-4 text-blue-500 mr-3" />
+                      <span className="text-sm text-gray-900 dark:text-white">
+                        Lead a major project (+$12K potential)
+                      </span>
+                    </div>
+                    <div className="flex items-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                      <FiUsers className="w-4 h-4 text-purple-500 mr-3" />
+                      <span className="text-sm text-gray-900 dark:text-white">
+                        Build network in target companies (+$15K potential)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-900 dark:text-white">
+                    Timeline Milestones:
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                      <FiCalendar className="w-4 h-4 text-yellow-500 mr-3" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          6 months: +$5K-8K
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          Complete skill certifications
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                      <FiCalendar className="w-4 h-4 text-orange-500 mr-3" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          12 months: +$15K-20K
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          Promotion or role transition
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                      <FiCalendar className="w-4 h-4 text-red-500 mr-3" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          24 months: Target achieved
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          Senior role at target company
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Networking Tab */}
+        {activeTab === 'networking' && (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Professional Networking
+              </h2>
+              <button
+                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                onClick={addNetworkingContact}
+              >
+                <FiUsers className="w-4 h-4 mr-2" />
+                Find Connections
+              </button>
+            </div>
+
+            {/* Networking Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center mb-2">
+                  <FiUsers className="w-6 h-6 text-blue-500 mr-2" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Total Connections
+                  </h3>
+                </div>
+                <div className="text-3xl font-bold text-blue-600">
+                  {networkingContacts.length}
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Industry professionals
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center mb-2">
+                  <FiMessageCircle className="w-6 h-6 text-green-500 mr-2" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Active Conversations
+                  </h3>
+                </div>
+                <div className="text-3xl font-bold text-green-600">
+                  {networkingContacts.filter(c =>
+                    new Date(c.lastContact) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+                  ).length}
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  In the last 30 days
+                </p>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center mb-2">
+                  <FiBriefcase className="w-6 h-6 text-purple-500 mr-2" />
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Referral Potential
+                  </h3>
+                </div>
+                <div className="text-3xl font-bold text-purple-600">
+                  {networkingContacts.filter(c => c.connectionStrength === 'strong').length}
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Strong connections
+                </p>
+              </div>
+            </div>
+
+            {/* Networking Contacts */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Your Professional Network
+              </h3>
+              <div className="space-y-4">
+                {networkingContacts.map((contact) => (
+                  <div
+                    key={contact.id}
+                    className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2">
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            {contact.name.split(' ').map(n => n[0]).join('')}
+                          </div>
+                          <div className="ml-3">
+                            <h4 className="font-semibold text-gray-900 dark:text-white">
+                              {contact.name}
+                            </h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {contact.title} at {contact.company}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                          <strong>Potential Value:</strong> {contact.potentialValue}
+                        </p>
+                        <div className="flex items-center space-x-4 text-xs text-gray-600 dark:text-gray-400">
+                          <span className="flex items-center">
+                            <div className={`w-2 h-2 rounded-full mr-1 ${contact.connectionStrength === 'strong' ? 'bg-green-500' :
+                              contact.connectionStrength === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
+                              }`}></div>
+                            {contact.connectionStrength} connection
+                          </span>
+                          <span>Last contact: {new Date(contact.lastContact).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          className="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-colors"
+                          onClick={() => messageContact(contact.id)}
+                        >
+                          Message
+                        </button>
+                        <button
+                          className="px-3 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors"
+                          onClick={() => scheduleContact(contact.id)}
+                        >
+                          Schedule
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Networking Recommendations */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                Networking Opportunities
+              </h3>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                    Career Opportunities:
+                  </h4>
+                  <div className="space-y-3">
+                    {networkingOpportunities.slice(0, 3).map((opportunity) => {
+                      const IconComponent = getOpportunityIcon(opportunity.type);
+                      return (
+                        <div key={opportunity.id} className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center">
+                              <IconComponent className="w-5 h-5 text-blue-500 mr-2" />
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {opportunity.title}
+                              </span>
+                            </div>
+                            <span className={`px-2 py-1 text-xs rounded-full ${opportunity.difficulty === 'beginner' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
+                                opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                                  'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                              }`}>
+                              {opportunity.difficulty}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            {opportunity.description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500 dark:text-gray-500">
+                              <FiClock className="w-3 h-3 inline mr-1" />
+                              {opportunity.timeCommitment}
+                            </span>
+                            <button
+                              className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                              onClick={() => applyToOpportunity(opportunity.id)}
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                    Upcoming Events:
+                  </h4>
+                  <div className="space-y-3">
+                    {networkingEvents.slice(0, 3).map((event) => {
+                      const IconComponent = getEventIcon(event.type);
+                      return (
+                        <div key={event.id} className="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center">
+                              <IconComponent className="w-5 h-5 text-green-500 mr-2" />
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {event.title}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                                {event.relevanceScore}% match
+                              </span>
+                              {event.isVirtual && (
+                                <div className="text-xs text-blue-600 dark:text-blue-400">Virtual</div>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            {new Date(event.date).toLocaleDateString()} • {event.time} • {event.location}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs text-gray-500 dark:text-gray-500">
+                                {event.attendees} attendees
+                              </span>
+                              <span className="text-xs font-semibold text-green-600 dark:text-green-400">
+                                {event.price}
+                              </span>
+                            </div>
+                            <button
+                              className="px-3 py-1 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                              onClick={() => registerForEvent(event.id)}
+                            >
+                              Register
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed Events Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Recommended Events
+                </h3>
+                <div className="flex space-x-2">
+                  <select className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <option>All Events</option>
+                    <option>Conferences</option>
+                    <option>Meetups</option>
+                    <option>Workshops</option>
+                    <option>Webinars</option>
+                  </select>
+                  <select className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <option>All Locations</option>
+                    <option>San Francisco</option>
+                    <option>Virtual</option>
+                    <option>Seattle</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {networkingEvents.map((event) => {
+                  const IconComponent = getEventIcon(event.type);
+                  return (
+                    <div key={event.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center">
+                          <IconComponent className="w-6 h-6 text-primary-500 mr-3" />
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-white">{event.title}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{event.organizer}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-2 py-1 text-xs rounded-full ${event.relevanceScore >= 90 ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
+                              event.relevanceScore >= 80 ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                                'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+                            }`}>
+                            {event.relevanceScore}% match
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{event.description}</p>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <FiCalendar className="w-4 h-4 mr-2" />
+                          {new Date(event.date).toLocaleDateString()} at {event.time}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <FiMapPin className="w-4 h-4 mr-2" />
+                          {event.location} {event.isVirtual && '(Virtual)'}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <FiUsers className="w-4 h-4 mr-2" />
+                          {event.attendees} expected attendees
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {event.tags.map((tag, index) => (
+                          <span key={index} className="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900/20 text-primary-800 dark:text-primary-300 rounded-full">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-primary-600">{event.price}</span>
+                        <button
+                          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                          onClick={() => registerForEvent(event.id)}
+                        >
+                          Register Now
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Detailed Opportunities Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                Career Development Opportunities
+              </h3>
+
+              <div className="space-y-6">
+                {networkingOpportunities.map((opportunity) => {
+                  const IconComponent = getOpportunityIcon(opportunity.type);
+                  return (
+                    <div key={opportunity.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center">
+                          <IconComponent className="w-8 h-8 text-primary-500 mr-4" />
+                          <div>
+                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{opportunity.title}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">{opportunity.type.replace('_', ' ')}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-3 py-1 text-sm rounded-full ${opportunity.difficulty === 'beginner' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
+                              opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                                'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                            }`}>
+                            {opportunity.difficulty}
+                          </span>
+                          {opportunity.deadline && (
+                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                              Due: {new Date(opportunity.deadline).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="text-gray-700 dark:text-gray-300 mb-4">{opportunity.description}</p>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                        <div>
+                          <h5 className="font-medium text-gray-900 dark:text-white mb-2">Benefits:</h5>
+                          <ul className="space-y-1">
+                            {opportunity.benefits.map((benefit, index) => (
+                              <li key={index} className="flex items-start text-sm text-gray-600 dark:text-gray-400">
+                                <FiCheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                                {benefit}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div>
+                          <h5 className="font-medium text-gray-900 dark:text-white mb-2">Requirements:</h5>
+                          <ul className="space-y-1">
+                            {opportunity.requirements.map((requirement, index) => (
+                              <li key={index} className="flex items-start text-sm text-gray-600 dark:text-gray-400">
+                                <FiArrowRight className="w-4 h-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+                                {requirement}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                          <span className="flex items-center">
+                            <FiClock className="w-4 h-4 mr-1" />
+                            {opportunity.timeCommitment}
+                          </span>
+                          {opportunity.contact && (
+                            <span className="flex items-center">
+                              <FiMessageCircle className="w-4 h-4 mr-1" />
+                              {opportunity.contact}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                          onClick={() => applyToOpportunity(opportunity.id)}
+                        >
+                          Apply Now
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Industry Trends Tab */}
+        {activeTab === 'trends' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Industry Trends & Market Intelligence
+            </h2>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {industryTrends.map((trend) => (
+                <div
+                  key={trend.id}
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {trend.skill}
+                    </h3>
+                    <div className={`px-2 py-1 rounded-full text-xs font-medium ${trend.trend === 'rising' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
+                      trend.trend === 'stable' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300' :
+                        'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                      }`}>
+                      {trend.trend === 'rising' && <FiTrendingUp className="w-3 h-3 inline mr-1" />}
+                      {trend.trend.charAt(0).toUpperCase() + trend.trend.slice(1)}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Demand Growth</span>
+                      <span className="font-semibold text-green-600">+{trend.demandGrowth}%</span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Avg Salary</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        ${trend.averageSalary.toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Job Postings</span>
+                      <span className="font-semibold text-blue-600">
+                        {trend.jobPostings.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      {trend.description}
+                    </p>
+                  </div>
+
+                  <button
+                    className="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                    onClick={() => setActiveTab('learning')}
+                  >
+                    Explore Learning Path
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {/* Market Insights */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                <FiPieChart className="w-5 h-5 mr-2 text-blue-500" />
+                Market Intelligence
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                    Hot Skills for 2025:
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 bg-green-50 dark:bg-green-900/20 rounded">
+                      <span className="text-sm text-gray-900 dark:text-white">Generative AI</span>
+                      <span className="text-sm font-semibold text-green-600">+67% demand</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
+                      <span className="text-sm text-gray-900 dark:text-white">Kubernetes</span>
+                      <span className="text-sm font-semibold text-blue-600">+52% demand</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-purple-50 dark:bg-purple-900/20 rounded">
+                      <span className="text-sm text-gray-900 dark:text-white">Rust</span>
+                      <span className="text-sm font-semibold text-purple-600">+48% demand</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                    Regional Job Markets:
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                      <span className="text-sm text-gray-900 dark:text-white">San Francisco Bay Area</span>
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">24,580 jobs</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                      <span className="text-sm text-gray-900 dark:text-white">Seattle</span>
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">18,920 jobs</span>
+                    </div>
+                    <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                      <span className="text-sm text-gray-900 dark:text-white">New York</span>
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">16,340 jobs</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Career Assessment Tab */}
+        {activeTab === 'assessment' && careerAssessment && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Career Development Assessment
+            </h2>
+
+            {!careerAssessment.completed ? (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FiLayers className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+                    {careerAssessment.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6">
+                    Get personalized career recommendations based on your skills, goals, and preferences.
+                  </p>
+                  <div className="flex items-center justify-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                    <span className="flex items-center">
+                      <FiClock className="w-4 h-4 mr-1" />
+                      10-15 minutes
+                    </span>
+                    <span className="flex items-center">
+                      <FiCheckCircle className="w-4 h-4 mr-1" />
+                      {careerAssessment.questions.length} questions
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-6 mb-6">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                    What you'll discover:
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ul className="space-y-2">
+                      <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                        <FiTarget className="w-4 h-4 text-blue-500 mr-2" />
+                        Your career readiness score
+                      </li>
+                      <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                        <FiAward className="w-4 h-4 text-green-500 mr-2" />
+                        Personalized skill recommendations
+                      </li>
+                    </ul>
+                    <ul className="space-y-2">
+                      <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                        <FiBriefcase className="w-4 h-4 text-purple-500 mr-2" />
+                        Optimal career paths
+                      </li>
+                      <li className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                        <FiTrendingUp className="w-4 h-4 text-orange-500 mr-2" />
+                        Market positioning insights
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
+                    onClick={startAssessment}
+                  >
+                    Start Assessment
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FiCheckCircle className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+                    Assessment Complete!
+                  </h3>
+                  <p className="text-lg font-medium text-green-600">
+                    Your Career Readiness Score: {careerAssessment.score || 85}/100
+                  </p>
+                </div>
+
+                {careerAssessment.recommendations && (
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-gray-900 dark:text-white">
+                      Personalized Recommendations:
+                    </h4>
+                    {careerAssessment.recommendations.map((rec, index) => (
+                      <div key={index} className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                        <p className="text-gray-800 dark:text-gray-200">{rec}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
