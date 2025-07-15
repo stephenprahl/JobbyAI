@@ -10,7 +10,8 @@ export const useAutoLogin = () => {
 
   useEffect(() => {
     // Don't auto-login if user is on login/register pages (they might be manually logging in)
-    if (location.pathname === '/login' || location.pathname === '/register') {
+    // Also don't auto-login on home page to prevent redirect loops
+    if (location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/') {
       return
     }
 

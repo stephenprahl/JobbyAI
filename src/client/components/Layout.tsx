@@ -3,11 +3,14 @@ import {
   FiBriefcase,
   FiChevronDown,
   FiCreditCard,
+  FiDollarSign,
   FiFileText,
   FiLogOut,
   FiMenu,
   FiSettings,
+  FiTarget,
   FiUser,
+  FiVideo,
   FiX
 } from 'react-icons/fi'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
@@ -27,6 +30,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: FiUser, color: 'text-primary-600' },
     { name: 'Profile', href: '/profile', icon: FiUser, color: 'text-purple-600' },
+    { name: 'Career Development', href: '/career-development', icon: FiTarget, color: 'text-green-600' },
+    { name: 'Salary Negotiation', href: '/salary-negotiation', icon: FiDollarSign, color: 'text-emerald-600' },
+    { name: 'Interview Simulator', href: '/interview-simulator', icon: FiVideo, color: 'text-purple-600' },
     { name: 'Resume Builder', href: '/resume/builder', icon: FiFileText, color: 'text-success-600' },
     { name: 'My Resumes', href: '/resume', icon: FiFileText, color: 'text-warning-600' },
     { name: 'Job Analysis', href: '/jobs', icon: FiBriefcase, color: 'text-secondary-600' },
@@ -124,31 +130,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
                 {/* User dropdown menu */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">                  <div className="py-1">
-                    <RouterLink
-                      to="/subscription"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      <FiCreditCard className="mr-3 h-4 w-4" />
-                      Subscription
-                    </RouterLink>
-                    <RouterLink
-                      to="/settings"
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      <FiSettings className="mr-3 h-4 w-4" />
-                      Settings
-                    </RouterLink>
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                    >
-                      <FiLogOut className="mr-3 h-4 w-4" />
-                      Sign out
-                    </button>
-                  </div>
+                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
+                    <div className="py-1">
+                      <RouterLink
+                        to="/subscription"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <FiCreditCard className="mr-3 h-4 w-4" />
+                        Subscription
+                      </RouterLink>
+                      <RouterLink
+                        to="/settings"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        <FiSettings className="mr-3 h-4 w-4" />
+                        Settings
+                      </RouterLink>
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <FiLogOut className="mr-3 h-4 w-4" />
+                        Sign out
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>

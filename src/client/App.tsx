@@ -4,7 +4,9 @@ import { useAuth } from './contexts/AuthContext'
 import { useAutoLogin } from './hooks/useAutoLogin'
 
 // Import Tailwind pages
+import CareerDevelopmentPage from './pages/CareerDevelopmentPage'
 import DashboardPage from './pages/DashboardPage'
+import InterviewSimulatorPage from './pages/InterviewSimulatorPage'
 import JobAnalysisPage from './pages/JobAnalysisPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
@@ -12,6 +14,7 @@ import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
 import ResumeBuilderPage from './pages/ResumeBuilderPage'
 import ResumePage from './pages/ResumePage'
+import SalaryNegotiationPage from './pages/SalaryNegotiationPage'
 import SettingsPage from './pages/SettingsPage'
 
 import DocumentationPage from './pages/DocumentationPage'
@@ -64,6 +67,18 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>
 }
 
+// Home page component that handles both authenticated and non-authenticated users
+const HomePage: React.FC = () => {
+  const { isAuthenticated, isLoading } = useAuth()
+
+  if (isLoading) {
+    return <LoadingSpinner />
+  }
+
+  // Always show the landing page, regardless of authentication status
+  return <LandingPage />
+}
+
 const App: React.FC = () => {
   // Enable auto-login for users with "Remember Me" enabled
   useAutoLogin()
@@ -75,9 +90,7 @@ const App: React.FC = () => {
         <Route
           path="/"
           element={
-            <PublicRoute>
-              <LandingPage />
-            </PublicRoute>
+            <HomePage />
           }
         />
         <Route
@@ -98,11 +111,7 @@ const App: React.FC = () => {
         />
         <Route
           path="/documentation"
-          element={
-            <PublicRoute>
-              <DocumentationPage />
-            </PublicRoute>
-          }
+          element={<DocumentationPage />}
         />
 
         {/* Protected routes */}
@@ -132,6 +141,36 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <Layout>
                 <SettingsPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/career-development"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <CareerDevelopmentPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/salary-negotiation"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <SalaryNegotiationPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/interview-simulator"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <InterviewSimulatorPage />
               </Layout>
             </ProtectedRoute>
           }
