@@ -149,6 +149,12 @@ CORS_ORIGIN=http://localhost:5173
 > 💡 **Tip:** For local development, ensure your PostgreSQL instance is running and accessible. You can use tools like [pgAdmin](https://www.pgadmin.org/) or [TablePlus](https://tableplus.com/) to manage your database visually.
 
 ---
+## App Logic
+
+- **Subscription Info:**
+
+`subscription.service.ts`
+---
 
 ## 📚 Documentation & API
 

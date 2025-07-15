@@ -1,6 +1,8 @@
 const { Elysia, t } = require('elysia');
 import { JobListing } from '../schemas/analysis';
+import { authService } from '../services/auth.service';
 import { generateResume } from '../services/resumeBuilder';
+import { subscriptionService } from '../services/subscription.service';
 import { logger } from '../utils/logger';
 
 // Define request schemas
@@ -85,14 +87,40 @@ export const resumeRoutes = new Elysia({ prefix: '/resume' })
   // Generate resume endpoint
   .post(
     '/generate',
-    async ({ body, set }) => {
+    async ({ body, headers, set }) => {
       try {
+        // Check authentication
+        const authHeader = headers.authorization;
+        if (!authHeader) {
+          set.status = 401;
+          return {
+            success: false,
+            error: 'Authorization header required'
+          };
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const user = await authService.getCurrentUser(token);
+
+        // Check subscription limits for resume generation
+        const usageCheck = await subscriptionService.canUseFeature(user.id, 'resume_generation');
+        if (!usageCheck.allowed) {
+          set.status = 403;
+          return {
+            success: false,
+            error: 'Resume generation limit exceeded. Please upgrade your plan to generate more resumes.',
+            remaining: usageCheck.remaining || 0
+          };
+        }
+
         const { userProfile, jobListing, options = {} } = body;
 
         logger.info('Processing resume generation request', {
+          userId: user.id,
           jobTitle: jobListing.title,
           company: jobListing.company,
-          format: options.format || 'markdown'
+          format: options.format || 'markdown',
+          remaining: usageCheck.remaining
         });
 
         // Set default options if not provided
@@ -168,7 +196,11 @@ export const resumeRoutes = new Elysia({ prefix: '/resume' })
           resumeOptions
         );
 
+        // Record the usage after successful generation
+        await subscriptionService.recordUsage(user.id, 'resume_generation');
+
         logger.info('Resume generation completed successfully', {
+          userId: user.id,
           jobTitle: jobListing.title,
           format: resumeOptions.format,
           length: resumeContent.length
@@ -199,6 +231,9 @@ export const resumeRoutes = new Elysia({ prefix: '/resume' })
     },
     {
       body: generateResumeSchema,
+      headers: t.Object({
+        authorization: t.String(),
+      }),
       response: {
         200: t.Object({
           success: t.Boolean(),

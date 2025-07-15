@@ -3,8 +3,13 @@ import { config } from 'dotenv';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
 import { analysisPrismaRoutes } from './routes/analysis.prisma';
+import { analyticsRoutes } from './routes/analytics.routes';
 import { authRoutes } from './routes/auth.routes';
+import { careerDevelopmentRoutes } from './routes/careerDevelopment.routes';
+import { interviewRoutes } from './routes/interview.routes';
+import { jobRecommendationsRoutes } from './routes/jobRecommendations.routes';
 import { resumeRoutes } from './routes/resume.routes';
+// import { salaryNegotiationRoutes } from './routes/salaryNegotiation.routes';
 import { subscriptionRoutes } from './routes/subscription.routes';
 import { userRoutes } from './routes/user.routes';
 import prisma, { connect, disconnect } from './services/prisma.service';
@@ -73,6 +78,11 @@ const app = new Elysia()
       .use(analysisPrismaRoutes)
       .use(userRoutes)
       .use(subscriptionRoutes)
+      .use(analyticsRoutes)
+      .use(jobRecommendationsRoutes)
+      .use(interviewRoutes)
+      .use(careerDevelopmentRoutes)
+      // .use(salaryNegotiationRoutes)
       .get('/health', () => ({
         status: 'ok',
         timestamp: new Date().toISOString(),
@@ -88,6 +98,7 @@ const app = new Elysia()
 // Connect to database and start server
 async function startServer() {
   try {
+    logger.info('🔄 Attempting to connect to database...');
     await connect();
     logger.info('✅ Connected to database');
 
@@ -99,12 +110,26 @@ async function startServer() {
       logger.info(`🔐 Auth API: http://${app.server?.hostname}:${app.server?.port}/api/auth`);
     });
   } catch (error) {
-    logger.error('❌ Failed to connect to database:', error);
+    logger.error('❌ Failed to start server:', error);
+    console.error('Full error details:', error);
     process.exit(1);
   }
 }
 
 startServer();
+
+// Global error handlers
+process.on('uncaughtException', (error) => {
+  logger.error('Uncaught Exception:', error);
+  console.error('Uncaught Exception details:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('Unhandled Rejection details:', reason);
+  process.exit(1);
+});
 
 // Handle graceful shutdown
 const shutdown = async () => {

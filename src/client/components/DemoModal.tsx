@@ -30,16 +30,35 @@ const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-75 flex items-center justify-center p-4">
-      <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full mx-auto">
+    <div
+      className="fixed inset-0 z-[9999] overflow-auto bg-red-500 bg-opacity-75 flex items-center justify-center p-4"
+      style={{
+        zIndex: 9999,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(255, 0, 0, 0.5)'
+      }}
+      onClick={onClose}
+    >
+      <div
+        className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full mx-auto border-4 border-blue-500"
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          backgroundColor: 'white',
+          border: '4px solid blue'
+        }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              JobbyAI Demo
+              🎉 MODAL IS WORKING! 🎉
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
-              See how our AI-powered resume builder works
+              This modal is now visible and working correctly!
             </p>
           </div>
           <button

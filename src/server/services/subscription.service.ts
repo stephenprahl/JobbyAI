@@ -24,14 +24,14 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanDetails[] = [
     description: 'Get started with basic features',
     price: 0,
     features: [
-      '3 resume generations per month',
+      '1 resume generation for free',
       '5 job analyses per month',
       '3 basic resume templates',
       'Email support',
       '14-day trial of Pro features'
     ],
     limits: {
-      resumeGenerations: 3,
+      resumeGenerations: 1,
       jobAnalyses: 5,
       templates: 3,
       aiAnalyses: 5

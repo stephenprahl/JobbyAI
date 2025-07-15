@@ -1,6 +1,7 @@
 import React from 'react'
 import { FiBriefcase, FiEdit, FiEye, FiFileText, FiPlus, FiStar, FiTrendingUp, FiUser } from 'react-icons/fi'
 import { Link as RouterLink } from 'react-router-dom'
+import SubscriptionDashboard from '../components/SubscriptionDashboard'
 import { useAuth } from '../contexts/AuthContext'
 
 const DashboardPageTailwind: React.FC = () => {
@@ -379,6 +380,10 @@ const DashboardPageTailwind: React.FC = () => {
                     ))
                   )}
                 </div>
+              </div>
+
+              <div className="mt-8">
+                <SubscriptionDashboard />
               </div>
 
               <div className="mt-8">

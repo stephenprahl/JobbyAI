@@ -64,10 +64,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
+      // Token expired or invalid - only clear auth state, don't force redirect
       removeAuthToken()
       localStorage.removeItem('auth_tokens')
-      window.location.href = '/login'
+      // Let the components handle the redirect based on their own logic
+      // Don't force navigation here as it can cause unwanted redirects
     }
     return Promise.reject(error)
   }
