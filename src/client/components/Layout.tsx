@@ -5,6 +5,7 @@ import {
   FiCreditCard,
   FiDollarSign,
   FiFileText,
+  FiHome,
   FiLogOut,
   FiMenu,
   FiSettings,
@@ -24,11 +25,11 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth()
   const location = useLocation()
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: FiUser, color: 'text-primary-600' },
+    { name: 'Dashboard', href: '/dashboard', icon: FiHome, color: 'text-primary-600' },
     { name: 'Profile', href: '/profile', icon: FiUser, color: 'text-purple-600' },
     { name: 'Career Development', href: '/career-development', icon: FiTarget, color: 'text-green-600' },
     { name: 'Salary Negotiation', href: '/salary-negotiation', icon: FiDollarSign, color: 'text-emerald-600' },
@@ -72,149 +73,150 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo and brand */}
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                  Resume Plan AI
-                </h1>
-              </div>
-            </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+      {/* Sidebar */}
+      <div className={`w-56 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0`}>
+        <div className="flex flex-col min-h-screen">
+          {/* Sidebar header */}
+          <div className="flex items-center justify-between h-12 px-4 border-b border-gray-200 dark:border-gray-700">
+            <h1 className="text-lg font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+              JobbyAI
+            </h1>
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden p-1 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </div>
 
-            {/* Desktop navigation */}
-            <nav className="hidden md:flex space-x-8">
-              {navigation.map((item) => {
-                const Icon = item.icon
-                const isActive = isActivePath(item.href)
-                return (
-                  <RouterLink
-                    key={item.name}
-                    to={item.href}
-                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${isActive
-                      ? 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }`}
-                  >
-                    <Icon className={`mr-2 h-4 w-4 ${item.color}`} />
-                    {item.name}
-                  </RouterLink>
-                )
-              })}
-            </nav>
-
-            {/* User menu and mobile menu button */}
-            <div className="flex items-center space-x-4">
-              <ThemeToggle />
-
-              {/* User menu */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 dark:focus:ring-offset-gray-800"
+          {/* Navigation */}
+          <nav className="flex-1 px-3 py-4 space-y-1">
+            {navigation.map((item) => {
+              const Icon = item.icon
+              const isActive = isActivePath(item.href)
+              return (
+                <RouterLink
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isActive
+                    ? 'bg-primary-50 dark:bg-primary-900/50 text-primary-700 dark:text-primary-400 border-r-2 border-primary-600'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
+                  onClick={() => setIsSidebarOpen(false)}
                 >
-                  <div className="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
-                    <div className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                      <FiUser className="h-4 w-4 text-primary-600 dark:text-primary-400" />
-                    </div>
-                    <span className="hidden sm:block text-gray-700 dark:text-gray-300 font-medium">
-                      {user?.email}
-                    </span>
-                    <FiChevronDown className="h-4 w-4 text-gray-400" />
-                  </div>
-                </button>
+                  <Icon className={`mr-2 h-4 w-4 ${item.color}`} />
+                  {item.name}
+                </RouterLink>
+              )
+            })}
+          </nav>
 
-                {/* User dropdown menu */}
-                {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
-                    <div className="py-1">
-                      <RouterLink
-                        to="/subscription"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        <FiCreditCard className="mr-3 h-4 w-4" />
-                        Subscription
-                      </RouterLink>
-                      <RouterLink
-                        to="/settings"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        <FiSettings className="mr-3 h-4 w-4" />
-                        Settings
-                      </RouterLink>
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                      >
-                        <FiLogOut className="mr-3 h-4 w-4" />
-                        Sign out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Mobile menu button */}
+          {/* User section - Fixed at bottom */}
+          <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-3">
+            <div className="relative">
               <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="w-full flex items-center px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
               >
-                {isMobileMenuOpen ? (
-                  <FiX className="h-6 w-6" />
-                ) : (
-                  <FiMenu className="h-6 w-6" />
-                )}
+                <div className="h-7 w-7 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+                  <FiUser className="h-3 w-3 text-primary-600 dark:text-primary-400" />
+                </div>
+                <div className="ml-2 flex-1 text-left">
+                  <p className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+                    {user?.email}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Account
+                  </p>
+                </div>
+                <FiChevronDown className="h-3 w-3 text-gray-400" />
               </button>
+
+              {/* User dropdown menu */}
+              {isUserMenuOpen && (
+                <div className="absolute bottom-full left-0 right-0 mb-1 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50">
+                  <div className="py-1">
+                    <RouterLink
+                      to="/subscription"
+                      className="flex items-center px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => {
+                        setIsUserMenuOpen(false)
+                        setIsSidebarOpen(false)
+                      }}
+                    >
+                      <FiCreditCard className="mr-2 h-3 w-3" />
+                      Subscription
+                    </RouterLink>
+                    <RouterLink
+                      to="/settings"
+                      className="flex items-center px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => {
+                        setIsUserMenuOpen(false)
+                        setIsSidebarOpen(false)
+                      }}
+                    >
+                      <FiSettings className="mr-2 h-3 w-3" />
+                      Settings
+                    </RouterLink>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <FiLogOut className="mr-2 h-3 w-3" />
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Mobile navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-              {navigation.map((item) => {
-                const Icon = item.icon
-                const isActive = isActivePath(item.href)
-                return (
-                  <RouterLink
-                    key={item.name}
-                    to={item.href}
-                    className={`flex items-center px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${isActive
-                      ? 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50'
-                      : 'text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-                      }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <Icon className={`mr-3 h-5 w-5 ${item.color}`} />
-                    {item.name}
-                  </RouterLink>
-                )
-              })}
-            </div>
+      {/* Main content area */}
+      <div className="flex-1">
+        {/* Mobile header */}
+        <header className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="p-1.5 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <FiMenu className="h-5 w-5" />
+            </button>
+            <h1 className="text-base font-semibold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+              JobbyAI
+            </h1>
+            <ThemeToggle />
           </div>
-        )}
-      </header>
+        </header>
 
-      {/* Main content */}
-      <main className="flex-1">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            {children}
+        {/* Desktop header with theme toggle */}
+        <header className="hidden lg:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
+          <div className="flex justify-end">
+            <ThemeToggle />
           </div>
-        </div>
-      </main>
+        </header>
+
+        {/* Main content */}
+        <main className="p-4">
+          {children}
+        </main>
+      </div>
+
+      {/* Sidebar overlay for mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
 
       {/* Click outside handler for user menu */}
       {isUserMenuOpen && (
         <div
-          className="fixed inset-0 z-40"
+          className="fixed inset-0 z-30"
           onClick={() => setIsUserMenuOpen(false)}
         />
       )}
