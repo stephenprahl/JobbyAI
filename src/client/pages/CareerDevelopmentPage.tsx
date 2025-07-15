@@ -147,6 +147,36 @@ interface AssessmentQuestion {
   answer?: string | number;
 }
 
+interface NetworkingEvent {
+  id: string;
+  title: string;
+  description: string;
+  date: string;
+  time: string;
+  location: string;
+  type: 'conference' | 'meetup' | 'workshop' | 'webinar' | 'networking';
+  isVirtual: boolean;
+  attendees: number;
+  tags: string[];
+  price: string;
+  organizer: string;
+  registrationUrl?: string;
+  relevanceScore: number;
+}
+
+interface NetworkingOpportunity {
+  id: string;
+  title: string;
+  description: string;
+  type: 'job_referral' | 'mentorship' | 'collaboration' | 'speaking' | 'interview_prep';
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  timeCommitment: string;
+  benefits: string[];
+  requirements: string[];
+  contact?: string;
+  deadline?: string;
+}
+
 export default function CareerDevelopmentPage() {
   const { user, token } = useAuth();
   const [skillGaps, setSkillGaps] = useState<SkillGap[]>([]);
@@ -156,6 +186,8 @@ export default function CareerDevelopmentPage() {
   const [salaryData, setSalaryData] = useState<SalaryData | null>(null);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [networkingContacts, setNetworkingContacts] = useState<NetworkingContact[]>([]);
+  const [networkingEvents, setNetworkingEvents] = useState<NetworkingEvent[]>([]);
+  const [networkingOpportunities, setNetworkingOpportunities] = useState<NetworkingOpportunity[]>([]);
   const [industryTrends, setIndustryTrends] = useState<IndustryTrend[]>([]);
   const [careerAssessment, setCareerAssessment] = useState<CareerAssessment | null>(null);
   const [loading, setLoading] = useState(true);
@@ -564,6 +596,219 @@ export default function CareerDevelopmentPage() {
         }
       ]);
 
+      // Mock networking events (simulating real event data)
+      setNetworkingEvents([
+        {
+          id: '1',
+          title: 'React Conf 2025',
+          description: 'Annual React conference featuring the latest updates, best practices, and networking opportunities with React core team and community leaders.',
+          date: '2025-03-15',
+          time: '09:00 AM',
+          location: 'San Francisco, CA',
+          type: 'conference',
+          isVirtual: false,
+          attendees: 2500,
+          tags: ['React', 'Frontend', 'JavaScript', 'Web Development'],
+          price: '$299',
+          organizer: 'React Community',
+          registrationUrl: 'https://reactconf.com',
+          relevanceScore: 95
+        },
+        {
+          id: '2',
+          title: 'Bay Area System Design Meetup',
+          description: 'Monthly meetup focused on system design patterns, scalability challenges, and architectural best practices. Great for senior engineers.',
+          date: '2025-07-25',
+          time: '06:30 PM',
+          location: 'Palo Alto, CA',
+          type: 'meetup',
+          isVirtual: false,
+          attendees: 150,
+          tags: ['System Design', 'Architecture', 'Scalability', 'Engineering'],
+          price: 'Free',
+          organizer: 'Bay Area Tech Community',
+          relevanceScore: 88
+        },
+        {
+          id: '3',
+          title: 'AI/ML Engineering Workshop',
+          description: 'Hands-on workshop covering machine learning deployment, MLOps best practices, and building production-ready AI systems.',
+          date: '2025-08-10',
+          time: '10:00 AM',
+          location: 'Virtual',
+          type: 'workshop',
+          isVirtual: true,
+          attendees: 300,
+          tags: ['AI', 'Machine Learning', 'MLOps', 'Python', 'TensorFlow'],
+          price: '$149',
+          organizer: 'AI Engineering Institute',
+          relevanceScore: 82
+        },
+        {
+          id: '4',
+          title: 'Women in Tech Leadership Summit',
+          description: 'Leadership development summit focusing on career advancement, executive presence, and building inclusive teams in technology.',
+          date: '2025-09-05',
+          time: '09:00 AM',
+          location: 'Seattle, WA',
+          type: 'conference',
+          isVirtual: false,
+          attendees: 800,
+          tags: ['Leadership', 'Diversity', 'Career Development', 'Management'],
+          price: '$199',
+          organizer: 'Women in Tech Global',
+          relevanceScore: 76
+        },
+        {
+          id: '5',
+          title: 'Cloud Architecture Deep Dive',
+          description: 'Technical webinar series covering AWS, Azure, and GCP architecture patterns, with live Q&A from cloud architects.',
+          date: '2025-07-30',
+          time: '02:00 PM',
+          location: 'Virtual',
+          type: 'webinar',
+          isVirtual: true,
+          attendees: 500,
+          tags: ['Cloud', 'AWS', 'Azure', 'Architecture', 'DevOps'],
+          price: 'Free',
+          organizer: 'Cloud Architecture Alliance',
+          relevanceScore: 91
+        },
+        {
+          id: '6',
+          title: 'Local TypeScript User Group',
+          description: 'Monthly TypeScript meetup with lightning talks, code reviews, and networking. Perfect for developers looking to improve TypeScript skills.',
+          date: '2025-08-15',
+          time: '07:00 PM',
+          location: 'San Francisco, CA',
+          type: 'meetup',
+          isVirtual: false,
+          attendees: 80,
+          tags: ['TypeScript', 'JavaScript', 'Frontend', 'Programming'],
+          price: 'Free',
+          organizer: 'SF TypeScript Community',
+          relevanceScore: 89
+        }
+      ]);
+
+      // Mock networking opportunities
+      setNetworkingOpportunities([
+        {
+          id: '1',
+          title: 'FAANG Company Referral Program',
+          description: 'Get referred to senior software engineering positions at major tech companies through our verified network of current employees.',
+          type: 'job_referral',
+          difficulty: 'intermediate',
+          timeCommitment: '2-3 hours for interview prep',
+          benefits: [
+            'Direct referral to hiring managers',
+            'Resume review by current employees',
+            'Interview preparation sessions',
+            'Salary negotiation guidance'
+          ],
+          requirements: [
+            '3+ years of software engineering experience',
+            'Strong system design knowledge',
+            'Experience with modern web technologies',
+            'Previous leadership or mentoring experience preferred'
+          ],
+          contact: 'Sarah Chen (Google)',
+          deadline: '2025-08-31'
+        },
+        {
+          id: '2',
+          title: 'Senior Engineer Mentorship Program',
+          description: 'Be mentored by principal engineers and tech leads from top companies. Focus on career advancement and technical leadership skills.',
+          type: 'mentorship',
+          difficulty: 'intermediate',
+          timeCommitment: '1 hour/week for 6 months',
+          benefits: [
+            'Personalized career roadmap',
+            'Technical skill development',
+            'Leadership coaching',
+            'Network expansion',
+            'Mock interview practice'
+          ],
+          requirements: [
+            '2+ years of professional experience',
+            'Commitment to regular meetings',
+            'Specific career goals defined',
+            'Willingness to give back to community'
+          ],
+          contact: 'Michael Rodriguez (Meta)',
+          deadline: '2025-07-25'
+        },
+        {
+          id: '3',
+          title: 'Open Source Project Collaboration',
+          description: 'Contribute to high-impact open source projects used by millions of developers. Build your portfolio and network with maintainers.',
+          type: 'collaboration',
+          difficulty: 'beginner',
+          timeCommitment: '5-10 hours/week',
+          benefits: [
+            'GitHub portfolio enhancement',
+            'Real-world project experience',
+            'Community recognition',
+            'Learning cutting-edge technologies',
+            'Potential job opportunities'
+          ],
+          requirements: [
+            'Basic Git/GitHub knowledge',
+            'Proficiency in JavaScript/TypeScript',
+            'Good communication skills',
+            'Commitment to quality code'
+          ],
+          contact: 'Open Source Community',
+          deadline: '2025-12-31'
+        },
+        {
+          id: '4',
+          title: 'Tech Conference Speaking Opportunity',
+          description: 'Share your expertise at regional tech conferences. Great for building personal brand and establishing thought leadership.',
+          type: 'speaking',
+          difficulty: 'advanced',
+          timeCommitment: '20-30 hours preparation',
+          benefits: [
+            'Industry recognition',
+            'Personal brand building',
+            'Network expansion',
+            'Speaking fee compensation',
+            'Travel opportunities'
+          ],
+          requirements: [
+            'Deep expertise in specific technology',
+            'Previous speaking experience preferred',
+            'Strong presentation skills',
+            'Unique insights or case studies'
+          ],
+          contact: 'Conference Organizers',
+          deadline: '2025-09-15'
+        },
+        {
+          id: '5',
+          title: 'Mock Interview Exchange Program',
+          description: 'Practice technical interviews with peers preparing for similar roles. Improve your interviewing skills through peer feedback.',
+          type: 'interview_prep',
+          difficulty: 'beginner',
+          timeCommitment: '2-3 hours/week',
+          benefits: [
+            'Interview skill improvement',
+            'Peer feedback and tips',
+            'Reduced interview anxiety',
+            'Learning different approaches',
+            'Building interview confidence'
+          ],
+          requirements: [
+            'Actively job searching or preparing',
+            'Commitment to help others',
+            'Basic algorithmic knowledge',
+            'Professional communication skills'
+          ],
+          contact: 'Interview Prep Community',
+          deadline: '2025-12-31'
+        }
+      ]);
+
       // Mock industry trends
       setIndustryTrends([
         {
@@ -723,6 +968,51 @@ export default function CareerDevelopmentPage() {
       potentialValue: 'Industry insights and networking'
     };
     setNetworkingContacts([...networkingContacts, newContact]);
+  };
+
+  const registerForEvent = (eventId: string) => {
+    const event = networkingEvents.find(e => e.id === eventId);
+    if (event) {
+      if (event.registrationUrl) {
+        // In a real app, this would open the registration URL
+        alert(`Registration would open for "${event.title}". You would be redirected to: ${event.registrationUrl}`);
+      } else {
+        alert(`Registration confirmed for "${event.title}"! Check your email for details.`);
+      }
+
+      // Update event to show registered status (in real app, this would be persisted)
+      console.log(`Registered for event: ${event.title}`);
+    }
+  };
+
+  const applyToOpportunity = (opportunityId: string) => {
+    const opportunity = networkingOpportunities.find(o => o.id === opportunityId);
+    if (opportunity) {
+      alert(`Application submitted for "${opportunity.title}"! The organizer will contact you within 3-5 business days.`);
+      console.log(`Applied to opportunity: ${opportunity.title}`);
+    }
+  };
+
+  const getEventIcon = (type: string) => {
+    switch (type) {
+      case 'conference': return FiUsers;
+      case 'meetup': return FiMessageCircle;
+      case 'workshop': return FiBook;
+      case 'webinar': return FiGlobe;
+      case 'networking': return FiUsers;
+      default: return FiCalendar;
+    }
+  };
+
+  const getOpportunityIcon = (type: string) => {
+    switch (type) {
+      case 'job_referral': return FiBriefcase;
+      case 'mentorship': return FiUsers;
+      case 'collaboration': return FiGlobe;
+      case 'speaking': return FiMessageCircle;
+      case 'interview_prep': return FiTarget;
+      default: return FiAward;
+    }
   };
 
   if (loading) {
@@ -1538,34 +1828,48 @@ export default function CareerDevelopmentPage() {
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Networking Opportunities
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                    Suggested Connections:
+                    Career Opportunities:
                   </h4>
                   <div className="space-y-3">
-                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                      <div className="flex items-center mb-2">
-                        <FiUsers className="w-4 h-4 text-blue-500 mr-2" />
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          Engineering Managers at FAANG
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Connect with senior engineers who can provide mentorship and referrals
-                      </p>
-                    </div>
-                    <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                      <div className="flex items-center mb-2">
-                        <FiGlobe className="w-4 h-4 text-green-500 mr-2" />
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          Tech Community Leaders
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Engage with thought leaders in TypeScript and system design
-                      </p>
-                    </div>
+                    {networkingOpportunities.slice(0, 3).map((opportunity) => {
+                      const IconComponent = getOpportunityIcon(opportunity.type);
+                      return (
+                        <div key={opportunity.id} className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center">
+                              <IconComponent className="w-5 h-5 text-blue-500 mr-2" />
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {opportunity.title}
+                              </span>
+                            </div>
+                            <span className={`px-2 py-1 text-xs rounded-full ${opportunity.difficulty === 'beginner' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
+                                opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                                  'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                              }`}>
+                              {opportunity.difficulty}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                            {opportunity.description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-gray-500 dark:text-gray-500">
+                              <FiClock className="w-3 h-3 inline mr-1" />
+                              {opportunity.timeCommitment}
+                            </span>
+                            <button
+                              className="px-3 py-1 text-xs bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                              onClick={() => applyToOpportunity(opportunity.id)}
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -1574,30 +1878,224 @@ export default function CareerDevelopmentPage() {
                     Upcoming Events:
                   </h4>
                   <div className="space-y-3">
-                    <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                      <div className="flex items-center mb-2">
-                        <FiCalendar className="w-4 h-4 text-purple-500 mr-2" />
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          React Conf 2025
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        March 15-17 • Great for frontend networking
-                      </p>
-                    </div>
-                    <div className="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                      <div className="flex items-center mb-2">
-                        <FiCalendar className="w-4 h-4 text-orange-500 mr-2" />
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          Local Tech Meetup
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Every 2nd Thursday • System Design Focus
-                      </p>
-                    </div>
+                    {networkingEvents.slice(0, 3).map((event) => {
+                      const IconComponent = getEventIcon(event.type);
+                      return (
+                        <div key={event.id} className="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center">
+                              <IconComponent className="w-5 h-5 text-green-500 mr-2" />
+                              <span className="font-medium text-gray-900 dark:text-white">
+                                {event.title}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+                                {event.relevanceScore}% match
+                              </span>
+                              {event.isVirtual && (
+                                <div className="text-xs text-blue-600 dark:text-blue-400">Virtual</div>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            {new Date(event.date).toLocaleDateString()} • {event.time} • {event.location}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs text-gray-500 dark:text-gray-500">
+                                {event.attendees} attendees
+                              </span>
+                              <span className="text-xs font-semibold text-green-600 dark:text-green-400">
+                                {event.price}
+                              </span>
+                            </div>
+                            <button
+                              className="px-3 py-1 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                              onClick={() => registerForEvent(event.id)}
+                            >
+                              Register
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Detailed Events Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Recommended Events
+                </h3>
+                <div className="flex space-x-2">
+                  <select className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <option>All Events</option>
+                    <option>Conferences</option>
+                    <option>Meetups</option>
+                    <option>Workshops</option>
+                    <option>Webinars</option>
+                  </select>
+                  <select className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <option>All Locations</option>
+                    <option>San Francisco</option>
+                    <option>Virtual</option>
+                    <option>Seattle</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {networkingEvents.map((event) => {
+                  const IconComponent = getEventIcon(event.type);
+                  return (
+                    <div key={event.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center">
+                          <IconComponent className="w-6 h-6 text-primary-500 mr-3" />
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-white">{event.title}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{event.organizer}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-2 py-1 text-xs rounded-full ${event.relevanceScore >= 90 ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
+                              event.relevanceScore >= 80 ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                                'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+                            }`}>
+                            {event.relevanceScore}% match
+                          </span>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{event.description}</p>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <FiCalendar className="w-4 h-4 mr-2" />
+                          {new Date(event.date).toLocaleDateString()} at {event.time}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <FiMapPin className="w-4 h-4 mr-2" />
+                          {event.location} {event.isVirtual && '(Virtual)'}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                          <FiUsers className="w-4 h-4 mr-2" />
+                          {event.attendees} expected attendees
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {event.tags.map((tag, index) => (
+                          <span key={index} className="px-2 py-1 text-xs bg-primary-100 dark:bg-primary-900/20 text-primary-800 dark:text-primary-300 rounded-full">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-primary-600">{event.price}</span>
+                        <button
+                          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                          onClick={() => registerForEvent(event.id)}
+                        >
+                          Register Now
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Detailed Opportunities Section */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
+                Career Development Opportunities
+              </h3>
+
+              <div className="space-y-6">
+                {networkingOpportunities.map((opportunity) => {
+                  const IconComponent = getOpportunityIcon(opportunity.type);
+                  return (
+                    <div key={opportunity.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center">
+                          <IconComponent className="w-8 h-8 text-primary-500 mr-4" />
+                          <div>
+                            <h4 className="text-lg font-semibold text-gray-900 dark:text-white">{opportunity.title}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">{opportunity.type.replace('_', ' ')}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className={`px-3 py-1 text-sm rounded-full ${opportunity.difficulty === 'beginner' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
+                              opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                                'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                            }`}>
+                            {opportunity.difficulty}
+                          </span>
+                          {opportunity.deadline && (
+                            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                              Due: {new Date(opportunity.deadline).toLocaleDateString()}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <p className="text-gray-700 dark:text-gray-300 mb-4">{opportunity.description}</p>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                        <div>
+                          <h5 className="font-medium text-gray-900 dark:text-white mb-2">Benefits:</h5>
+                          <ul className="space-y-1">
+                            {opportunity.benefits.map((benefit, index) => (
+                              <li key={index} className="flex items-start text-sm text-gray-600 dark:text-gray-400">
+                                <FiCheckCircle className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                                {benefit}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div>
+                          <h5 className="font-medium text-gray-900 dark:text-white mb-2">Requirements:</h5>
+                          <ul className="space-y-1">
+                            {opportunity.requirements.map((requirement, index) => (
+                              <li key={index} className="flex items-start text-sm text-gray-600 dark:text-gray-400">
+                                <FiArrowRight className="w-4 h-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+                                {requirement}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                          <span className="flex items-center">
+                            <FiClock className="w-4 h-4 mr-1" />
+                            {opportunity.timeCommitment}
+                          </span>
+                          {opportunity.contact && (
+                            <span className="flex items-center">
+                              <FiMessageCircle className="w-4 h-4 mr-1" />
+                              {opportunity.contact}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                          onClick={() => applyToOpportunity(opportunity.id)}
+                        >
+                          Apply Now
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
