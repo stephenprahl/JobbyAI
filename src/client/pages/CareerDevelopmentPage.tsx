@@ -10,6 +10,7 @@ import {
   FiCheckCircle,
   FiClock,
   FiDollarSign,
+  FiDownload,
   FiGift,
   FiGlobe,
   FiLayers,
@@ -17,8 +18,10 @@ import {
   FiMessageCircle,
   FiPieChart,
   FiPlay,
+  FiRefreshCw,
   FiStar,
   FiTarget,
+  FiTrash2,
   FiTrendingUp,
   FiUsers,
   FiZap
@@ -892,6 +895,56 @@ export default function CareerDevelopmentPage() {
     setCareerGoals([...careerGoals, newGoal]);
   };
 
+  const deleteGoal = (goalId: string) => {
+    if (confirm('Are you sure you want to delete this career goal?')) {
+      setCareerGoals(careerGoals.filter(goal => goal.id !== goalId));
+    }
+  };
+
+  const resetAchievements = () => {
+    if (confirm('Are you sure you want to reset all achievement progress?')) {
+      setAchievements(achievements.map(achievement => ({
+        ...achievement,
+        earned: false,
+        earnedDate: undefined
+      })));
+    }
+  };
+
+  const exportCareerReport = () => {
+    const report = {
+      generatedDate: new Date().toISOString(),
+      user: user?.email || 'User',
+      careerGoals: careerGoals.length,
+      activeGoals: careerGoals.filter(g => g.status === 'active').length,
+      averageProgress: Math.round(careerGoals.reduce((acc, goal) => acc + goal.progress, 0) / careerGoals.length || 0),
+      skillGapsIdentified: skillGaps.length,
+      learningPathsAvailable: learningPaths.length,
+      networkingContacts: networkingContacts.length,
+      strongConnections: networkingContacts.filter(c => c.connectionStrength === 'strong').length,
+      achievementsEarned: achievements.filter(a => a.earned).length,
+      totalPoints: achievements.filter(a => a.earned).reduce((sum, a) => sum + a.points, 0),
+      salaryGrowthPotential: salaryData?.projectedGrowth || 0,
+      recommendations: [
+        'Focus on high-demand skills like TypeScript and System Design',
+        'Expand professional network in target companies',
+        'Complete learning paths to bridge skill gaps',
+        'Maintain consistent learning and development schedule'
+      ]
+    };
+
+    const dataStr = JSON.stringify(report, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    const exportFileDefaultName = `career-development-report-${new Date().toISOString().split('T')[0]}.json`;
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+
+    alert('Career development report downloaded successfully!');
+  };
+
   const enrollInPath = (pathId: string) => {
     console.log(`Enrolling in learning path: ${pathId}`);
     // Update the learning path to show enrollment
@@ -1031,17 +1084,36 @@ export default function CareerDevelopmentPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <div className="h-12 w-12 bg-gradient-to-br from-purple-500 to-primary-500 rounded-xl flex items-center justify-center">
-              <FiActivity className="h-6 w-6 text-white" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <div className="h-12 w-12 bg-gradient-to-br from-purple-500 to-primary-500 rounded-xl flex items-center justify-center">
+                <FiActivity className="h-6 w-6 text-white" />
+              </div>
+              <div className="ml-4">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  Career Development Hub
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">
+                  AI-powered career growth and skill development recommendations
+                </p>
+              </div>
             </div>
-            <div className="ml-4">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                Career Development Hub
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                AI-powered career growth and skill development recommendations
-              </p>
+            <div className="flex space-x-2">
+              <button
+                onClick={fetchCareerData}
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={loading}
+              >
+                <FiRefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                Refresh Data
+              </button>
+              <button
+                onClick={exportCareerReport}
+                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <FiDownload className="w-4 h-4 mr-2" />
+                Export Report
+              </button>
             </div>
           </div>
         </div>
@@ -1312,13 +1384,22 @@ export default function CareerDevelopmentPage() {
                       {goal.targetRole} at {goal.company}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-primary-600">
-                      {goal.progress}%
+                  <div className="flex items-center space-x-3">
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-primary-600">
+                        {goal.progress}%
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Due: {new Date(goal.deadline).toLocaleDateString()}
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Due: {new Date(goal.deadline).toLocaleDateString()}
-                    </p>
+                    <button
+                      onClick={() => deleteGoal(goal.id)}
+                      className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                      title="Delete Goal"
+                    >
+                      <FiTrash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
@@ -1329,10 +1410,27 @@ export default function CareerDevelopmentPage() {
                   ></div>
                 </div>
 
+                <div className="mb-6">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                    Required Skills:
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {goal.requiredSkills.map((skill, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-full text-sm"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="space-y-3">
                   <h4 className="font-semibold text-gray-900 dark:text-white">
                     Milestones:
-                  </h4>                  {goal.milestones.map((milestone) => (
+                  </h4>
+                  {goal.milestones.map((milestone) => (
                     <div
                       key={milestone.id}
                       className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${milestone.completed
@@ -1846,8 +1944,8 @@ export default function CareerDevelopmentPage() {
                               </span>
                             </div>
                             <span className={`px-2 py-1 text-xs rounded-full ${opportunity.difficulty === 'beginner' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
-                                opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
-                                  'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                              opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                                'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
                               }`}>
                               {opportunity.difficulty}
                             </span>
@@ -1963,8 +2061,8 @@ export default function CareerDevelopmentPage() {
                         </div>
                         <div className="text-right">
                           <span className={`px-2 py-1 text-xs rounded-full ${event.relevanceScore >= 90 ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
-                              event.relevanceScore >= 80 ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
-                                'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+                            event.relevanceScore >= 80 ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                              'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                             }`}>
                             {event.relevanceScore}% match
                           </span>
@@ -2032,8 +2130,8 @@ export default function CareerDevelopmentPage() {
                         </div>
                         <div className="text-right">
                           <span className={`px-3 py-1 text-sm rounded-full ${opportunity.difficulty === 'beginner' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
-                              opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
-                                'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                            opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                              'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
                             }`}>
                             {opportunity.difficulty}
                           </span>
