@@ -3,10 +3,13 @@ import { useForm } from 'react-hook-form'
 import { FiCopy, FiDownload, FiEdit, FiEye, FiFileText, FiMinus, FiPlus, FiX } from 'react-icons/fi'
 import ReactMarkdown from 'react-markdown'
 import { useNavigate } from 'react-router-dom'
+import ResumeUsageDisplay from '../components/ResumeUsageDisplay'
+import { useSubscription } from '../contexts/SubscriptionContext'
 import * as apiService from '../services/api'
 
 const ResumePage: React.FC = () => {
   const navigate = useNavigate()
+  const { subscription, checkFeatureUsage, refreshSubscription, getResumeUsage } = useSubscription()
   const [isGenerating, setIsGenerating] = useState(false)
   const [generatedResume, setGeneratedResume] = useState<string | null>(null)
   const [resumeFormat, setResumeFormat] = useState('markdown')
@@ -83,6 +86,16 @@ const ResumePage: React.FC = () => {
   }
 
   const onSubmit = async (data: any) => {
+    // Check subscription limits before proceeding
+    const usageCheck = await checkFeatureUsage('resume_generation')
+    if (!usageCheck.allowed) {
+      showToastMessage(
+        'Resume generation limit reached. Please upgrade your plan to generate more resumes.',
+        'error'
+      )
+      return
+    }
+
     setIsGenerating(true)
 
     try {
@@ -94,12 +107,31 @@ const ResumePage: React.FC = () => {
         setResumeFormat(response.data.format)
         setActiveTab(3) // Switch to Generated Resume tab
 
+        // Refresh subscription data to update usage counts
+        await refreshSubscription()
+
         showToastMessage('Your tailored resume has been successfully generated.', 'success')
       } else {
-        throw new Error(response.error || 'Failed to generate resume')
+        // Check if it's a subscription limit error
+        if (response.error?.includes('limit exceeded') || response.error?.includes('limit reached')) {
+          showToastMessage(
+            'Resume generation limit reached. Please upgrade your plan to generate more resumes.',
+            'error'
+          )
+        } else {
+          throw new Error(response.error || 'Failed to generate resume')
+        }
       }
     } catch (error: any) {
-      showToastMessage(error.message || 'Failed to generate resume. Please try again.', 'error')
+      // Check if it's a subscription limit error
+      if (error.message?.includes('limit exceeded') || error.message?.includes('limit reached')) {
+        showToastMessage(
+          'Resume generation limit reached. Please upgrade your plan to generate more resumes.',
+          'error'
+        )
+      } else {
+        showToastMessage(error.message || 'Failed to generate resume. Please try again.', 'error')
+      }
     } finally {
       setIsGenerating(false)
     }
@@ -167,6 +199,11 @@ const ResumePage: React.FC = () => {
                     <FiFileText className="w-4 h-4" />
                     <span>AI-Powered • ATS-Optimized • Job-Specific</span>
                   </div>
+                </div>
+
+                {/* Usage Display */}
+                <div className="lg:text-right">
+                  <ResumeUsageDisplay />
                 </div>
               </div>
             </div>
@@ -483,13 +520,21 @@ const ResumePage: React.FC = () => {
                 <button
                   type="submit"
                   onClick={handleSubmit(onSubmit)}
-                  disabled={isGenerating}
-                  className="w-full btn bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 text-white text-xl py-6 font-bold flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl transform hover:scale-[1.02] transition-all duration-200"
+                  disabled={isGenerating || getResumeUsage().remaining === 0}
+                  className={`w-full btn text-xl py-6 font-bold flex items-center justify-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl transform hover:scale-[1.02] transition-all duration-200 ${getResumeUsage().remaining === 0
+                      ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 text-white'
+                    }`}
                 >
                   {isGenerating ? (
                     <>
                       <div className="animate-spin w-6 h-6 border-3 border-white border-t-transparent rounded-full"></div>
                       <span>Generating Your Perfect Resume...</span>
+                    </>
+                  ) : getResumeUsage().remaining === 0 ? (
+                    <>
+                      <FiFileText className="w-6 h-6" />
+                      <span>Resume Limit Reached - Upgrade to Continue</span>
                     </>
                   ) : (
                     <>
