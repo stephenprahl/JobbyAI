@@ -11,8 +11,11 @@ const DashboardPageTailwind: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex justify-center items-center">
         <div className="text-center">
-          <div className="animate-spin w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400 font-medium">Loading your dashboard...</p>
+          <div className="animate-spin w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-6"></div>
+          <div className="space-y-2">
+            <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">Loading your dashboard...</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Preparing your personalized experience</p>
+          </div>
         </div>
       </div>
     )
