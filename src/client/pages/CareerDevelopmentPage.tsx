@@ -193,9 +193,20 @@ export default function CareerDevelopmentPage() {
               price: '$89.99',
               url: '#',
               skills: ['TypeScript', 'JavaScript', 'React']
+            },
+            {
+              id: '2',
+              title: 'Advanced TypeScript Patterns',
+              provider: 'Frontend Masters',
+              duration: '6 hours',
+              difficulty: 'Advanced',
+              rating: 4.8,
+              price: '$39/month',
+              url: '#',
+              skills: ['TypeScript', 'Design Patterns', 'Advanced Types']
             }
           ],
-          relatedJobs: ['Senior Frontend Developer', 'Full Stack Engineer']
+          relatedJobs: ['Senior Frontend Developer', 'Full Stack Engineer', 'TypeScript Specialist']
         },
         {
           skill: 'System Design',
@@ -205,7 +216,7 @@ export default function CareerDevelopmentPage() {
           estimatedLearningTime: '6-8 months',
           courses: [
             {
-              id: '2',
+              id: '3',
               title: 'System Design Interview Prep',
               provider: 'Tech Interview Pro',
               duration: '40 hours',
@@ -214,9 +225,84 @@ export default function CareerDevelopmentPage() {
               price: '$199',
               url: '#',
               skills: ['System Design', 'Architecture', 'Scalability']
+            },
+            {
+              id: '4',
+              title: 'Designing Data-Intensive Applications',
+              provider: 'Coursera',
+              duration: '60 hours',
+              difficulty: 'Advanced',
+              rating: 4.7,
+              price: '$49/month',
+              url: '#',
+              skills: ['Distributed Systems', 'Database Design', 'Microservices']
             }
           ],
-          relatedJobs: ['Senior Software Engineer', 'Tech Lead', 'Principal Engineer']
+          relatedJobs: ['Senior Software Engineer', 'Tech Lead', 'Principal Engineer', 'Solutions Architect']
+        },
+        {
+          skill: 'Leadership & Management',
+          currentLevel: 1,
+          targetLevel: 3,
+          demand: 78,
+          estimatedLearningTime: '4-6 months',
+          courses: [
+            {
+              id: '5',
+              title: 'Tech Leadership Essentials',
+              provider: 'LinkedIn Learning',
+              duration: '12 hours',
+              difficulty: 'Intermediate',
+              rating: 4.5,
+              price: '$29.99/month',
+              url: '#',
+              skills: ['Leadership', 'Team Management', 'Communication']
+            },
+            {
+              id: '6',
+              title: 'Engineering Management 101',
+              provider: 'Pluralsight',
+              duration: '8 hours',
+              difficulty: 'Beginner',
+              rating: 4.4,
+              price: '$35/month',
+              url: '#',
+              skills: ['People Management', 'Project Management', 'Decision Making']
+            }
+          ],
+          relatedJobs: ['Engineering Manager', 'Tech Lead', 'Team Lead', 'Senior Developer']
+        },
+        {
+          skill: 'Cloud Architecture (AWS)',
+          currentLevel: 2,
+          targetLevel: 4,
+          demand: 89,
+          estimatedLearningTime: '5-7 months',
+          courses: [
+            {
+              id: '7',
+              title: 'AWS Solutions Architect Professional',
+              provider: 'AWS Training',
+              duration: '50 hours',
+              difficulty: 'Advanced',
+              rating: 4.6,
+              price: '$300',
+              url: '#',
+              skills: ['AWS', 'Cloud Architecture', 'DevOps', 'Security']
+            },
+            {
+              id: '8',
+              title: 'Complete AWS DevOps Engineer',
+              provider: 'A Cloud Guru',
+              duration: '35 hours',
+              difficulty: 'Intermediate',
+              rating: 4.7,
+              price: '$47/month',
+              url: '#',
+              skills: ['AWS', 'CI/CD', 'Infrastructure as Code', 'Monitoring']
+            }
+          ],
+          relatedJobs: ['Cloud Architect', 'DevOps Engineer', 'Senior Backend Engineer', 'Platform Engineer']
         }
       ]);
 
@@ -280,6 +366,76 @@ export default function CareerDevelopmentPage() {
               resources: []
             }
           ]
+        },
+        {
+          id: '2',
+          title: 'AI/ML Engineering Path',
+          description: 'Master artificial intelligence and machine learning for modern applications',
+          estimatedTime: '8-12 months',
+          difficulty: 'Advanced',
+          skills: ['Python', 'TensorFlow', 'PyTorch', 'Data Science', 'MLOps'],
+          outcomes: ['Build ML models', 'Deploy AI systems', 'Data analysis expertise'],
+          steps: [
+            {
+              id: '1',
+              title: 'Python for Data Science',
+              type: 'course',
+              duration: '8 weeks',
+              completed: false,
+              resources: []
+            },
+            {
+              id: '2',
+              title: 'Machine Learning Fundamentals',
+              type: 'course',
+              duration: '10 weeks',
+              completed: false,
+              resources: []
+            },
+            {
+              id: '3',
+              title: 'Deep Learning with TensorFlow',
+              type: 'course',
+              duration: '12 weeks',
+              completed: false,
+              resources: []
+            }
+          ]
+        },
+        {
+          id: '3',
+          title: 'Cloud Architecture Mastery',
+          description: 'Become proficient in cloud architecture and DevOps practices',
+          estimatedTime: '5-7 months',
+          difficulty: 'Intermediate',
+          skills: ['AWS', 'Docker', 'Kubernetes', 'Terraform', 'CI/CD'],
+          outcomes: ['Design cloud solutions', 'Implement DevOps pipelines', 'Scale applications'],
+          steps: [
+            {
+              id: '1',
+              title: 'AWS Fundamentals',
+              type: 'certification',
+              duration: '4 weeks',
+              completed: false,
+              resources: []
+            },
+            {
+              id: '2',
+              title: 'Docker & Containerization',
+              type: 'course',
+              duration: '3 weeks',
+              completed: false,
+              resources: []
+            },
+            {
+              id: '3',
+              title: 'Kubernetes Administration',
+              type: 'course',
+              duration: '6 weeks',
+              completed: false,
+              resources: []
+            }
+          ]
         }
       ]);
 
@@ -323,6 +479,34 @@ export default function CareerDevelopmentPage() {
           earned: false,
           category: 'networking',
           points: 200
+        },
+        {
+          id: '4',
+          title: 'Assessment Master',
+          description: 'Complete your career development assessment',
+          icon: 'award',
+          earned: false,
+          category: 'career',
+          points: 125
+        },
+        {
+          id: '5',
+          title: 'Goal Achiever',
+          description: 'Complete your first career goal',
+          icon: 'trophy',
+          earned: false,
+          category: 'career',
+          points: 300
+        },
+        {
+          id: '6',
+          title: 'Learning Streak',
+          description: 'Maintain a 30-day learning streak',
+          icon: 'zap',
+          earned: true,
+          earnedDate: '2025-07-10',
+          category: 'learning',
+          points: 175
         }
       ]);
 
@@ -347,6 +531,36 @@ export default function CareerDevelopmentPage() {
           connectionStrength: 'strong',
           lastContact: '2025-07-12',
           potentialValue: 'Technical Skills & Project Collaboration'
+        },
+        {
+          id: '3',
+          name: 'Emily Johnson',
+          title: 'Principal Software Engineer',
+          company: 'Amazon',
+          industry: 'Technology',
+          connectionStrength: 'medium',
+          lastContact: '2025-06-28',
+          potentialValue: 'System Design Expertise & Referrals'
+        },
+        {
+          id: '4',
+          name: 'David Kim',
+          title: 'CTO',
+          company: 'Startup Inc',
+          industry: 'Technology',
+          connectionStrength: 'weak',
+          lastContact: '2025-06-15',
+          potentialValue: 'Leadership Insights & Startup Opportunities'
+        },
+        {
+          id: '5',
+          name: 'Lisa Wang',
+          title: 'Senior Data Scientist',
+          company: 'Netflix',
+          industry: 'Technology',
+          connectionStrength: 'strong',
+          lastContact: '2025-07-14',
+          potentialValue: 'AI/ML Knowledge & Cross-domain Skills'
         }
       ]);
 
@@ -410,13 +624,105 @@ export default function CareerDevelopmentPage() {
   };
 
   const createNewGoal = () => {
-    // Implementation for creating new career goal
-    console.log('Creating new career goal...');
+    const newGoal: CareerGoal = {
+      id: String(careerGoals.length + 1),
+      title: 'New Career Goal',
+      targetRole: 'Senior Software Engineer',
+      company: 'Target Company',
+      deadline: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      progress: 0,
+      status: 'active',
+      requiredSkills: ['Leadership', 'Technical Skills'],
+      milestones: [
+        {
+          id: '1',
+          title: 'Define specific objectives',
+          description: 'Set clear and measurable career objectives',
+          completed: false,
+          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          type: 'skill'
+        }
+      ]
+    };
+    setCareerGoals([...careerGoals, newGoal]);
   };
 
   const enrollInPath = (pathId: string) => {
     console.log(`Enrolling in learning path: ${pathId}`);
-    // Implementation for enrolling in learning path
+    // Update the learning path to show enrollment
+    setLearningPaths(paths =>
+      paths.map(path =>
+        path.id === pathId
+          ? { ...path, steps: path.steps.map(step => ({ ...step, completed: false })) }
+          : path
+      )
+    );
+
+    // Show success message (in a real app, this would be a toast notification)
+    alert('Successfully enrolled in learning path! Check your progress in the Learning tab.');
+  };
+
+  const startAssessment = () => {
+    if (careerAssessment) {
+      setCareerAssessment({
+        ...careerAssessment,
+        completed: true,
+        score: 85,
+        recommendations: [
+          'Focus on developing leadership skills to advance to senior roles',
+          'Consider obtaining cloud architecture certifications to increase market value',
+          'Build a stronger professional network in your target companies',
+          'Practice system design skills through mock interviews and projects'
+        ]
+      });
+    }
+  };
+
+  const toggleMilestone = (goalId: string, milestoneId: string) => {
+    setCareerGoals(goals =>
+      goals.map(goal =>
+        goal.id === goalId
+          ? {
+            ...goal,
+            milestones: goal.milestones.map(milestone =>
+              milestone.id === milestoneId
+                ? { ...milestone, completed: !milestone.completed }
+                : milestone
+            ),
+            progress: goal.milestones.filter(m =>
+              m.id === milestoneId ? !goal.milestones.find(ms => ms.id === milestoneId)?.completed
+                : m.completed
+            ).length / goal.milestones.length * 100
+          }
+          : goal
+      )
+    );
+  };
+
+  const messageContact = (contactId: string) => {
+    // In a real app, this would open a messaging interface
+    const contact = networkingContacts.find(c => c.id === contactId);
+    alert(`Message feature would open for ${contact?.name}. This would integrate with LinkedIn, email, or internal messaging.`);
+  };
+
+  const scheduleContact = (contactId: string) => {
+    // In a real app, this would open calendar scheduling
+    const contact = networkingContacts.find(c => c.id === contactId);
+    alert(`Calendar scheduling would open for ${contact?.name}. This would integrate with calendar apps.`);
+  };
+
+  const addNetworkingContact = () => {
+    const newContact: NetworkingContact = {
+      id: String(networkingContacts.length + 1),
+      name: 'New Contact',
+      title: 'Software Engineer',
+      company: 'Tech Company',
+      industry: 'Technology',
+      connectionStrength: 'weak',
+      lastContact: new Date().toISOString().split('T')[0],
+      potentialValue: 'Industry insights and networking'
+    };
+    setNetworkingContacts([...networkingContacts, newContact]);
   };
 
   if (loading) {
@@ -499,7 +805,7 @@ export default function CareerDevelopmentPage() {
                   {careerGoals.filter(goal => goal.status === 'active').length}
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  65% average progress
+                  {Math.round(careerGoals.reduce((acc, goal) => acc + goal.progress, 0) / careerGoals.length || 0)}% average progress
                 </p>
               </div>
 
@@ -569,6 +875,9 @@ export default function CareerDevelopmentPage() {
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                 <FiAward className="w-5 h-5 mr-2 text-yellow-500" />
                 Recent Achievements
+                <span className="ml-auto text-sm bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded-full">
+                  {achievements.filter(a => a.earned).reduce((sum, a) => sum + a.points, 0)} points earned
+                </span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {achievements.slice(0, 3).map((achievement) => (
@@ -610,7 +919,10 @@ export default function CareerDevelopmentPage() {
                   Recommended Actions
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <div
+                    className="flex items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                    onClick={() => setActiveTab('learning')}
+                  >
                     <FiZap className="w-5 h-5 text-blue-500 mr-3" />
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">
@@ -622,7 +934,10 @@ export default function CareerDevelopmentPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <div
+                    className="flex items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                    onClick={() => setActiveTab('goals')}
+                  >
                     <FiTarget className="w-5 h-5 text-green-500 mr-3" />
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">
@@ -630,6 +945,21 @@ export default function CareerDevelopmentPage() {
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         Review your Senior Engineer goal progress
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    className="flex items-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg cursor-pointer hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+                    onClick={() => setActiveTab('networking')}
+                  >
+                    <FiUsers className="w-5 h-5 text-purple-500 mr-3" />
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        Expand Professional Network
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Connect with 5 new industry professionals this month
                       </p>
                     </div>
                   </div>
@@ -712,27 +1042,33 @@ export default function CareerDevelopmentPage() {
                 <div className="space-y-3">
                   <h4 className="font-semibold text-gray-900 dark:text-white">
                     Milestones:
-                  </h4>
-                  {goal.milestones.map((milestone) => (
+                  </h4>                  {goal.milestones.map((milestone) => (
                     <div
                       key={milestone.id}
-                      className={`flex items-center p-3 rounded-lg ${milestone.completed
+                      className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${milestone.completed
                         ? 'bg-green-50 dark:bg-green-900/20'
                         : 'bg-gray-50 dark:bg-gray-700'
                         }`}
+                      onClick={() => toggleMilestone(goal.id, milestone.id)}
                     >
-                      <div className={`w-5 h-5 rounded-full mr-3 flex items-center justify-center ${milestone.completed
+                      <div className={`w-5 h-5 rounded-full mr-3 flex items-center justify-center transition-colors ${milestone.completed
                         ? 'bg-green-500 text-white'
-                        : 'bg-gray-300 dark:bg-gray-600'
+                        : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
                         }`}>
                         {milestone.completed && <FiCheckCircle className="w-3 h-3" />}
                       </div>
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
+                      <div className="flex-1">
+                        <p className={`font-medium ${milestone.completed
+                          ? 'text-green-800 dark:text-green-200 line-through'
+                          : 'text-gray-900 dark:text-white'
+                          }`}>
                           {milestone.title}
                         </p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           {milestone.description}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                          Due: {new Date(milestone.dueDate).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -1079,7 +1415,10 @@ export default function CareerDevelopmentPage() {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Professional Networking
               </h2>
-              <button className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+              <button
+                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                onClick={addNetworkingContact}
+              >
                 <FiUsers className="w-4 h-4 mr-2" />
                 Find Connections
               </button>
@@ -1167,7 +1506,7 @@ export default function CareerDevelopmentPage() {
                         <div className="flex items-center space-x-4 text-xs text-gray-600 dark:text-gray-400">
                           <span className="flex items-center">
                             <div className={`w-2 h-2 rounded-full mr-1 ${contact.connectionStrength === 'strong' ? 'bg-green-500' :
-                                contact.connectionStrength === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
+                              contact.connectionStrength === 'medium' ? 'bg-yellow-500' : 'bg-red-500'
                               }`}></div>
                             {contact.connectionStrength} connection
                           </span>
@@ -1175,10 +1514,16 @@ export default function CareerDevelopmentPage() {
                         </div>
                       </div>
                       <div className="flex space-x-2">
-                        <button className="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-colors">
+                        <button
+                          className="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-colors"
+                          onClick={() => messageContact(contact.id)}
+                        >
                           Message
                         </button>
-                        <button className="px-3 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors">
+                        <button
+                          className="px-3 py-1 text-xs bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors"
+                          onClick={() => scheduleContact(contact.id)}
+                        >
                           Schedule
                         </button>
                       </div>
@@ -1276,8 +1621,8 @@ export default function CareerDevelopmentPage() {
                       {trend.skill}
                     </h3>
                     <div className={`px-2 py-1 rounded-full text-xs font-medium ${trend.trend === 'rising' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
-                        trend.trend === 'stable' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300' :
-                          'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                      trend.trend === 'stable' ? 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300' :
+                        'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
                       }`}>
                       {trend.trend === 'rising' && <FiTrendingUp className="w-3 h-3 inline mr-1" />}
                       {trend.trend.charAt(0).toUpperCase() + trend.trend.slice(1)}
@@ -1311,7 +1656,10 @@ export default function CareerDevelopmentPage() {
                     </p>
                   </div>
 
-                  <button className="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                  <button
+                    className="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                    onClick={() => setActiveTab('learning')}
+                  >
                     Explore Learning Path
                   </button>
                 </div>
@@ -1432,10 +1780,7 @@ export default function CareerDevelopmentPage() {
                 <div className="text-center">
                   <button
                     className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 transform hover:scale-105"
-                    onClick={() => {
-                      // Start assessment
-                      console.log('Starting career assessment...');
-                    }}
+                    onClick={startAssessment}
                   >
                     Start Assessment
                   </button>
