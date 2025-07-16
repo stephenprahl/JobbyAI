@@ -495,7 +495,18 @@ const LandingPageTailwind: React.FC = () => {
 
         {/* Features Section */}
         <section ref={featuresRef} className="py-24 bg-white dark:bg-gray-800 relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-30">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="featuresGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-300 dark:text-gray-600" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#featuresGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-20">
               <div className="inline-flex items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/30 rounded-full text-primary-600 dark:text-primary-400 font-medium text-sm mb-6">
                 ✨ Powerful Features
@@ -535,8 +546,20 @@ const LandingPageTailwind: React.FC = () => {
         </section>
 
         {/* Benefits Section */}
-        <section ref={benefitsRef} className="py-24 bg-gradient-to-br from-gray-50 to-primary-50/30 dark:from-gray-900 dark:to-gray-800 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section ref={benefitsRef} className="py-24 bg-gradient-to-br from-gray-50 to-primary-50/30 dark:from-gray-900 dark:to-gray-800 relative z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-20">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="benefitsGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+                  <path d="M 50 0 L 0 0 0 50" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary-400 dark:text-primary-600" />
+                  <circle cx="25" cy="25" r="1" fill="currentColor" className="text-primary-300 dark:text-primary-700" opacity="0.3" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#benefitsGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
                 <div className="inline-flex items-center px-4 py-2 bg-success-50 dark:bg-success-900/30 rounded-full text-success-600 dark:text-success-400 font-medium text-sm mb-6">
@@ -589,8 +612,20 @@ const LandingPageTailwind: React.FC = () => {
         </section>
 
         {/* Testimonials Section */}
-        <section className="py-24 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-24 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 relative z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-25">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="testimonialsGrid" width="80" height="80" patternUnits="userSpaceOnUse">
+                  <path d="M 80 0 L 0 0 0 80" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-blue-300 dark:text-blue-700" />
+                  <rect x="20" y="20" width="8" height="8" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-blue-400 dark:text-blue-600" opacity="0.4" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#testimonialsGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-20">
               <div className="inline-flex items-center px-4 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400 font-medium text-sm mb-6">
                 💬 Success Stories
@@ -733,8 +768,21 @@ const LandingPageTailwind: React.FC = () => {
         </section>
 
         {/* Pricing Preview Section */}
-        <section ref={pricingRef} className="py-24 bg-white dark:bg-gray-800 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section ref={pricingRef} className="py-24 bg-white dark:bg-gray-800 relative z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-25">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="pricingGrid" width="70" height="70" patternUnits="userSpaceOnUse">
+                  <path d="M 70 0 L 0 0 0 70" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-300 dark:text-purple-700" />
+                  <rect x="15" y="15" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-400 dark:text-purple-600" opacity="0.3" />
+                  <rect x="43" y="43" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-400 dark:text-purple-600" opacity="0.3" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#pricingGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-16">
               <div className="inline-flex items-center px-4 py-2 bg-purple-50 dark:bg-purple-900/30 rounded-full text-purple-600 dark:text-purple-400 font-medium text-sm mb-6">
                 💎 Flexible Plans
@@ -894,8 +942,19 @@ const LandingPageTailwind: React.FC = () => {
         </section>
 
         {/* Trust & Security Section */}
-        <section ref={trustRef} className="py-16 bg-gradient-to-r from-gray-50 to-primary-50/20 dark:from-gray-900 dark:to-gray-800 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section ref={trustRef} className="py-16 bg-gradient-to-r from-gray-50 to-primary-50/20 dark:from-gray-900 dark:to-gray-800 relative z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-20">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="trustGrid" width="45" height="45" patternUnits="userSpaceOnUse">
+                  <path d="M 45 0 L 0 0 0 45" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400 dark:text-gray-600" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#trustGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                 Trusted by Job Seekers Worldwide
@@ -943,6 +1002,19 @@ const LandingPageTailwind: React.FC = () => {
 
         {/* CTA Section */}
         <section ref={ctaRef} className="py-24 bg-gradient-to-r from-primary-600 via-purple-600 to-secondary-600 relative overflow-hidden z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-15">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="ctaGrid" width="100" height="100" patternUnits="userSpaceOnUse">
+                  <path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" strokeWidth="0.5" opacity="0.3" />
+                  <rect x="25" y="25" width="15" height="15" fill="none" stroke="white" strokeWidth="0.5" opacity="0.2" />
+                  <rect x="60" y="60" width="15" height="15" fill="none" stroke="white" strokeWidth="0.5" opacity="0.2" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#ctaGrid)" />
+            </svg>
+          </div>
           {/* Background decoration */}
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
