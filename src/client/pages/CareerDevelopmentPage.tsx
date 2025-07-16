@@ -9,6 +9,8 @@ import {
   FiBriefcase,
   FiCalendar,
   FiCheckCircle,
+  FiChevronLeft,
+  FiChevronRight,
   FiClock,
   FiDollarSign,
   FiDownload,
@@ -202,6 +204,12 @@ export default function CareerDevelopmentPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'goals' | 'skills' | 'learning' | 'salary' | 'networking' | 'trends' | 'assessment' | 'jobs'>('overview');
 
+  // Navigation carousel state
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  const [visibleTabsCount, setVisibleTabsCount] = useState(7); // Number of tabs visible at once (increased for compact design)
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchEndX, setTouchEndX] = useState(0);
+
   // Job search state
   const [jobSearchQuery, setJobSearchQuery] = useState('');
   const [jobSearchLocation, setJobSearchLocation] = useState('');
@@ -216,6 +224,134 @@ export default function CareerDevelopmentPage() {
     salaryMax: '',
     experience: 'mid' as 'entry' | 'mid' | 'senior'
   });
+
+  // Define navigation tabs
+  const navigationTabs = [
+    { id: 'overview', label: 'Overview', icon: FiTrendingUp, color: 'blue', description: 'Career dashboard' },
+    { id: 'goals', label: 'Career Goals', icon: FiTarget, color: 'green', description: 'Set & track goals' },
+    { id: 'skills', label: 'Skill Gaps', icon: FiAward, color: 'orange', description: 'Identify improvements' },
+    { id: 'learning', label: 'Learning Paths', icon: FiBook, color: 'purple', description: 'Curated courses' },
+    { id: 'salary', label: 'Salary Tracker', icon: FiDollarSign, color: 'emerald', description: 'Market insights' },
+    { id: 'networking', label: 'Networking', icon: FiUsers, color: 'pink', description: 'Build connections' },
+    { id: 'jobs', label: 'Job Search', icon: FiBriefcase, color: 'indigo', description: 'Find opportunities' },
+    { id: 'trends', label: 'Industry Trends', icon: FiGlobe, color: 'cyan', description: 'Market analysis' },
+    { id: 'assessment', label: 'Assessment', icon: FiLayers, color: 'red', description: 'Skill evaluation' }
+  ];
+
+  // Responsive tab visibility
+  useEffect(() => {
+    const updateVisibleTabs = () => {
+      const width = window.innerWidth;
+      if (width < 640) setVisibleTabsCount(3);       // Mobile: 3 tabs (more compact now)
+      else if (width < 768) setVisibleTabsCount(4);   // Small: 4 tabs
+      else if (width < 1024) setVisibleTabsCount(6);  // Medium: 6 tabs
+      else if (width < 1280) setVisibleTabsCount(7);  // Large: 7 tabs
+      else setVisibleTabsCount(9);                    // XL: All 9 tabs
+    };
+
+    updateVisibleTabs();
+    window.addEventListener('resize', updateVisibleTabs);
+    return () => window.removeEventListener('resize', updateVisibleTabs);
+  }, []);
+
+  // Navigation functions
+  const navigateTabs = (direction: 'prev' | 'next') => {
+    const maxIndex = Math.max(0, navigationTabs.length - visibleTabsCount);
+    setCurrentTabIndex(prev => {
+      if (direction === 'prev') return Math.max(0, prev - 1);
+      return Math.min(maxIndex, prev + 1);
+    });
+  };
+
+  const selectTab = (tabId: string) => {
+    setActiveTab(tabId as any);
+    const tabIndex = navigationTabs.findIndex(tab => tab.id === tabId);
+    if (tabIndex !== -1) {
+      // Auto-scroll to make selected tab visible
+      const maxIndex = Math.max(0, navigationTabs.length - visibleTabsCount);
+      if (tabIndex < currentTabIndex) {
+        setCurrentTabIndex(tabIndex);
+      } else if (tabIndex >= currentTabIndex + visibleTabsCount) {
+        setCurrentTabIndex(Math.min(maxIndex, tabIndex - visibleTabsCount + 1));
+      }
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case 'ArrowLeft':
+            e.preventDefault();
+            navigateTabs('prev');
+            break;
+          case 'ArrowRight':
+            e.preventDefault();
+            navigateTabs('next');
+            break;
+          case '1':
+          case '2':
+          case '3':
+          case '4':
+          case '5':
+          case '6':
+          case '7':
+          case '8':
+          case '9':
+            e.preventDefault();
+            const tabIndex = parseInt(e.key) - 1;
+            if (tabIndex < navigationTabs.length) {
+              selectTab(navigationTabs[tabIndex].id);
+            }
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Auto-navigate through tabs on first visit (demo mode)
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (activeTab === 'overview') {
+      interval = setInterval(() => {
+        setCurrentTabIndex(prev => {
+          const maxIndex = Math.max(0, navigationTabs.length - visibleTabsCount);
+          return (prev + 1) > maxIndex ? 0 : prev + 1;
+        });
+      }, 4000); // Change every 4 seconds when on overview
+    }
+    return () => clearInterval(interval);
+  }, [activeTab, visibleTabsCount]);
+
+  // Touch gesture handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX || !touchEndX) return;
+
+    const distance = touchStartX - touchEndX;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      navigateTabs('next');
+    } else if (isRightSwipe) {
+      navigateTabs('prev');
+    }
+
+    setTouchStartX(0);
+    setTouchEndX(0);
+  };
 
   useEffect(() => {
     if (user) {
@@ -1346,33 +1482,139 @@ export default function CareerDevelopmentPage() {
           </div>
         </div>
 
-        {/* Enhanced Navigation Tabs */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-2 mb-8 shadow-lg">
-          <nav className="flex space-x-2 overflow-x-auto">
-            {[
-              { id: 'overview', label: 'Overview', icon: FiTrendingUp, color: 'blue' },
-              { id: 'goals', label: 'Career Goals', icon: FiTarget, color: 'green' },
-              { id: 'skills', label: 'Skill Gaps', icon: FiAward, color: 'orange' },
-              { id: 'learning', label: 'Learning Paths', icon: FiBook, color: 'purple' },
-              { id: 'salary', label: 'Salary Tracker', icon: FiDollarSign, color: 'emerald' },
-              { id: 'networking', label: 'Networking', icon: FiUsers, color: 'pink' },
-              { id: 'jobs', label: 'Job Search', icon: FiBriefcase, color: 'indigo' },
-              { id: 'trends', label: 'Industry Trends', icon: FiGlobe, color: 'indigo' },
-              { id: 'assessment', label: 'Assessment', icon: FiLayers, color: 'red' }
-            ].map((tab) => (
+        {/* Enhanced Carousel Navigation */}
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-3 mb-8 shadow-lg">
+          {/* Navigation Header */}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-2">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Career Hub</h2>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {navigationTabs.find(tab => tab.id === activeTab)?.description}
+              </span>
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center py-3 px-4 rounded-xl font-semibold text-sm whitespace-nowrap transition-all duration-300 transform hover:scale-105 ${activeTab === tab.id
-                  ? `bg-gradient-to-r from-${tab.color}-500 to-${tab.color}-600 text-white shadow-lg`
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/50'
-                  }`}
+                onClick={() => {
+                  alert(`Navigation Tips:
+• Use arrow buttons or swipe on mobile to browse tabs
+• Keyboard shortcuts: Ctrl/Cmd + ← → or press 1-9 for direct access
+• The carousel auto-scrolls when viewing the Overview
+• Each tab has specialized tools for career development`);
+                }}
+                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                title="Navigation Help"
               >
-                <tab.icon className="w-4 h-4 mr-2" />
-                {tab.label}
+                <FiInfo className="w-4 h-4" />
               </button>
-            ))}
-          </nav>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="hidden sm:flex items-center space-x-1">
+                {navigationTabs.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${index >= currentTabIndex && index < currentTabIndex + visibleTabsCount
+                        ? 'bg-blue-500'
+                        : 'bg-gray-300 dark:bg-gray-600'
+                      }`}
+                  />
+                ))}
+              </div>
+              <div className="hidden md:block text-xs text-gray-500 dark:text-gray-400 ml-2">
+                Ctrl/Cmd + ← → or 1-9 to navigate
+              </div>
+              <div className="flex items-center space-x-1">
+                <button
+                  onClick={() => navigateTabs('prev')}
+                  disabled={currentTabIndex === 0}
+                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  <FiChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => navigateTabs('next')}
+                  disabled={currentTabIndex >= navigationTabs.length - visibleTabsCount}
+                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                >
+                  <FiChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Carousel Container */}
+          <div
+            className="relative overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{
+                transform: `translateX(-${currentTabIndex * (100 / visibleTabsCount)}%)`
+              }}
+            >
+              {navigationTabs.map((tab, index) => (
+                <div
+                  key={tab.id}
+                  className="flex-shrink-0"
+                  style={{ width: `${100 / visibleTabsCount}%` }}
+                >
+                  <button
+                    onClick={() => selectTab(tab.id)}
+                    className={`w-full mx-1 px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 group flex items-center justify-center space-x-2 ${activeTab === tab.id
+                        ? `bg-gradient-to-r from-${tab.color}-500 to-${tab.color}-600 text-white shadow-lg`
+                        : 'bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600'
+                      }`}
+                  >
+                    <tab.icon className={`w-4 h-4 flex-shrink-0 ${activeTab === tab.id
+                        ? 'text-white'
+                        : `text-${tab.color}-600 dark:text-${tab.color}-400`
+                      }`} />
+                    <span className={`font-medium text-sm truncate ${activeTab === tab.id
+                        ? 'text-white'
+                        : 'text-gray-900 dark:text-white'
+                      }`}>
+                      {tab.label}
+                    </span>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Tab Selector */}
+          <div className="mt-3 sm:hidden">
+            <select
+              value={activeTab}
+              onChange={(e) => selectTab(e.target.value)}
+              className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              {navigationTabs.map((tab) => (
+                <option key={tab.id} value={tab.id}>
+                  {tab.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Active Tab Progress Indicator */}
+          <div className="mt-3 hidden sm:block">
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <span>
+                Section {navigationTabs.findIndex(tab => tab.id === activeTab) + 1} of {navigationTabs.length}
+              </span>
+              <div className="flex items-center space-x-1">
+                <span>Progress:</span>
+                <div className="w-20 h-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 transition-all duration-500 ease-out"
+                    style={{
+                      width: `${((navigationTabs.findIndex(tab => tab.id === activeTab) + 1) / navigationTabs.length) * 100}%`
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Overview Tab */}
