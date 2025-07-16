@@ -1511,8 +1511,8 @@ export default function CareerDevelopmentPage() {
                   <div
                     key={index}
                     className={`w-2 h-2 rounded-full transition-all duration-300 ${index >= currentTabIndex && index < currentTabIndex + visibleTabsCount
-                        ? 'bg-blue-500'
-                        : 'bg-gray-300 dark:bg-gray-600'
+                      ? 'bg-blue-500'
+                      : 'bg-gray-300 dark:bg-gray-600'
                       }`}
                   />
                 ))}
@@ -1555,27 +1555,30 @@ export default function CareerDevelopmentPage() {
               {navigationTabs.map((tab, index) => (
                 <div
                   key={tab.id}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 px-2"
                   style={{ width: `${100 / visibleTabsCount}%` }}
                 >
-                  <button
-                    onClick={() => selectTab(tab.id)}
-                    className={`w-full mx-1 px-3 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 group flex items-center justify-center space-x-2 ${activeTab === tab.id
-                        ? `bg-gradient-to-r from-${tab.color}-500 to-${tab.color}-600 text-white shadow-lg`
-                        : 'bg-gray-50 dark:bg-gray-700/50 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600'
-                      }`}
-                  >
-                    <tab.icon className={`w-4 h-4 flex-shrink-0 ${activeTab === tab.id
-                        ? 'text-white'
-                        : `text-${tab.color}-600 dark:text-${tab.color}-400`
-                      }`} />
-                    <span className={`font-medium text-sm truncate ${activeTab === tab.id
-                        ? 'text-white'
-                        : 'text-gray-900 dark:text-white'
+                  <div className="flex flex-col items-center space-y-2">
+                    <button
+                      onClick={() => selectTab(tab.id)}
+                      className={`w-12 h-12 rounded-full transition-all duration-300 transform hover:scale-110 group flex items-center justify-center shadow-lg ${activeTab === tab.id
+                          ? `bg-gradient-to-br from-${tab.color}-500 to-${tab.color}-600 text-white shadow-xl ring-2 ring-${tab.color}-300 dark:ring-${tab.color}-700`
+                          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 hover:shadow-xl'
+                        }`}
+                      title={tab.label}
+                    >
+                      <tab.icon className={`w-5 h-5 ${activeTab === tab.id
+                          ? 'text-white'
+                          : `text-${tab.color}-600 dark:text-${tab.color}-400`
+                        }`} />
+                    </button>
+                    <span className={`text-xs font-medium text-center leading-tight max-w-full truncate ${activeTab === tab.id
+                        ? `text-${tab.color}-600 dark:text-${tab.color}-400 font-semibold`
+                        : 'text-gray-600 dark:text-gray-400'
                       }`}>
                       {tab.label}
                     </span>
-                  </button>
+                  </div>
                 </div>
               ))}
             </div>
