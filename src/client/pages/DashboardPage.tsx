@@ -1,5 +1,23 @@
 import React from 'react'
-import { FiBriefcase, FiEdit, FiEye, FiFileText, FiPlus, FiStar, FiTrendingUp, FiUser } from 'react-icons/fi'
+import {
+  FiActivity,
+  FiArrowRight,
+  FiAward,
+  FiBarChart,
+  FiBookOpen,
+  FiBriefcase,
+  FiCheckCircle,
+  FiDollarSign,
+  FiDownload,
+  FiEdit, FiEye, FiFileText,
+  FiHeart,
+  FiPlus,
+  FiRefreshCw,
+  FiStar,
+  FiTarget,
+  FiTrendingUp, FiUser,
+  FiUsers
+} from 'react-icons/fi'
 import { Link as RouterLink } from 'react-router-dom'
 import SubscriptionDashboard from '../components/SubscriptionDashboard'
 import { useAuth } from '../contexts/AuthContext'
@@ -225,61 +243,302 @@ const DashboardPageTailwind: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Actions */}
+          {/* Enhanced Analytics Overview */}
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-3xl p-8 shadow-2xl">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2">
+                  Your Career Analytics
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">
+                  Track your job search progress and optimize your strategy
+                </p>
+              </div>
+              <div className="flex space-x-3 mt-4 lg:mt-0">
+                <button className="group flex items-center space-x-2 bg-gradient-to-r from-primary-500 to-blue-600 hover:from-primary-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <FiRefreshCw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
+                  <span>Refresh Data</span>
+                </button>
+                <button className="flex items-center space-x-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <FiDownload className="w-4 h-4" />
+                  <span>Export Report</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <div className="group bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200/50 dark:border-green-800/30 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-xl">
+                    <FiTrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <span className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/50 px-2 py-1 rounded-full">
+                    +12%
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                  Response Rate
+                </h3>
+                <p className="text-3xl font-black text-green-600 dark:text-green-400 mb-2">
+                  {isNewUser ? '0%' : '78%'}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  {isNewUser ? 'Apply to jobs to track' : 'Above industry average'}
+                </p>
+              </div>
+
+              <div className="group bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border border-blue-200/50 dark:border-blue-800/30 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl">
+                    <FiTarget className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50 px-2 py-1 rounded-full">
+                    +5
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                  Active Applications
+                </h3>
+                <p className="text-3xl font-black text-blue-600 dark:text-blue-400 mb-2">
+                  {isNewUser ? '0' : '23'}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  {isNewUser ? 'Start applying!' : 'Interviews pending'}
+                </p>
+              </div>
+
+              <div className="group bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border border-purple-200/50 dark:border-purple-800/30 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-xl">
+                    <FiAward className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <span className="text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/50 px-2 py-1 rounded-full">
+                    NEW
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                  Skills Score
+                </h3>
+                <p className="text-3xl font-black text-purple-600 dark:text-purple-400 mb-2">
+                  {isNewUser ? '-' : '92'}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  {isNewUser ? 'Complete profile' : 'Top 10% in industry'}
+                </p>
+              </div>
+
+              <div className="group bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border border-orange-200/50 dark:border-orange-800/30 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02]">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-xl">
+                    <FiDollarSign className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                  </div>
+                  <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/50 px-2 py-1 rounded-full">
+                    AVG
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                  Salary Range
+                </h3>
+                <p className="text-3xl font-black text-orange-600 dark:text-orange-400 mb-2">
+                  {isNewUser ? '$-' : '$85K'}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  {isNewUser ? 'Set target salary' : 'Based on profile'}
+                </p>
+              </div>
+            </div>
+
+            {/* Career Progress Chart */}
+            <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800/50 dark:to-blue-900/20 rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/30">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                  Career Progress Timeline
+                </h3>
+                <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                  <FiActivity className="w-4 h-4" />
+                  <span>Last 30 days</span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                    <FiCheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900 dark:text-white">Profile Optimization Complete</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Improved match score by 15%</p>
+                  </div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">2 days ago</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                    <FiFileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900 dark:text-white">New Resume Generated</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Tailored for Software Engineer role</p>
+                  </div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">5 days ago</span>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                    <FiBriefcase className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900 dark:text-white">Applied to 12 Positions</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Focused on tech companies</p>
+                  </div>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">1 week ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Quick Actions with More Features */}
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
-                <div className="space-y-4">
-                  <FiFileText className="w-8 h-8 text-blue-500" />
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Resume</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      Build a tailored resume with our AI-powered builder
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-black text-gray-900 dark:text-white">
+                Quick Actions
+              </h2>
+              <RouterLink
+                to="/career-development"
+                className="group flex items-center space-x-2 text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold transition-colors duration-200"
+              >
+                <span>Career Development</span>
+                <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+              </RouterLink>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/20 to-transparent rounded-full blur-xl transform translate-x-10 -translate-y-10"></div>
+                <div className="relative space-y-6">
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300 inline-block">
+                    <FiFileText className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                      Create AI Resume
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+                      Build a tailored resume with our advanced AI-powered builder in minutes
                     </p>
                   </div>
                   <RouterLink
                     to="/resume/builder"
-                    className="block w-full px-4 py-2 border border-blue-600 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200 text-center"
+                    className="group/btn flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
                   >
-                    Get Started
+                    <span>Get Started</span>
+                    <FiArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-200" />
                   </RouterLink>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
-                <div className="space-y-4">
-                  <FiBriefcase className="w-8 h-8 text-green-500" />
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Analyze Job Posting</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      See how well your profile matches job requirements
+              <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-500/20 to-transparent rounded-full blur-xl transform translate-x-10 -translate-y-10"></div>
+                <div className="relative space-y-6">
+                  <div className="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300 inline-block">
+                    <FiBriefcase className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-300">
+                      Analyze Job Match
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+                      See how well your profile matches job requirements and get improvement tips
                     </p>
                   </div>
                   <RouterLink
                     to="/jobs"
-                    className="block w-full px-4 py-2 border border-green-600 text-green-600 dark:text-green-400 rounded-md hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200 text-center"
+                    className="group/btn flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
                   >
-                    Get Started
+                    <span>Analyze Now</span>
+                    <FiArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-200" />
                   </RouterLink>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
-                <div className="space-y-4">
-                  <FiUser className="w-8 h-8 text-purple-500" />
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Update Profile</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">
-                      Keep your profile information up to date
+              <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-500/20 to-transparent rounded-full blur-xl transform translate-x-10 -translate-y-10"></div>
+                <div className="relative space-y-6">
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300 inline-block">
+                    <FiTarget className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
+                      Career Development
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+                      Set goals, track progress, and accelerate your career growth
                     </p>
                   </div>
                   <RouterLink
-                    to="/profile"
-                    className="block w-full px-4 py-2 border border-purple-600 text-purple-600 dark:text-purple-400 rounded-md hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-200 text-center"
+                    to="/career-development"
+                    className="group/btn flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
                   >
-                    Get Started
+                    <span>Start Planning</span>
+                    <FiArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-200" />
                   </RouterLink>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* New Features Section */}
+          <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200/50 dark:border-indigo-800/30 rounded-3xl p-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-transparent rounded-full blur-2xl transform translate-x-16 -translate-y-16"></div>
+            <div className="relative">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-3 rounded-2xl shadow-xl">
+                  <FiStar className="text-white w-6 h-6" />
+                </div>
+                <h2 className="text-2xl font-black text-indigo-700 dark:text-indigo-300">
+                  ✨ New Features Available
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <FiBookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                    <h3 className="font-bold text-gray-900 dark:text-white">Interview Prep</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Practice with AI-generated questions tailored to your target roles
+                  </p>
+                  <RouterLink
+                    to="/interview-prep"
+                    className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold text-sm flex items-center space-x-1"
+                  >
+                    <span>Try Now</span>
+                    <FiArrowRight className="w-3 h-3" />
+                  </RouterLink>
+                </div>
+
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <FiUsers className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <h3 className="font-bold text-gray-900 dark:text-white">Network Builder</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Connect with professionals in your industry and expand your network
+                  </p>
+                  <button className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold text-sm flex items-center space-x-1">
+                    <span>Coming Soon</span>
+                    <FiHeart className="w-3 h-3" />
+                  </button>
+                </div>
+
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <FiBarChart className="w-5 h-5 text-green-600 dark:text-green-400" />
+                    <h3 className="font-bold text-gray-900 dark:text-white">Salary Insights</h3>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    Get real-time salary data and negotiation tips for your roles
+                  </p>
+                  <button className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-semibold text-sm flex items-center space-x-1">
+                    <span>Coming Soon</span>
+                    <FiTrendingUp className="w-3 h-3" />
+                  </button>
                 </div>
               </div>
             </div>
