@@ -150,9 +150,47 @@
     @apply border-2 border-gray-600 dark:border-gray-400 text-gray-950 dark:text-gray-50 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-700 dark:hover:border-gray-300;
   }
 
+  /* Enhanced button styles for auth forms */
+  .btn-auth {
+    @apply w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transform transition-all duration-200 ease-in-out;
+  }
+
+  .btn-auth:hover {
+    @apply shadow-lg scale-[1.02];
+  }
+
+  .btn-auth:active {
+    @apply scale-[0.98];
+  }
+
+  .btn-auth:disabled {
+    @apply opacity-50 cursor-not-allowed transform-none shadow-none;
+  }
+
+  .btn-social {
+    @apply w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-social:hover {
+    @apply shadow-md;
+  }
+
   /* Custom input styles */
   .input {
     @apply block w-full px-4 py-3 border-2 border-gray-400 dark:border-gray-500 rounded-lg shadow-sm placeholder-gray-600 dark:placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-950 dark:text-gray-50 font-medium;
+  }
+
+  /* Enhanced input styles for auth forms */
+  .enhanced-input {
+    @apply block w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg shadow-sm placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-950 dark:text-gray-50 font-medium transition-all duration-200 ease-in-out;
+  }
+
+  .enhanced-input:focus {
+    @apply shadow-lg transform scale-[1.02] border-primary-500 ring-primary-500;
+  }
+
+  .enhanced-input:hover:not(:focus) {
+    @apply border-gray-400 dark:border-gray-500;
   }
 
   /* Enhanced input styles for ProfilePage */
@@ -341,5 +379,109 @@
 
   50% {
     transform: translateY(-10px);
+  }
+}
+
+/* Enhanced Auth Form Styles */
+@layer components {
+  .auth-gradient-bg {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 50%, rgba(244, 114, 182, 0.1) 100%);
+  }
+
+  .auth-card {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-gray-200/60 dark:border-gray-700/60 shadow-2xl rounded-2xl;
+  }
+
+  .enhanced-input-focus {
+    @apply ring-2 ring-primary-500/20 border-primary-500 shadow-lg transform scale-[1.01];
+  }
+
+  .social-button-hover {
+    @apply transform scale-[1.02] shadow-lg;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .dark .glass-effect {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Button shimmer effect */
+  .btn-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-shimmer:hover::before {
+    left: 100%;
+  }
+
+  /* Floating label animation */
+  .floating-label {
+    @apply absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 pointer-events-none transition-all duration-200;
+  }
+
+  .floating-label.active {
+    @apply top-1 text-xs text-primary-600 dark:text-primary-400 font-semibold;
+  }
+
+  /* Enhanced validation states */
+  .input-valid {
+    @apply border-green-500 bg-green-50/50 dark:bg-green-900/20;
+  }
+
+  .input-error {
+    @apply border-red-500 bg-red-50/50 dark:bg-red-900/20;
+  }
+
+  /* Loading spinner */
+  .loading-dots {
+    @apply inline-flex space-x-1;
+  }
+
+  .loading-dots>div {
+    @apply w-2 h-2 bg-current rounded-full animate-pulse;
+  }
+
+  .loading-dots>div:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .loading-dots>div:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  /* Custom scrollbar for form containers */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-gray-400 dark:hover:bg-gray-500;
   }
 }

@@ -2,6 +2,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  FiArrowLeft,
   FiArrowRight,
   FiAward,
   FiBook,
@@ -38,6 +39,10 @@ const DocumentationPage: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const floatingElementsRef = useRef<HTMLDivElement>(null);
+  const overviewCardsRef = useRef<HTMLDivElement>(null);
+  const performanceStatsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -58,6 +63,120 @@ const DocumentationPage: React.FC = () => {
         { opacity: 0, x: -20 },
         { opacity: 1, x: 0, stagger: 0.05, duration: 0.6, ease: "power2.out", delay: 0.3 }
       );
+    }
+
+    // Animated background grid
+    if (gridRef.current) {
+      // Animate grid opacity and scale
+      gsap.fromTo(
+        gridRef.current,
+        {
+          opacity: 0,
+          scale: 1.1
+        },
+        {
+          opacity: 0.1,
+          scale: 1,
+          duration: 2,
+          ease: "power2.out",
+          delay: 0.5
+        }
+      );
+
+      // Continuous subtle animation
+      gsap.to(gridRef.current, {
+        rotation: 0.5,
+        duration: 20,
+        ease: "none",
+        repeat: -1,
+        yoyo: true
+      });
+    }
+
+    // Floating elements animation
+    if (floatingElementsRef.current) {
+      const elements = floatingElementsRef.current.children;
+
+      // Animate each floating element
+      Array.from(elements).forEach((element, index) => {
+        gsap.fromTo(
+          element,
+          {
+            opacity: 0,
+            scale: 0.8,
+            y: 20
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 1.5,
+            ease: "power2.out",
+            delay: 1 + index * 0.2
+          }
+        );
+
+        // Continuous floating animation
+        gsap.to(element, {
+          y: `${index % 2 === 0 ? '-=' : '+='}20`,
+          duration: 3 + index,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true
+        });
+
+        gsap.to(element, {
+          x: `${index % 2 === 0 ? '+=' : '-='}15`,
+          duration: 4 + index * 0.5,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true
+        });
+      });
+    }
+
+    // Overview section animations
+    if (overviewCardsRef.current) {
+      gsap.fromTo(
+        overviewCardsRef.current.children,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: overviewCardsRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
+        }
+      );
+    }
+
+    // Performance stats animation
+    if (performanceStatsRef.current) {
+      const stats = performanceStatsRef.current.querySelectorAll('[data-stat]');
+
+      stats.forEach((stat, index) => {
+        gsap.fromTo(
+          stat,
+          { scale: 0.8, opacity: 0 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 0.6,
+            delay: index * 0.1,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: performanceStatsRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      });
     }
   }, []);
 
@@ -177,55 +296,106 @@ const DocumentationPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Hero Section */}
-      <div ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 py-24">
-        {/* Geometric Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <svg className="w-full h-full" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="currentColor" strokeWidth="1" />
-              </pattern>
-              <linearGradient id="fade" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-            <rect width="100%" height="100%" fill="url(#fade)" />
-          </svg>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900">
+      {/* Hero Section - Full Width */}
+      <div ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 py-24 w-full">
+        {/* Advanced Background Pattern - Full Width */}
+        <div className="absolute inset-0 w-full h-full">
+          {/* Animated gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/5 to-emerald-600/10 animate-pulse"></div>
+
+          {/* Full Width Geometric Grid Pattern */}
+          <div ref={gridRef} className="absolute inset-0 w-full h-full opacity-0">
+            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="documentation-grid" width="8" height="8" patternUnits="userSpaceOnUse">
+                  <path d="M 8 0 L 0 0 0 8" fill="none" stroke="currentColor" strokeWidth="0.3" />
+                  <circle cx="4" cy="4" r="0.4" fill="currentColor" opacity="0.4" />
+                </pattern>
+                <pattern id="larger-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.2" opacity="0.6" />
+                </pattern>
+                <pattern id="hexagon-pattern" width="12" height="10.4" patternUnits="userSpaceOnUse">
+                  <path d="M 6 0 L 12 5.2 L 6 10.4 L 0 5.2 Z" fill="none" stroke="currentColor" strokeWidth="0.15" opacity="0.3" />
+                </pattern>
+                <linearGradient id="professional-fade" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.15" />
+                  <stop offset="50%" stopColor="currentColor" stopOpacity="0.08" />
+                  <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                </linearGradient>
+                <radialGradient id="radial-fade" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="currentColor" stopOpacity="0" />
+                  <stop offset="70%" stopColor="currentColor" stopOpacity="0.05" />
+                  <stop offset="100%" stopColor="currentColor" stopOpacity="0.12" />
+                </radialGradient>
+              </defs>
+
+              {/* Multiple overlapping grid layers for depth */}
+              <rect width="100%" height="100%" fill="url(#larger-grid)" />
+              <rect width="100%" height="100%" fill="url(#documentation-grid)" />
+              <rect width="100%" height="100%" fill="url(#hexagon-pattern)" />
+              <rect width="100%" height="100%" fill="url(#professional-fade)" />
+              <rect width="100%" height="100%" fill="url(#radial-fade)" />
+            </svg>
+          </div>
+
+          {/* Animated Floating Elements */}
+          <div ref={floatingElementsRef} className="absolute inset-0 w-full h-full">
+            <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-blue-500/15 to-purple-500/15 rounded-full blur-2xl"></div>
+            <div className="absolute top-40 right-32 w-24 h-24 bg-gradient-to-br from-emerald-500/15 to-teal-500/15 rounded-full blur-xl"></div>
+            <div className="absolute bottom-32 left-1/3 w-40 h-40 bg-gradient-to-br from-indigo-500/12 to-blue-500/12 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 right-1/4 w-28 h-28 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-20 right-20 w-20 h-20 bg-gradient-to-br from-teal-500/12 to-cyan-500/12 rounded-full blur-xl"></div>
+          </div>
+
+          {/* Additional animated elements */}
+          <div className="absolute inset-0 w-full h-full pointer-events-none">
+            {/* Subtle moving lines */}
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+          </div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10">
+          {/* Back Button */}
+          <div className="flex justify-start mb-8">
+            <Link
+              to="/"
+              className="group inline-flex items-center px-6 py-3 bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/20 text-gray-200 hover:text-white rounded-2xl font-semibold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              <FiArrowLeft className="w-5 h-5 mr-3 transition-transform group-hover:-translate-x-1" />
+              Back to Home
+            </Link>
+          </div>
+
           <div className="text-center">
-            <div className="inline-flex items-center px-4 py-2 bg-emerald-500/10 backdrop-blur-sm rounded-full text-emerald-400 text-sm font-medium mb-8 border border-emerald-500/20">
-              <FiBook className="w-4 h-4 mr-2" />
+            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-500/20 to-teal-500/20 backdrop-blur-sm rounded-2xl text-emerald-300 text-sm font-semibold mb-8 border border-emerald-400/30 shadow-lg">
+              <FiBook className="w-5 h-5 mr-3" />
               Developer Documentation & API Reference
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-8 tracking-tight">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tight leading-none">
               Build with{' '}
-              <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-blue-400 bg-clip-text text-transparent font-black">
                 JobbyAI
               </span>
             </h1>
-            <p className="text-xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed">
-              Comprehensive documentation, REST API reference, SDKs, and integration guides
-              to help you build powerful AI-driven career applications with our resume optimization platform.
+            <p className="text-xl md:text-2xl text-gray-200 mb-12 max-w-5xl mx-auto leading-relaxed font-light">
+              Comprehensive documentation, enterprise-grade REST APIs, SDKs, and integration guides
+              to help you build powerful AI-driven career applications with our advanced resume optimization platform.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link
                 to="/register"
-                className="inline-flex items-center px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-emerald-500/25"
+                className="group inline-flex items-center px-10 py-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl font-bold text-lg transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-emerald-500/25"
               >
-                <FiZap className="w-5 h-5 mr-2" />
+                <FiZap className="w-6 h-6 mr-3 transition-transform group-hover:rotate-12" />
                 Get API Key
               </Link>
               <button
                 onClick={() => setActiveTab('quickstart')}
-                className="inline-flex items-center px-8 py-4 border-2 border-gray-600 text-gray-300 hover:text-white hover:border-gray-400 rounded-xl font-semibold transform hover:scale-105 transition-all duration-200"
+                className="group inline-flex items-center px-10 py-5 border-2 border-white/30 bg-white/5 backdrop-blur-sm text-gray-200 hover:text-white hover:border-white/50 hover:bg-white/10 rounded-2xl font-bold text-lg transform hover:scale-105 transition-all duration-300"
               >
-                <FiPlay className="w-5 h-5 mr-2" />
+                <FiPlay className="w-6 h-6 mr-3 transition-transform group-hover:translate-x-1" />
                 Quick Start Guide
               </button>
             </div>
@@ -233,23 +403,24 @@ const DocumentationPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
             <div ref={navRef} className="sticky top-8 space-y-2">
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-2 shadow-lg border border-gray-200 dark:border-gray-700">
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-3 shadow-xl border border-gray-200/50 dark:border-gray-700/50">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white px-4 py-2 mb-2">Navigation</h3>
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all duration-200 ${activeTab === tab.id
-                      ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200'
+                    className={`w-full flex items-center px-5 py-4 text-left rounded-2xl transition-all duration-300 font-semibold ${activeTab === tab.id
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25 transform scale-[1.02]'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-200 hover:transform hover:scale-[1.01]'
                       }`}
                   >
-                    <tab.icon className="w-5 h-5 mr-3" />
-                    <span className="font-medium">{tab.label}</span>
+                    <tab.icon className="w-5 h-5 mr-4" />
+                    <span>{tab.label}</span>
                   </button>
                 ))}
               </div>
@@ -263,67 +434,67 @@ const DocumentationPage: React.FC = () => {
               {/* Overview Tab */}
               {activeTab === 'overview' && (
                 <div className="space-y-8">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mr-4">
-                        <FiCode className="w-6 h-6 text-white" />
+                  <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 p-10">
+                    <div className="flex items-center mb-8">
+                      <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-500 rounded-2xl flex items-center justify-center mr-6 shadow-lg">
+                        <FiCode className="w-8 h-8 text-white" />
                       </div>
                       <div>
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                        <h2 className="text-4xl font-black text-gray-900 dark:text-white leading-tight">
                           JobbyAI Developer Platform
                         </h2>
-                        <p className="text-gray-600 dark:text-gray-400">Professional API for AI-powered career tools</p>
+                        <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">Enterprise-grade API for AI-powered career tools</p>
                       </div>
                     </div>
 
-                    <p className="text-lg text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
+                    <p className="text-xl text-gray-700 dark:text-gray-300 mb-10 leading-relaxed font-light">
                       JobbyAI provides enterprise-grade REST APIs that enable developers to integrate
                       intelligent resume generation, ATS optimization, job analysis, and career coaching
-                      features into their applications with ease.
+                      features into their applications with ease and unprecedented reliability.
                     </p>
 
                     {/* Key Features Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
                       {[
                         {
                           icon: FiZap,
                           title: 'AI Resume Builder',
-                          description: 'Generate tailored resumes with advanced AI matching',
+                          description: 'Generate tailored resumes with advanced AI matching algorithms',
                           color: 'emerald'
                         },
                         {
                           icon: FiShield,
                           title: 'Enterprise Security',
-                          description: 'SOC 2 compliant with end-to-end encryption',
+                          description: 'SOC 2 compliant with military-grade encryption',
                           color: 'slate'
                         },
                         {
                           icon: FiTrendingUp,
                           title: 'Real-time Analytics',
-                          description: 'Comprehensive usage metrics and insights',
+                          description: 'Comprehensive usage metrics and performance insights',
                           color: 'teal'
                         },
                         {
                           icon: FiDatabase,
                           title: 'Scalable Infrastructure',
                           description: '99.99% uptime with global edge deployment',
-                          color: 'gray'
+                          color: 'blue'
                         }
                       ].map((feature, index) => (
                         <div key={index} className="group relative">
-                          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                          <div className="relative p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-300">
-                            <div className={`w-12 h-12 bg-gradient-to-r ${feature.color === 'emerald' ? 'from-emerald-500 to-emerald-600' :
+                          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-teal-500/5 to-blue-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:scale-105"></div>
+                          <div className="relative p-8 border border-gray-200/60 dark:border-gray-700/60 rounded-2xl hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-500 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm hover:shadow-xl">
+                            <div className={`w-14 h-14 bg-gradient-to-br ${feature.color === 'emerald' ? 'from-emerald-500 to-emerald-600' :
                               feature.color === 'slate' ? 'from-slate-500 to-slate-600' :
                                 feature.color === 'teal' ? 'from-teal-500 to-teal-600' :
-                                  'from-gray-500 to-gray-600'
-                              } rounded-lg flex items-center justify-center mb-4`}>
-                              <feature.icon className="w-6 h-6 text-white" />
+                                  'from-blue-500 to-blue-600'
+                              } rounded-xl flex items-center justify-center mb-6 shadow-lg`}>
+                              <feature.icon className="w-7 h-7 text-white" />
                             </div>
-                            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                            <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-3">
                               {feature.title}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                               {feature.description}
                             </p>
                           </div>
@@ -332,24 +503,93 @@ const DocumentationPage: React.FC = () => {
                     </div>
 
                     {/* Performance Stats */}
-                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-xl p-8">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 text-center">Platform Performance</h3>
+                    <div ref={performanceStatsRef} className="bg-gradient-to-br from-gray-50 via-blue-50 to-emerald-50 dark:from-gray-700 dark:via-gray-800 dark:to-gray-700 rounded-3xl p-10 shadow-inner">
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">Platform Performance</h3>
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">99.99%</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">API Uptime</div>
+                        <div className="text-center" data-stat>
+                          <div className="text-4xl font-black text-emerald-600 dark:text-emerald-400 mb-2">99.99%</div>
+                          <div className="text-gray-600 dark:text-gray-400 font-semibold">API Uptime</div>
                         </div>
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-teal-600 dark:text-teal-400 mb-2">&lt;150ms</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">Response Time</div>
+                        <div className="text-center" data-stat>
+                          <div className="text-4xl font-black text-teal-600 dark:text-teal-400 mb-2">&lt;150ms</div>
+                          <div className="text-gray-600 dark:text-gray-400 font-semibold">Response Time</div>
                         </div>
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-slate-600 dark:text-slate-400 mb-2">100+</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">Resume Templates</div>
+                        <div className="text-center" data-stat>
+                          <div className="text-4xl font-black text-blue-600 dark:text-blue-400 mb-2">100+</div>
+                          <div className="text-gray-600 dark:text-gray-400 font-semibold">Resume Templates</div>
                         </div>
-                        <div className="text-center">
-                          <div className="text-3xl font-bold text-gray-600 dark:text-gray-400 mb-2">24/7</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">Support Coverage</div>
+                        <div className="text-center" data-stat>
+                          <div className="text-4xl font-black text-slate-600 dark:text-slate-400 mb-2">24/7</div>
+                          <div className="text-gray-600 dark:text-gray-400 font-semibold">Support Coverage</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* API Overview Cards */}
+                    <div ref={overviewCardsRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+                      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+                        <div className="flex items-center mb-6">
+                          <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mr-4">
+                            <FiZap className="w-6 h-6 text-white" />
+                          </div>
+                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Quick Integration</h3>
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                          Get started in minutes with our comprehensive SDKs and detailed documentation.
+                          Our APIs are designed with developer experience in mind.
+                        </p>
+                        <button
+                          onClick={() => setActiveTab('quickstart')}
+                          className="inline-flex items-center text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                        >
+                          Get Started
+                          <FiArrowRight className="w-4 h-4 ml-2" />
+                        </button>
+                      </div>
+
+                      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-8 border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+                        <div className="flex items-center mb-6">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center mr-4">
+                            <FiCode className="w-6 h-6 text-white" />
+                          </div>
+                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Complete Documentation</h3>
+                        </div>
+                        <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                          Explore our comprehensive API reference, code examples, and integration guides
+                          for all supported programming languages.
+                        </p>
+                        <button
+                          onClick={() => setActiveTab('api')}
+                          className="inline-flex items-center text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                        >
+                          API Reference
+                          <FiArrowRight className="w-4 h-4 ml-2" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Getting Started CTA */}
+                    <div className="mt-10 p-8 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-blue-500/10 border border-emerald-200/50 dark:border-emerald-800/50 rounded-2xl">
+                      <div className="text-center">
+                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Ready to Build Something Amazing?</h3>
+                        <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+                          Join thousands of developers who are building the future of career technology with JobbyAI's powerful APIs.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                          <Link
+                            to="/register"
+                            className="inline-flex items-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-emerald-500/25"
+                          >
+                            <FiZap className="w-5 h-5 mr-2" />
+                            Get Your API Key
+                          </Link>
+                          <button
+                            onClick={() => setActiveTab('examples')}
+                            className="inline-flex items-center px-6 py-3 border border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-xl font-semibold transition-colors"
+                          >
+                            <FiPlay className="w-5 h-5 mr-2" />
+                            View Examples
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -360,21 +600,21 @@ const DocumentationPage: React.FC = () => {
               {/* Quick Start Tab */}
               {activeTab === 'quickstart' && (
                 <div className="space-y-8">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
-                    <div className="flex items-center mb-6">
-                      <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mr-4">
-                        <FiZap className="w-6 h-6 text-white" />
+                  <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 p-10">
+                    <div className="flex items-center mb-8">
+                      <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-500 rounded-2xl flex items-center justify-center mr-6 shadow-lg">
+                        <FiZap className="w-8 h-8 text-white" />
                       </div>
                       <div>
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                        <h2 className="text-4xl font-black text-gray-900 dark:text-white leading-tight">
                           Quick Start Guide
                         </h2>
-                        <p className="text-gray-600 dark:text-gray-400">Get up and running in minutes</p>
+                        <p className="text-lg text-gray-600 dark:text-gray-400 font-medium">Get up and running in minutes</p>
                       </div>
                     </div>
 
                     {/* Getting Started Steps */}
-                    <div className="space-y-8">
+                    <div className="space-y-12">
                       {[
                         {
                           step: 1,
@@ -442,28 +682,28 @@ const resume = await jobbyai.resumes.generate({
                         }
                       ].map((item) => (
                         <div key={item.step} className="relative">
-                          <div className="flex items-start space-x-6">
+                          <div className="flex items-start space-x-8">
                             {/* Step Number */}
                             <div className="flex-shrink-0">
-                              <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-lg">
+                              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 via-teal-500 to-blue-500 text-white rounded-2xl flex items-center justify-center font-black text-xl shadow-xl">
                                 {item.step}
                               </div>
                               {item.step < 4 && (
-                                <div className="w-px h-16 bg-gradient-to-b from-emerald-500 to-teal-600 ml-5 mt-4"></div>
+                                <div className="w-1 h-20 bg-gradient-to-b from-emerald-500 via-teal-500 to-blue-500 ml-7 mt-6 rounded-full"></div>
                               )}
                             </div>
 
                             {/* Content */}
-                            <div className="flex-1 pb-8">
-                              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                            <div className="flex-1 pb-12">
+                              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                                 {item.title}
                               </h3>
-                              <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+                              <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed text-lg">
                                 {item.description}
                               </p>
 
                               {item.highlight && (
-                                <div className="inline-flex items-center px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-sm font-medium rounded-full mb-4">
+                                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 text-emerald-700 dark:text-emerald-400 text-sm font-bold rounded-xl mb-6 border border-emerald-200 dark:border-emerald-800">
                                   <FiCheck className="w-4 h-4 mr-2" />
                                   {item.highlight}
                                 </div>
@@ -471,19 +711,19 @@ const resume = await jobbyai.resumes.generate({
 
                               {item.code && (
                                 <div className="relative">
-                                  <div className="bg-slate-900 rounded-xl p-6 overflow-x-auto">
-                                    <pre className="text-gray-100 text-sm leading-relaxed">
+                                  <div className="bg-gradient-to-br from-slate-900 to-gray-900 rounded-2xl p-8 overflow-x-auto shadow-2xl border border-slate-700">
+                                    <pre className="text-gray-100 text-sm leading-relaxed font-mono">
                                       <code>{item.code}</code>
                                     </pre>
                                   </div>
                                   <button
                                     onClick={() => handleCopyCode(item.code, `step-${item.step}`)}
-                                    className="absolute top-4 right-4 p-2 bg-slate-800 hover:bg-slate-700 text-gray-400 hover:text-white rounded-lg transition-colors"
+                                    className="absolute top-6 right-6 p-3 bg-slate-800/80 hover:bg-slate-700/80 backdrop-blur-sm text-gray-400 hover:text-white rounded-xl transition-all duration-300 border border-slate-600/50"
                                   >
                                     {copiedCode === `step-${item.step}` ? (
-                                      <FiCheck className="w-4 h-4 text-emerald-400" />
+                                      <FiCheck className="w-5 h-5 text-emerald-400" />
                                     ) : (
-                                      <FiCopy className="w-4 h-4" />
+                                      <FiCopy className="w-5 h-5" />
                                     )}
                                   </button>
                                 </div>
@@ -1450,12 +1690,12 @@ if ($result['success']) {
                           ].map((option, index) => (
                             <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors cursor-pointer group">
                               <div className={`p-3 rounded-lg ${option.color === 'emerald' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
-                                  option.color === 'slate' ? 'bg-slate-100 dark:bg-slate-900/30' :
-                                    'bg-teal-100 dark:bg-teal-900/30'
+                                option.color === 'slate' ? 'bg-slate-100 dark:bg-slate-900/30' :
+                                  'bg-teal-100 dark:bg-teal-900/30'
                                 }`}>
                                 <option.icon className={`w-6 h-6 ${option.color === 'emerald' ? 'text-emerald-600 dark:text-emerald-400' :
-                                    option.color === 'slate' ? 'text-slate-600 dark:text-slate-400' :
-                                      'text-teal-600 dark:text-teal-400'
+                                  option.color === 'slate' ? 'text-slate-600 dark:text-slate-400' :
+                                    'text-teal-600 dark:text-teal-400'
                                   }`} />
                               </div>
                               <div className="flex-1">
@@ -1503,7 +1743,7 @@ if ($result['success']) {
       </div>
 
       {/* Bottom CTA */}
-      <div className="bg-gradient-to-r from-slate-900 via-gray-900 to-slate-800 py-20 mt-16">
+      <div className="bg-gradient-to-r from-slate-900 via-gray-900 to-slate-800 py-20 mt-16 w-full">
         <div className="max-w-4xl mx-auto text-center px-4">
           <div className="inline-flex items-center px-4 py-2 bg-emerald-500/10 backdrop-blur-sm rounded-full text-emerald-400 text-sm font-medium mb-6 border border-emerald-500/20">
             <FiZap className="w-4 h-4 mr-2" />
