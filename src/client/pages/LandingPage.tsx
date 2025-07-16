@@ -6,9 +6,11 @@ import {
   FiBriefcase,
   FiCheck,
   FiFileText,
+  FiPlay,
   FiStar,
   FiTarget,
   FiTrendingUp,
+  FiUser,
   FiZap
 } from 'react-icons/fi'
 import { Link as RouterLink } from 'react-router-dom'
@@ -313,69 +315,178 @@ const LandingPageTailwind: React.FC = () => {
         </header>
 
         {/* Hero Section */}
-        {/* Animated background shapes */}
-        <div ref={bgTopRef} className="pointer-events-none absolute top-0 left-0 w-full h-40 bg-gradient-to-r from-primary-400/30 to-purple-400/20 blur-2xl opacity-70 z-0" />
-        <div ref={bgBottomRef} className="pointer-events-none absolute bottom-0 right-0 w-full h-40 bg-gradient-to-l from-secondary-400/30 to-primary-400/10 blur-2xl opacity-70 z-0" />
+        {/* Enhanced animated background shapes */}
+        <div ref={bgTopRef} className="pointer-events-none absolute top-0 left-0 w-full h-96 bg-gradient-to-r from-primary-400/20 via-purple-400/10 to-blue-400/15 blur-3xl opacity-70 z-0" />
+        <div ref={bgBottomRef} className="pointer-events-none absolute bottom-0 right-0 w-full h-96 bg-gradient-to-l from-secondary-400/20 via-pink-400/10 to-primary-400/15 blur-3xl opacity-70 z-0" />
 
-        <section ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-purple-50 to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-20 pb-32 z-10">
-          {/* Background decoration: netting grid */}
+        <section ref={heroRef} className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-purple-50 to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-32 pb-40 z-10">
+          {/* Grid background pattern */}
           <div className="absolute inset-0 pointer-events-none z-0">
             <svg width="100%" height="100%" className="w-full h-full" style={{ position: 'absolute', inset: 0 }}>
               <defs>
                 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#a3a3a3" strokeWidth="0.5" opacity="0.15" />
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" className="text-gray-400 dark:text-gray-600" opacity="0.3" />
                 </pattern>
+                <pattern id="squares" width="80" height="80" patternUnits="userSpaceOnUse">
+                  <rect x="10" y="10" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1" className="text-primary-300 dark:text-primary-700" opacity="0.2" />
+                  <rect x="50" y="50" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1" className="text-purple-300 dark:text-purple-700" opacity="0.2" />
+                </pattern>
+                <linearGradient id="heroGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.05" />
+                  <stop offset="50%" stopColor="#8B5CF6" stopOpacity="0.03" />
+                  <stop offset="100%" stopColor="#EF4444" stopOpacity="0.05" />
+                </linearGradient>
               </defs>
               <rect width="100%" height="100%" fill="url(#grid)" />
+              <rect width="100%" height="100%" fill="url(#squares)" />
+              <rect width="100%" height="100%" fill="url(#heroGradient)" />
             </svg>
           </div>
-          {/* Removed large colored circles for a cleaner look */}
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="max-w-4xl mx-auto">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-8 tracking-tight">
-                Create Winning Resumes with{' '}
-                <span className="text-gradient">
-                  AI Precision
+            <div className="max-w-5xl mx-auto">
+              {/* Hero Badge */}
+              <div className="inline-flex items-center space-x-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-full px-6 py-3 mb-8 shadow-lg">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    🚀 AI-Powered Resume Builder
+                  </span>
+                </div>
+                <div className="w-px h-4 bg-gray-300 dark:bg-gray-600"></div>
+                <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  Join 15,000+ users
+                </span>
+              </div>
+
+              <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-8 tracking-tight leading-none">
+                Create{' '}
+                <span className="relative">
+                  <span className="text-gradient bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    Winning
+                  </span>
+                  <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full opacity-50"></div>
+                </span>
+                {' '}Resumes
+                <br />
+                with{' '}
+                <span className="relative inline-block">
+                  <span className="text-gradient bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent">
+                    AI Precision
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-red-600/10 rounded-2xl -z-10 blur-xl"></div>
                 </span>
               </h1>
-              <p className="text-xl md:text-2xl mb-12 text-gray-800 dark:text-gray-100 max-w-3xl mx-auto leading-relaxed font-medium">
-                Generate ATS-optimized, tailored resumes in seconds. Our advanced AI analyzes job postings
-                and crafts personalized content that gets you noticed by hiring managers.
+
+              <p className="text-xl md:text-2xl lg:text-3xl mb-12 text-gray-700 dark:text-gray-200 max-w-4xl mx-auto leading-relaxed font-medium">
+                Generate <span className="font-bold text-blue-600 dark:text-blue-400">ATS-optimized</span>,
+                tailored resumes in <span className="font-bold text-purple-600 dark:text-purple-400">seconds</span>.
+                Our advanced AI analyzes job postings and crafts{' '}
+                <span className="font-bold text-pink-600 dark:text-pink-400">personalized content</span>{' '}
+                that gets you noticed by hiring managers.
               </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
                 <RouterLink
                   to="/register"
-                  className="btn btn-primary text-lg px-8 py-4 shadow-2xl hover:shadow-3xl transform hover:scale-105 group"
+                  className="group relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 text-white text-xl font-bold px-12 py-5 rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
                 >
-                  Start Building Now
-                  <FiArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative flex items-center space-x-3">
+                    <span>Start Building Now</span>
+                    <FiArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-200" />
+                  </div>
                 </RouterLink>
+
                 <button
                   onClick={handleWatchDemo}
-                  className="btn btn-outline text-lg px-8 py-4 hover:bg-white dark:hover:bg-gray-800 relative z-10"
+                  className="group relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border-2 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-800 dark:text-gray-200 text-xl font-bold px-12 py-5 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
-                  Watch Demo {isDemoModalOpen && '(Modal Open)'}
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                      <FiPlay className="w-5 h-5 text-white ml-0.5" />
+                    </div>
+                    <span>Watch Demo</span>
+                  </div>
+                  {isDemoModalOpen && (
+                    <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-500 rounded-full animate-ping"></div>
+                  )}
                 </button>
               </div>
 
-              {/* Stats */}
-              <div className="mt-20 grid grid-cols-1 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">95%</div>
-                  <div className="text-gray-800 dark:text-gray-100 font-semibold">Match Rate Improvement</div>
+              {/* Enhanced Stats with animations */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                <div className="group text-center bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <div className="text-5xl font-black text-transparent bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text mb-3 group-hover:scale-110 transition-transform duration-300">
+                    95%
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-200 font-bold text-lg">
+                    Match Rate
+                  </div>
+                  <div className="text-gray-600 dark:text-gray-400 font-medium text-sm">
+                    Improvement
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">15K+</div>
-                  <div className="text-gray-800 dark:text-gray-100 font-semibold">Resumes Created</div>
+
+                <div className="group text-center bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <div className="text-5xl font-black text-transparent bg-gradient-to-r from-purple-500 to-violet-600 bg-clip-text mb-3 group-hover:scale-110 transition-transform duration-300">
+                    15K+
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-200 font-bold text-lg">
+                    Resumes
+                  </div>
+                  <div className="text-gray-600 dark:text-gray-400 font-medium text-sm">
+                    Created
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">3x</div>
-                  <div className="text-gray-800 dark:text-gray-100 font-semibold">Interview Rate</div>
+
+                <div className="group text-center bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <div className="text-5xl font-black text-transparent bg-gradient-to-r from-blue-500 to-cyan-600 bg-clip-text mb-3 group-hover:scale-110 transition-transform duration-300">
+                    3x
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-200 font-bold text-lg">
+                    Interview
+                  </div>
+                  <div className="text-gray-600 dark:text-gray-400 font-medium text-sm">
+                    Rate
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-orange-600 dark:text-orange-400 mb-2">10s</div>
-                  <div className="text-gray-800 dark:text-gray-100 font-semibold">Generation Time</div>
+
+                <div className="group text-center bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                  <div className="text-5xl font-black text-transparent bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text mb-3 group-hover:scale-110 transition-transform duration-300">
+                    10s
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-200 font-bold text-lg">
+                    Generation
+                  </div>
+                  <div className="text-gray-600 dark:text-gray-400 font-medium text-sm">
+                    Time
+                  </div>
+                </div>
+              </div>
+
+              {/* Social Proof */}
+              <div className="mt-16 flex flex-col items-center space-y-4">
+                <div className="flex items-center space-x-2">
+                  <div className="flex -space-x-2">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div key={i} className="w-10 h-10 bg-gradient-to-br from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700 rounded-full border-2 border-white dark:border-gray-800 flex items-center justify-center">
+                        <FiUser className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                      </div>
+                    ))}
+                  </div>
+                  <span className="text-gray-600 dark:text-gray-400 text-sm font-medium ml-4">
+                    Join thousands of successful job seekers
+                  </span>
+                </div>
+
+                <div className="flex items-center space-x-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <FiStar key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                  ))}
+                  <span className="text-gray-600 dark:text-gray-400 text-sm font-medium ml-2">
+                    4.9/5 from 2,000+ reviews
+                  </span>
                 </div>
               </div>
             </div>
@@ -384,7 +495,18 @@ const LandingPageTailwind: React.FC = () => {
 
         {/* Features Section */}
         <section ref={featuresRef} className="py-24 bg-white dark:bg-gray-800 relative z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-30">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="featuresGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+                  <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-300 dark:text-gray-600" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#featuresGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-20">
               <div className="inline-flex items-center px-4 py-2 bg-primary-50 dark:bg-primary-900/30 rounded-full text-primary-600 dark:text-primary-400 font-medium text-sm mb-6">
                 ✨ Powerful Features
@@ -424,8 +546,20 @@ const LandingPageTailwind: React.FC = () => {
         </section>
 
         {/* Benefits Section */}
-        <section ref={benefitsRef} className="py-24 bg-gradient-to-br from-gray-50 to-primary-50/30 dark:from-gray-900 dark:to-gray-800 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section ref={benefitsRef} className="py-24 bg-gradient-to-br from-gray-50 to-primary-50/30 dark:from-gray-900 dark:to-gray-800 relative z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-20">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="benefitsGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+                  <path d="M 50 0 L 0 0 0 50" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-primary-400 dark:text-primary-600" />
+                  <circle cx="25" cy="25" r="1" fill="currentColor" className="text-primary-300 dark:text-primary-700" opacity="0.3" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#benefitsGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
                 <div className="inline-flex items-center px-4 py-2 bg-success-50 dark:bg-success-900/30 rounded-full text-success-600 dark:text-success-400 font-medium text-sm mb-6">
@@ -477,9 +611,178 @@ const LandingPageTailwind: React.FC = () => {
           </div>
         </section>
 
+        {/* Testimonials Section */}
+        <section className="py-24 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 relative z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-25">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="testimonialsGrid" width="80" height="80" patternUnits="userSpaceOnUse">
+                  <path d="M 80 0 L 0 0 0 80" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-blue-300 dark:text-blue-700" />
+                  <rect x="20" y="20" width="8" height="8" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-blue-400 dark:text-blue-600" opacity="0.4" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#testimonialsGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="text-center mb-20">
+              <div className="inline-flex items-center px-4 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-full text-blue-600 dark:text-blue-400 font-medium text-sm mb-6">
+                💬 Success Stories
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
+                What Our Users{' '}
+                <span className="text-gradient bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Are Saying
+                </span>
+              </h2>
+              <p className="text-xl text-gray-700 dark:text-gray-200 max-w-3xl mx-auto leading-relaxed font-medium">
+                Join thousands of professionals who have transformed their careers with our AI-powered platform
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Testimonial 1 */}
+              <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-yellow-400/20 to-transparent rounded-full blur-xl transform translate-x-10 -translate-y-10"></div>
+                <div className="relative">
+                  <div className="flex items-center space-x-1 mb-6">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <FiStar key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <blockquote className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed mb-6 font-medium">
+                    "JobbyAI helped me land my dream job at a Fortune 500 company. The AI-generated resume was so well-tailored that I got 5 interview calls in the first week!"
+                  </blockquote>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">S</span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 dark:text-white">Sarah Chen</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Software Engineer at Google</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 2 */}
+              <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-400/20 to-transparent rounded-full blur-xl transform translate-x-10 -translate-y-10"></div>
+                <div className="relative">
+                  <div className="flex items-center space-x-1 mb-6">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <FiStar key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <blockquote className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed mb-6 font-medium">
+                    "The job analysis feature is incredible! It showed me exactly what skills I was missing and helped me tailor my resume perfectly. 95% match score on my last application!"
+                  </blockquote>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">M</span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 dark:text-white">Marcus Johnson</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">Product Manager at Microsoft</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial 3 */}
+              <div className="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-transparent rounded-full blur-xl transform translate-x-10 -translate-y-10"></div>
+                <div className="relative">
+                  <div className="flex items-center space-x-1 mb-6">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <FiStar key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    ))}
+                  </div>
+                  <blockquote className="text-gray-700 dark:text-gray-200 text-lg leading-relaxed mb-6 font-medium">
+                    "As a career changer, I was struggling to highlight transferable skills. JobbyAI's career development tools helped me identify and showcase my strengths perfectly."
+                  </blockquote>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">A</span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 dark:text-white">Aisha Patel</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">UX Designer at Airbnb</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="mt-20 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl p-12 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="text-center mb-12">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                  Trusted by Professionals Worldwide
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 text-lg">
+                  Join the community that's revolutionizing job search success
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div className="group">
+                  <div className="text-4xl font-black text-blue-600 dark:text-blue-400 mb-2 group-hover:scale-110 transition-transform duration-300">
+                    250%
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-200 font-semibold">
+                    Avg. Interview Increase
+                  </div>
+                </div>
+
+                <div className="group">
+                  <div className="text-4xl font-black text-green-600 dark:text-green-400 mb-2 group-hover:scale-110 transition-transform duration-300">
+                    89%
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-200 font-semibold">
+                    Job Offer Rate
+                  </div>
+                </div>
+
+                <div className="group">
+                  <div className="text-4xl font-black text-purple-600 dark:text-purple-400 mb-2 group-hover:scale-110 transition-transform duration-300">
+                    24h
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-200 font-semibold">
+                    Avg. First Response
+                  </div>
+                </div>
+
+                <div className="group">
+                  <div className="text-4xl font-black text-orange-600 dark:text-orange-400 mb-2 group-hover:scale-110 transition-transform duration-300">
+                    4.9★
+                  </div>
+                  <div className="text-gray-700 dark:text-gray-200 font-semibold">
+                    User Rating
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Pricing Preview Section */}
-        <section ref={pricingRef} className="py-24 bg-white dark:bg-gray-800 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section ref={pricingRef} className="py-24 bg-white dark:bg-gray-800 relative z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-25">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="pricingGrid" width="70" height="70" patternUnits="userSpaceOnUse">
+                  <path d="M 70 0 L 0 0 0 70" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-300 dark:text-purple-700" />
+                  <rect x="15" y="15" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-400 dark:text-purple-600" opacity="0.3" />
+                  <rect x="43" y="43" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-400 dark:text-purple-600" opacity="0.3" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#pricingGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-16">
               <div className="inline-flex items-center px-4 py-2 bg-purple-50 dark:bg-purple-900/30 rounded-full text-purple-600 dark:text-purple-400 font-medium text-sm mb-6">
                 💎 Flexible Plans
@@ -639,8 +942,19 @@ const LandingPageTailwind: React.FC = () => {
         </section>
 
         {/* Trust & Security Section */}
-        <section ref={trustRef} className="py-16 bg-gradient-to-r from-gray-50 to-primary-50/20 dark:from-gray-900 dark:to-gray-800 z-10">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section ref={trustRef} className="py-16 bg-gradient-to-r from-gray-50 to-primary-50/20 dark:from-gray-900 dark:to-gray-800 relative z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-20">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="trustGrid" width="45" height="45" patternUnits="userSpaceOnUse">
+                  <path d="M 45 0 L 0 0 0 45" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-400 dark:text-gray-600" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#trustGrid)" />
+            </svg>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                 Trusted by Job Seekers Worldwide
@@ -688,6 +1002,19 @@ const LandingPageTailwind: React.FC = () => {
 
         {/* CTA Section */}
         <section ref={ctaRef} className="py-24 bg-gradient-to-r from-primary-600 via-purple-600 to-secondary-600 relative overflow-hidden z-10">
+          {/* Grid background pattern */}
+          <div className="absolute inset-0 pointer-events-none z-0 opacity-15">
+            <svg width="100%" height="100%" className="w-full h-full">
+              <defs>
+                <pattern id="ctaGrid" width="100" height="100" patternUnits="userSpaceOnUse">
+                  <path d="M 100 0 L 0 0 0 100" fill="none" stroke="white" strokeWidth="0.5" opacity="0.3" />
+                  <rect x="25" y="25" width="15" height="15" fill="none" stroke="white" strokeWidth="0.5" opacity="0.2" />
+                  <rect x="60" y="60" width="15" height="15" fill="none" stroke="white" strokeWidth="0.5" opacity="0.2" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#ctaGrid)" />
+            </svg>
+          </div>
           {/* Background decoration */}
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>

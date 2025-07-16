@@ -10,6 +10,7 @@ import {
   FiCheckCircle,
   FiClock,
   FiDollarSign,
+  FiDownload,
   FiGift,
   FiGlobe,
   FiLayers,
@@ -17,8 +18,10 @@ import {
   FiMessageCircle,
   FiPieChart,
   FiPlay,
+  FiRefreshCw,
   FiStar,
   FiTarget,
+  FiTrash2,
   FiTrendingUp,
   FiUsers,
   FiZap
@@ -892,6 +895,56 @@ export default function CareerDevelopmentPage() {
     setCareerGoals([...careerGoals, newGoal]);
   };
 
+  const deleteGoal = (goalId: string) => {
+    if (confirm('Are you sure you want to delete this career goal?')) {
+      setCareerGoals(careerGoals.filter(goal => goal.id !== goalId));
+    }
+  };
+
+  const resetAchievements = () => {
+    if (confirm('Are you sure you want to reset all achievement progress?')) {
+      setAchievements(achievements.map(achievement => ({
+        ...achievement,
+        earned: false,
+        earnedDate: undefined
+      })));
+    }
+  };
+
+  const exportCareerReport = () => {
+    const report = {
+      generatedDate: new Date().toISOString(),
+      user: user?.email || 'User',
+      careerGoals: careerGoals.length,
+      activeGoals: careerGoals.filter(g => g.status === 'active').length,
+      averageProgress: Math.round(careerGoals.reduce((acc, goal) => acc + goal.progress, 0) / careerGoals.length || 0),
+      skillGapsIdentified: skillGaps.length,
+      learningPathsAvailable: learningPaths.length,
+      networkingContacts: networkingContacts.length,
+      strongConnections: networkingContacts.filter(c => c.connectionStrength === 'strong').length,
+      achievementsEarned: achievements.filter(a => a.earned).length,
+      totalPoints: achievements.filter(a => a.earned).reduce((sum, a) => sum + a.points, 0),
+      salaryGrowthPotential: salaryData?.projectedGrowth || 0,
+      recommendations: [
+        'Focus on high-demand skills like TypeScript and System Design',
+        'Expand professional network in target companies',
+        'Complete learning paths to bridge skill gaps',
+        'Maintain consistent learning and development schedule'
+      ]
+    };
+
+    const dataStr = JSON.stringify(report, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    const exportFileDefaultName = `career-development-report-${new Date().toISOString().split('T')[0]}.json`;
+
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+
+    alert('Career development report downloaded successfully!');
+  };
+
   const enrollInPath = (pathId: string) => {
     console.log(`Enrolling in learning path: ${pathId}`);
     // Update the learning path to show enrollment
@@ -1028,43 +1081,98 @@ export default function CareerDevelopmentPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
+      {/* Enhanced Decorative Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Grid/Netting Background Pattern */}
+        <svg width="100%" height="100%" className="w-full h-full" style={{ position: 'absolute', inset: 0 }}>
+          <defs>
+            <pattern id="careerGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-gray-300 dark:text-gray-700" opacity="0.15" />
+            </pattern>
+            <linearGradient id="careerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.08" />
+              <stop offset="50%" stopColor="#3B82F6" stopOpacity="0.04" />
+              <stop offset="100%" stopColor="#6366F1" stopOpacity="0.08" />
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#careerGrid)" />
+          <rect width="100%" height="100%" fill="url(#careerGradient)" />
+        </svg>
+
+        {/* Floating colored blur orbs */}
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-400/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 -left-32 w-64 h-64 bg-blue-400/10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary-400/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-secondary-400/8 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2"></div>
+
+        {/* Floating geometric shapes */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-blue-500/20 rounded-2xl blur-xl transform rotate-12 animate-pulse"></div>
+        <div className="absolute top-32 right-20 w-16 h-16 bg-gradient-to-br from-blue-400/20 to-purple-500/20 rounded-full blur-lg animate-bounce" style={{ animationDuration: '3s' }}></div>
+        <div className="absolute bottom-32 left-20 w-12 h-12 bg-gradient-to-br from-green-400/20 to-blue-500/20 rounded-lg blur-md transform -rotate-12 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 right-32 w-24 h-24 bg-gradient-to-br from-primary-400/20 to-secondary-500/20 rounded-3xl blur-xl transform rotate-45 animate-bounce" style={{ animationDuration: '4s', animationDelay: '2s' }}></div>
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Enhanced Header */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <div className="h-12 w-12 bg-gradient-to-br from-purple-500 to-primary-500 rounded-xl flex items-center justify-center">
-              <FiActivity className="h-6 w-6 text-white" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <div className="relative">
+                <div className="h-12 w-12 bg-gradient-to-br from-purple-500 to-primary-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <FiActivity className="h-6 w-6 text-white" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
+                </div>
+                {/* Floating accent */}
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-pulse"></div>
+              </div>
+              <div className="ml-4">
+                <h1 className="text-4xl font-black bg-gradient-to-r from-gray-900 via-purple-700 to-blue-600 dark:from-white dark:via-purple-400 dark:to-blue-400 bg-clip-text text-transparent">
+                  Career Development Hub
+                </h1>
+                <p className="text-lg text-gray-600 dark:text-gray-400 mt-1 font-medium">
+                  🚀 AI-powered career growth and skill development recommendations
+                </p>
+              </div>
             </div>
-            <div className="ml-4">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                Career Development Hub
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                AI-powered career growth and skill development recommendations
-              </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={fetchCareerData}
+                className="group flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                disabled={loading}
+              >
+                <FiRefreshCw className={`w-4 h-4 mr-2 group-hover:rotate-180 transition-transform duration-500 ${loading ? 'animate-spin' : ''}`} />
+                Refresh Data
+              </button>
+              <button
+                onClick={exportCareerReport}
+                className="flex items-center px-6 py-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <FiDownload className="w-4 h-4 mr-2" />
+                Export Report
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
-          <nav className="-mb-px flex space-x-8 overflow-x-auto">
+        {/* Enhanced Navigation Tabs */}
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-2 mb-8 shadow-lg">
+          <nav className="flex space-x-2 overflow-x-auto">
             {[
-              { id: 'overview', label: 'Overview', icon: FiTrendingUp },
-              { id: 'goals', label: 'Career Goals', icon: FiTarget },
-              { id: 'skills', label: 'Skill Gaps', icon: FiAward },
-              { id: 'learning', label: 'Learning Paths', icon: FiBook },
-              { id: 'salary', label: 'Salary Tracker', icon: FiDollarSign },
-              { id: 'networking', label: 'Networking', icon: FiUsers },
-              { id: 'trends', label: 'Industry Trends', icon: FiGlobe },
-              { id: 'assessment', label: 'Assessment', icon: FiLayers }
+              { id: 'overview', label: 'Overview', icon: FiTrendingUp, color: 'blue' },
+              { id: 'goals', label: 'Career Goals', icon: FiTarget, color: 'green' },
+              { id: 'skills', label: 'Skill Gaps', icon: FiAward, color: 'orange' },
+              { id: 'learning', label: 'Learning Paths', icon: FiBook, color: 'purple' },
+              { id: 'salary', label: 'Salary Tracker', icon: FiDollarSign, color: 'emerald' },
+              { id: 'networking', label: 'Networking', icon: FiUsers, color: 'pink' },
+              { id: 'trends', label: 'Industry Trends', icon: FiGlobe, color: 'indigo' },
+              { id: 'assessment', label: 'Assessment', icon: FiLayers, color: 'red' }
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${activeTab === tab.id
-                  ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                className={`flex items-center py-3 px-4 rounded-xl font-semibold text-sm whitespace-nowrap transition-all duration-300 transform hover:scale-105 ${activeTab === tab.id
+                    ? `bg-gradient-to-r from-${tab.color}-500 to-${tab.color}-600 text-white shadow-lg`
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700/50'
                   }`}
               >
                 <tab.icon className="w-4 h-4 mr-2" />
@@ -1312,13 +1420,22 @@ export default function CareerDevelopmentPage() {
                       {goal.targetRole} at {goal.company}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-primary-600">
-                      {goal.progress}%
+                  <div className="flex items-center space-x-3">
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-primary-600">
+                        {goal.progress}%
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Due: {new Date(goal.deadline).toLocaleDateString()}
+                      </p>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Due: {new Date(goal.deadline).toLocaleDateString()}
-                    </p>
+                    <button
+                      onClick={() => deleteGoal(goal.id)}
+                      className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                      title="Delete Goal"
+                    >
+                      <FiTrash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
 
@@ -1329,10 +1446,27 @@ export default function CareerDevelopmentPage() {
                   ></div>
                 </div>
 
+                <div className="mb-6">
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                    Required Skills:
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {goal.requiredSkills.map((skill, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-full text-sm"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="space-y-3">
                   <h4 className="font-semibold text-gray-900 dark:text-white">
                     Milestones:
-                  </h4>                  {goal.milestones.map((milestone) => (
+                  </h4>
+                  {goal.milestones.map((milestone) => (
                     <div
                       key={milestone.id}
                       className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${milestone.completed
@@ -1846,8 +1980,8 @@ export default function CareerDevelopmentPage() {
                               </span>
                             </div>
                             <span className={`px-2 py-1 text-xs rounded-full ${opportunity.difficulty === 'beginner' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
-                                opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
-                                  'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                              opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                                'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
                               }`}>
                               {opportunity.difficulty}
                             </span>
@@ -1963,8 +2097,8 @@ export default function CareerDevelopmentPage() {
                         </div>
                         <div className="text-right">
                           <span className={`px-2 py-1 text-xs rounded-full ${event.relevanceScore >= 90 ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
-                              event.relevanceScore >= 80 ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
-                                'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+                            event.relevanceScore >= 80 ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                              'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
                             }`}>
                             {event.relevanceScore}% match
                           </span>
@@ -2032,8 +2166,8 @@ export default function CareerDevelopmentPage() {
                         </div>
                         <div className="text-right">
                           <span className={`px-3 py-1 text-sm rounded-full ${opportunity.difficulty === 'beginner' ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300' :
-                              opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
-                                'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
+                            opportunity.difficulty === 'intermediate' ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300' :
+                              'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
                             }`}>
                             {opportunity.difficulty}
                           </span>
