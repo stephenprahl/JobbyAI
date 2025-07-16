@@ -314,9 +314,9 @@ const DocumentationPage: React.FC = () => {
                           <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           <div className="relative p-6 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-600 transition-all duration-300">
                             <div className={`w-12 h-12 bg-gradient-to-r ${feature.color === 'emerald' ? 'from-emerald-500 to-emerald-600' :
-                                feature.color === 'slate' ? 'from-slate-500 to-slate-600' :
-                                  feature.color === 'teal' ? 'from-teal-500 to-teal-600' :
-                                    'from-gray-500 to-gray-600'
+                              feature.color === 'slate' ? 'from-slate-500 to-slate-600' :
+                                feature.color === 'teal' ? 'from-teal-500 to-teal-600' :
+                                  'from-gray-500 to-gray-600'
                               } rounded-lg flex items-center justify-center mb-4`}>
                               <feature.icon className="w-6 h-6 text-white" />
                             </div>
@@ -580,9 +580,9 @@ const resume = await jobbyai.resumes.generate({
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex items-center space-x-4">
                                   <span className={`px-3 py-1 text-xs font-bold rounded-full ${endpoint.method === 'GET' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                      endpoint.method === 'POST' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' :
-                                        endpoint.method === 'PUT' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                                          'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                                    endpoint.method === 'POST' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' :
+                                      endpoint.method === 'PUT' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                                     }`}>
                                     {endpoint.method}
                                   </span>
@@ -1147,16 +1147,16 @@ if ($result['success']) {
                             {/* Header */}
                             <div className="flex items-start justify-between mb-4">
                               <div className={`w-12 h-12 bg-gradient-to-r ${guide.color === 'emerald' ? 'from-emerald-500 to-emerald-600' :
-                                  guide.color === 'teal' ? 'from-teal-500 to-teal-600' :
-                                    guide.color === 'slate' ? 'from-slate-500 to-slate-600' :
-                                      'from-gray-500 to-gray-600'
+                                guide.color === 'teal' ? 'from-teal-500 to-teal-600' :
+                                  guide.color === 'slate' ? 'from-slate-500 to-slate-600' :
+                                    'from-gray-500 to-gray-600'
                                 } rounded-lg flex items-center justify-center`}>
                                 <guide.icon className="w-6 h-6 text-white" />
                               </div>
                               <div className="flex flex-col items-end space-y-2">
                                 <span className={`px-2 py-1 text-xs font-medium rounded-full ${guide.difficulty === 'Beginner' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' :
-                                    guide.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                                      'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                                  guide.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
                                   }`}>
                                   {guide.difficulty}
                                 </span>
@@ -1338,10 +1338,18 @@ if ($result['success']) {
               {/* Support Tab */}
               {activeTab === 'support' && (
                 <div className="space-y-8">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
-                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                      Get Support
-                    </h2>
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8">
+                    <div className="flex items-center mb-6">
+                      <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center mr-4">
+                        <FiMail className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                          Get Support
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400">We're here to help you succeed</p>
+                      </div>
+                    </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {/* Contact Form */}
@@ -1350,12 +1358,12 @@ if ($result['success']) {
                           Send us a message
                         </h3>
                         {submitted ? (
-                          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 text-center">
-                            <FiCheck className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-3" />
-                            <h4 className="font-semibold text-green-900 dark:text-green-300 mb-2">
+                          <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-6 text-center">
+                            <FiCheck className="w-12 h-12 text-emerald-600 dark:text-emerald-400 mx-auto mb-3" />
+                            <h4 className="font-semibold text-emerald-900 dark:text-emerald-300 mb-2">
                               Message Sent!
                             </h4>
-                            <p className="text-green-700 dark:text-green-400">
+                            <p className="text-emerald-700 dark:text-emerald-400">
                               We'll get back to you within 24 hours.
                             </p>
                           </div>
@@ -1370,7 +1378,7 @@ if ($result['success']) {
                                 name="name"
                                 value={form.name}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all"
                                 required
                               />
                             </div>
@@ -1383,7 +1391,7 @@ if ($result['success']) {
                                 name="email"
                                 value={form.email}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all"
                                 required
                               />
                             </div>
@@ -1396,13 +1404,13 @@ if ($result['success']) {
                                 value={form.message}
                                 onChange={handleChange}
                                 rows={4}
-                                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                className="w-full px-4 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white transition-all resize-y"
                                 required
                               />
                             </div>
                             <button
                               type="submit"
-                              className="w-full flex items-center justify-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-semibold transition-colors"
+                              className="w-full flex items-center justify-center px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition-colors shadow-lg hover:shadow-emerald-500/25"
                             >
                               <FiSend className="w-5 h-5 mr-2" />
                               Send Message
@@ -1421,25 +1429,34 @@ if ($result['success']) {
                             {
                               icon: FiMail,
                               title: 'Email Support',
-                              description: 'support@jobbyai.com',
-                              action: 'Send Email'
+                              description: 'developers@jobbyai.com',
+                              action: 'Send Email',
+                              color: 'emerald'
                             },
                             {
                               icon: FiGithub,
                               title: 'GitHub Issues',
                               description: 'Report bugs and request features',
-                              action: 'Open Issue'
+                              action: 'Open Issue',
+                              color: 'slate'
                             },
                             {
                               icon: FiExternalLink,
                               title: 'Status Page',
                               description: 'Check API status and uptime',
-                              action: 'View Status'
+                              action: 'View Status',
+                              color: 'teal'
                             }
                           ].map((option, index) => (
-                            <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary-300 dark:hover:border-primary-600 transition-colors">
-                              <div className="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-lg">
-                                <option.icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                            <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-emerald-300 dark:hover:border-emerald-600 transition-colors cursor-pointer group">
+                              <div className={`p-3 rounded-lg ${option.color === 'emerald' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
+                                  option.color === 'slate' ? 'bg-slate-100 dark:bg-slate-900/30' :
+                                    'bg-teal-100 dark:bg-teal-900/30'
+                                }`}>
+                                <option.icon className={`w-6 h-6 ${option.color === 'emerald' ? 'text-emerald-600 dark:text-emerald-400' :
+                                    option.color === 'slate' ? 'text-slate-600 dark:text-slate-400' :
+                                      'text-teal-600 dark:text-teal-400'
+                                  }`} />
                               </div>
                               <div className="flex-1">
                                 <h4 className="font-medium text-gray-900 dark:text-white">
@@ -1449,11 +1466,30 @@ if ($result['success']) {
                                   {option.description}
                                 </p>
                               </div>
-                              <button className="text-primary-600 dark:text-primary-400 text-sm font-medium hover:text-primary-700 dark:hover:text-primary-300">
+                              <div className="text-emerald-600 dark:text-emerald-400 text-sm font-medium group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
                                 {option.action}
-                              </button>
+                              </div>
                             </div>
                           ))}
+                        </div>
+
+                        {/* Additional Support Info */}
+                        <div className="mt-8 p-4 bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-700 dark:to-slate-800 rounded-xl border border-gray-200 dark:border-gray-700">
+                          <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Support Hours</h4>
+                          <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1">
+                            <div className="flex justify-between">
+                              <span>Email Support:</span>
+                              <span>24/7</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Live Chat:</span>
+                              <span>9 AM - 6 PM PST</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Response Time:</span>
+                              <span>&lt; 4 hours</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
