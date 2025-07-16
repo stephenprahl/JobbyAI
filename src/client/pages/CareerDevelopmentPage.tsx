@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { gsap } from 'gsap';
+import { useEffect, useRef, useState } from 'react';
 import {
   FiActivity,
   FiArrowRight,
@@ -9,8 +10,6 @@ import {
   FiBriefcase,
   FiCalendar,
   FiCheckCircle,
-  FiChevronLeft,
-  FiChevronRight,
   FiClock,
   FiDollarSign,
   FiDownload,
@@ -204,11 +203,9 @@ export default function CareerDevelopmentPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'goals' | 'skills' | 'learning' | 'salary' | 'networking' | 'trends' | 'assessment' | 'jobs'>('overview');
 
-  // Navigation carousel state
-  const [currentTabIndex, setCurrentTabIndex] = useState(0);
-  const [visibleTabsCount, setVisibleTabsCount] = useState(7); // Number of tabs visible at once (increased for compact design)
-  const [touchStartX, setTouchStartX] = useState(0);
-  const [touchEndX, setTouchEndX] = useState(0);
+  // Navigation animation refs
+  const navContainerRef = useRef<HTMLDivElement>(null);
+  const navButtonsRef = useRef<HTMLDivElement[]>([]);
 
   // Job search state
   const [jobSearchQuery, setJobSearchQuery] = useState('');
@@ -238,73 +235,119 @@ export default function CareerDevelopmentPage() {
     { id: 'assessment', label: 'Assessment', icon: FiLayers, color: 'red', description: 'Skill evaluation' }
   ];
 
-  // Responsive tab visibility
+  // GSAP Animation setup
   useEffect(() => {
-    const updateVisibleTabs = () => {
-      const width = window.innerWidth;
-      if (width < 640) setVisibleTabsCount(3);       // Mobile: 3 tabs (more compact now)
-      else if (width < 768) setVisibleTabsCount(4);   // Small: 4 tabs
-      else if (width < 1024) setVisibleTabsCount(6);  // Medium: 6 tabs
-      else if (width < 1280) setVisibleTabsCount(7);  // Large: 7 tabs
-      else setVisibleTabsCount(9);                    // XL: All 9 tabs
-    };
+    if (navContainerRef.current) {
+      // Initial animation for navigation container
+      gsap.fromTo(
+        navContainerRef.current,
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+      );
 
-    updateVisibleTabs();
-    window.addEventListener('resize', updateVisibleTabs);
-    return () => window.removeEventListener('resize', updateVisibleTabs);
+      // Stagger animation for navigation buttons
+      gsap.fromTo(
+        navButtonsRef.current,
+        { opacity: 0, scale: 0.8, y: 20 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "back.out(1.7)",
+          delay: 0.3
+        }
+      );
+
+      // Add floating animation for non-active buttons
+      const floatingAnimation = () => {
+        navButtonsRef.current.forEach((button, index) => {
+          if (button && navigationTabs[index]?.id !== activeTab) {
+            gsap.to(button.querySelector('div'), {
+              y: -2,
+              duration: 2 + Math.random() * 2,
+              yoyo: true,
+              repeat: -1,
+              ease: "power1.inOut",
+              delay: Math.random() * 2
+            });
+          }
+        });
+      };
+
+      // Start floating animation after initial load
+      setTimeout(floatingAnimation, 1000);
+    }
   }, []);
 
-  // Navigation functions
-  const navigateTabs = (direction: 'prev' | 'next') => {
-    const maxIndex = Math.max(0, navigationTabs.length - visibleTabsCount);
-    setCurrentTabIndex(prev => {
-      if (direction === 'prev') return Math.max(0, prev - 1);
-      return Math.min(maxIndex, prev + 1);
+  // Enhanced tab selection with GSAP animations
+  const selectTab = (tabId: string) => {
+    setActiveTab(tabId as any);
+
+    // Find the clicked button and animate it
+    const tabIndex = navigationTabs.findIndex(tab => tab.id === tabId);
+    if (tabIndex !== -1 && navButtonsRef.current[tabIndex]) {
+      const button = navButtonsRef.current[tabIndex].querySelector('div') as HTMLElement;
+
+      if (button) {
+        // Kill any existing animations
+        gsap.killTweensOf(button);
+
+        // Dramatic selection animation
+        gsap.timeline()
+          .to(button, {
+            scale: 1.3,
+            duration: 0.2,
+            ease: "power2.out"
+          })
+          .to(button, {
+            scale: 1,
+            rotation: 360,
+            duration: 0.6,
+            ease: "back.out(1.7)"
+          })
+          .to(button, {
+            boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
+            duration: 0.3
+          }, "-=0.3");
+
+        // Ripple effect
+        const ripple = document.createElement('div');
+        ripple.className = 'absolute inset-0 rounded-full bg-white opacity-25 animate-ping';
+        button.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+      }
+    }
+
+    // Reset floating animations for all buttons except active
+    navButtonsRef.current.forEach((button, index) => {
+      if (button && navigationTabs[index]?.id !== tabId) {
+        const buttonEl = button.querySelector('div') as HTMLElement;
+        if (buttonEl) {
+          gsap.killTweensOf(buttonEl);
+          gsap.to(buttonEl, {
+            y: -2,
+            duration: 2 + Math.random() * 2,
+            yoyo: true,
+            repeat: -1,
+            ease: "power1.inOut",
+            delay: Math.random() * 1
+          });
+        }
+      }
     });
   };
 
-  const selectTab = (tabId: string) => {
-    setActiveTab(tabId as any);
-    const tabIndex = navigationTabs.findIndex(tab => tab.id === tabId);
-    if (tabIndex !== -1) {
-      // Auto-scroll to make selected tab visible
-      const maxIndex = Math.max(0, navigationTabs.length - visibleTabsCount);
-      if (tabIndex < currentTabIndex) {
-        setCurrentTabIndex(tabIndex);
-      } else if (tabIndex >= currentTabIndex + visibleTabsCount) {
-        setCurrentTabIndex(Math.min(maxIndex, tabIndex - visibleTabsCount + 1));
-      }
-    }
-  };
-
-  // Keyboard navigation
+  // Keyboard navigation with number keys
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        switch (e.key) {
-          case 'ArrowLeft':
-            e.preventDefault();
-            navigateTabs('prev');
-            break;
-          case 'ArrowRight':
-            e.preventDefault();
-            navigateTabs('next');
-            break;
-          case '1':
-          case '2':
-          case '3':
-          case '4':
-          case '5':
-          case '6':
-          case '7':
-          case '8':
-          case '9':
-            e.preventDefault();
-            const tabIndex = parseInt(e.key) - 1;
-            if (tabIndex < navigationTabs.length) {
-              selectTab(navigationTabs[tabIndex].id);
-            }
-            break;
+      const key = e.key;
+      if (key >= '1' && key <= '9') {
+        e.preventDefault();
+        const tabIndex = parseInt(key) - 1;
+        if (tabIndex < navigationTabs.length) {
+          selectTab(navigationTabs[tabIndex].id);
         }
       }
     };
@@ -313,44 +356,33 @@ export default function CareerDevelopmentPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Auto-navigate through tabs on first visit (demo mode)
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (activeTab === 'overview') {
-      interval = setInterval(() => {
-        setCurrentTabIndex(prev => {
-          const maxIndex = Math.max(0, navigationTabs.length - visibleTabsCount);
-          return (prev + 1) > maxIndex ? 0 : prev + 1;
+  // Add button refs and hover animations
+  const addButtonRef = (el: HTMLDivElement | null, index: number) => {
+    if (el && navButtonsRef.current) {
+      navButtonsRef.current[index] = el;
+
+      // Add hover animations
+      const button = el.querySelector('div') as HTMLElement;
+      if (button) {
+        el.addEventListener('mouseenter', () => {
+          gsap.to(button, {
+            scale: 1.1,
+            y: -2,
+            duration: 0.3,
+            ease: "power2.out"
+          });
         });
-      }, 4000); // Change every 4 seconds when on overview
+
+        el.addEventListener('mouseleave', () => {
+          gsap.to(button, {
+            scale: 1,
+            y: 0,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        });
+      }
     }
-    return () => clearInterval(interval);
-  }, [activeTab, visibleTabsCount]);
-
-  // Touch gesture handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEndX(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX || !touchEndX) return;
-
-    const distance = touchStartX - touchEndX;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe) {
-      navigateTabs('next');
-    } else if (isRightSwipe) {
-      navigateTabs('prev');
-    }
-
-    setTouchStartX(0);
-    setTouchEndX(0);
   };
 
   useEffect(() => {
@@ -1482,114 +1514,84 @@ export default function CareerDevelopmentPage() {
           </div>
         </div>
 
-        {/* Enhanced Carousel Navigation */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-3 mb-8 shadow-lg">
+        {/* GSAP Enhanced Navigation */}
+        <div
+          ref={navContainerRef}
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 mb-8 shadow-lg"
+        >
           {/* Navigation Header */}
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center space-x-2">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Career Hub</h2>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <h2 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                Career Hub
+              </h2>
+              <span className="text-sm text-gray-500 dark:text-gray-400 px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">
                 {navigationTabs.find(tab => tab.id === activeTab)?.description}
               </span>
-              <button
-                onClick={() => {
-                  alert(`Navigation Tips:
-• Use arrow buttons or swipe on mobile to browse tabs
-• Keyboard shortcuts: Ctrl/Cmd + ← → or press 1-9 for direct access
-• The carousel auto-scrolls when viewing the Overview
-• Each tab has specialized tools for career development`);
-                }}
-                className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                title="Navigation Help"
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Press 1-9 for quick navigation
+            </div>
+          </div>
+
+          {/* Enhanced Navigation Grid */}
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9 gap-4">
+            {navigationTabs.map((tab, index) => (
+              <div
+                key={tab.id}
+                ref={(el) => addButtonRef(el, index)}
+                className="flex flex-col items-center space-y-2 group cursor-pointer"
+                onClick={() => selectTab(tab.id)}
               >
-                <FiInfo className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="hidden sm:flex items-center space-x-1">
-                {navigationTabs.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${index >= currentTabIndex && index < currentTabIndex + visibleTabsCount
-                      ? 'bg-blue-500'
-                      : 'bg-gray-300 dark:bg-gray-600'
-                      }`}
-                  />
-                ))}
-              </div>
-              <div className="hidden md:block text-xs text-gray-500 dark:text-gray-400 ml-2">
-                Ctrl/Cmd + ← → or 1-9 to navigate
-              </div>
-              <div className="flex items-center space-x-1">
-                <button
-                  onClick={() => navigateTabs('prev')}
-                  disabled={currentTabIndex === 0}
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  <FiChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => navigateTabs('next')}
-                  disabled={currentTabIndex >= navigationTabs.length - visibleTabsCount}
-                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
-                >
-                  <FiChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
+                <div className={`
+                  relative w-14 h-14 rounded-full transition-all duration-300
+                  flex items-center justify-center shadow-lg transform group-hover:scale-110
+                  ${activeTab === tab.id
+                    ? `bg-gradient-to-br from-${tab.color}-500 to-${tab.color}-600 text-white shadow-2xl ring-4 ring-${tab.color}-200 dark:ring-${tab.color}-800`
+                    : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 border-2 border-gray-200 dark:border-gray-600 hover:shadow-xl hover:border-gray-300 dark:hover:border-gray-500'
+                  }
+                `}>
+                  <tab.icon className={`w-6 h-6 transition-all duration-300 ${activeTab === tab.id
+                      ? 'text-white scale-110'
+                      : `text-${tab.color}-600 dark:text-${tab.color}-400 group-hover:scale-110`
+                    }`} />
 
-          {/* Carousel Container */}
-          <div
-            className="relative overflow-hidden"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{
-                transform: `translateX(-${currentTabIndex * (100 / visibleTabsCount)}%)`
-              }}
-            >
-              {navigationTabs.map((tab, index) => (
-                <div
-                  key={tab.id}
-                  className="flex-shrink-0 px-2"
-                  style={{ width: `${100 / visibleTabsCount}%` }}
-                >
-                  <div className="flex flex-col items-center space-y-2">
-                    <button
-                      onClick={() => selectTab(tab.id)}
-                      className={`w-12 h-12 rounded-full transition-all duration-300 transform hover:scale-110 group flex items-center justify-center shadow-lg ${activeTab === tab.id
-                          ? `bg-gradient-to-br from-${tab.color}-500 to-${tab.color}-600 text-white shadow-xl ring-2 ring-${tab.color}-300 dark:ring-${tab.color}-700`
-                          : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 hover:shadow-xl'
-                        }`}
-                      title={tab.label}
-                    >
-                      <tab.icon className={`w-5 h-5 ${activeTab === tab.id
-                          ? 'text-white'
-                          : `text-${tab.color}-600 dark:text-${tab.color}-400`
-                        }`} />
-                    </button>
-                    <span className={`text-xs font-medium text-center leading-tight max-w-full truncate ${activeTab === tab.id
-                        ? `text-${tab.color}-600 dark:text-${tab.color}-400 font-semibold`
-                        : 'text-gray-600 dark:text-gray-400'
-                      }`}>
-                      {tab.label}
-                    </span>
-                  </div>
+                  {/* Active indicator dot */}
+                  {activeTab === tab.id && (
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-pulse border-2 border-white dark:border-gray-800" />
+                  )}
+
+                  {/* Hover glow effect */}
+                  <div className={`
+                    absolute inset-0 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300
+                    bg-gradient-to-br from-${tab.color}-400 to-${tab.color}-600
+                  `} />
                 </div>
-              ))}
-            </div>
+
+                <span className={`
+                  text-xs font-medium text-center leading-tight max-w-full truncate transition-all duration-300
+                  ${activeTab === tab.id
+                    ? `text-${tab.color}-600 dark:text-${tab.color}-400 font-bold`
+                    : 'text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'
+                  }
+                `}>
+                  {tab.label}
+                </span>
+
+                {/* Number indicator for keyboard shortcuts */}
+                <span className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">
+                  {index + 1}
+                </span>
+              </div>
+            ))}
           </div>
 
-          {/* Mobile Tab Selector */}
-          <div className="mt-3 sm:hidden">
+          {/* Mobile Dropdown (shown on very small screens) */}
+          <div className="mt-4 sm:hidden">
             <select
               value={activeTab}
               onChange={(e) => selectTab(e.target.value)}
-              className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               {navigationTabs.map((tab) => (
                 <option key={tab.id} value={tab.id}>
@@ -1599,17 +1601,17 @@ export default function CareerDevelopmentPage() {
             </select>
           </div>
 
-          {/* Active Tab Progress Indicator */}
-          <div className="mt-3 hidden sm:block">
+          {/* Progress Indicator */}
+          <div className="mt-4 hidden sm:block">
             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
               <span>
                 Section {navigationTabs.findIndex(tab => tab.id === activeTab) + 1} of {navigationTabs.length}
               </span>
               <div className="flex items-center space-x-1">
                 <span>Progress:</span>
-                <div className="w-20 h-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                <div className="w-24 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-blue-500 transition-all duration-500 ease-out"
+                    className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-500 ease-out"
                     style={{
                       width: `${((navigationTabs.findIndex(tab => tab.id === activeTab) + 1) / navigationTabs.length) * 100}%`
                     }}
