@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   FiBriefcase,
   FiChevronDown,
@@ -14,7 +14,7 @@ import {
   FiVideo,
   FiX
 } from 'react-icons/fi'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { ThemeToggle } from './ThemeToggle'
 
@@ -25,9 +25,11 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
   const [isSidebarOpen, setIsSidebarOpen] = useState(false) // Mobile-first: closed by default
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isMobileMenuAnimating, setIsMobileMenuAnimating] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
 
   // Auto-open sidebar on desktop, keep mobile behavior
   useEffect(() => {
@@ -45,6 +47,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  // Handle clicks outside the user menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false)
+      }
+    }
+
+    if (isUserMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isUserMenuOpen])
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: FiHome, color: 'text-primary-600', description: 'Overview & quick stats' },
@@ -71,6 +90,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       setIsSidebarOpen(false)
       setIsMobileMenuAnimating(false)
     }, 150)
+  }
+
+  const handleMenuItemClick = () => {
+    // Add a small delay to allow dropdown animation to complete
+    setTimeout(() => {
+      setIsUserMenuOpen(false)
+    }, 50)
   }
 
   const handleLogout = async () => {
@@ -179,7 +205,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
           {/* User section - Fixed at bottom */}
           <div className="flex-shrink-0 border-t border-gray-200/50 dark:border-gray-700/50 p-3 bg-gradient-to-r from-gray-50 to-purple-50/30 dark:from-gray-800 dark:to-purple-900/20">
-            <div className="relative">
+            <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="w-full flex items-center px-3 py-3 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-all duration-200 group backdrop-blur-sm"
@@ -210,10 +236,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <RouterLink
                       to="/subscription"
                       className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-primary-50 hover:to-purple-50 dark:hover:from-primary-900/30 dark:hover:to-purple-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setIsUserMenuOpen(false)
-                      }}
+                      onClick={handleMenuItemClick}
                     >
                       <div className="w-6 h-6 rounded-lg bg-primary-100 dark:bg-primary-900/50 flex items-center justify-center mr-3 group-hover:bg-primary-200 dark:group-hover:bg-primary-800/50 transition-colors duration-200">
                         <FiCreditCard className="h-3 w-3 text-primary-600 dark:text-primary-400" />
@@ -223,10 +246,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <RouterLink
                       to="/settings"
                       className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-primary-50 hover:to-purple-50 dark:hover:from-primary-900/30 dark:hover:to-purple-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setIsUserMenuOpen(false)
-                      }}
+                      onClick={handleMenuItemClick}
                     >
                       <div className="w-6 h-6 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center mr-3 group-hover:bg-gray-200 dark:group-hover:bg-gray-600 transition-colors duration-200">
                         <FiSettings className="h-3 w-3 text-gray-600 dark:text-gray-400" />
@@ -236,8 +256,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <div className="border-t border-gray-200/50 dark:border-gray-700/50 my-2"></div>
                     <button
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleLogout()
+                        e.preventDefault()
+                        setIsUserMenuOpen(false)
+                        // Use setTimeout to ensure the dropdown closes before logout
+                        setTimeout(() => {
+                          handleLogout()
+                        }, 100)
                       }}
                       className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 group"
                     >
@@ -403,14 +427,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </div>
-
-      {/* Click outside handler for user menu */}
-      {isUserMenuOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setIsUserMenuOpen(false)}
-        />
-      )}
     </div>
   )
 }

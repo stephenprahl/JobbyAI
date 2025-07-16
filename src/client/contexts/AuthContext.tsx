@@ -129,6 +129,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTokens(null)
     localStorage.removeItem('auth_tokens')
 
+    // Remove auth token from API service
+    authService.removeAuthToken()
+
     // Clear remember me credentials on logout
     import('../utils/encryption').then(({ clearCredentials }) => {
       clearCredentials()
