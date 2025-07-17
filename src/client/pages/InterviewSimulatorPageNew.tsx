@@ -11,11 +11,9 @@ import {
   InterviewSetup,
   PerformanceAnalytics,
   SessionHistory,
-  TechnicalInterview,
   type InterviewConfig
 } from '../components/interview';
 import { useAuth } from '../contexts/AuthContext';
-import { CodingChallenge, codingChallenges } from '../data/interviewData';
 
 // Types
 interface InterviewSession {
@@ -29,7 +27,6 @@ interface InterviewSession {
   createdAt: string;
   industry?: string;
   focusAreas?: string[];
-  codingChallenges?: CodingChallenge[];
 }
 
 interface Question {
@@ -328,8 +325,7 @@ const InterviewSimulatorPage: React.FC = () => {
         questions: generateMockQuestions(config.type),
         createdAt: new Date().toISOString(),
         industry: config.industry,
-        focusAreas: config.focusAreas,
-        codingChallenges: config.type === 'technical' ? codingChallenges.slice(0, 3) : undefined
+        focusAreas: config.focusAreas
       };
 
       setCurrentSession(newSession);
@@ -502,18 +498,6 @@ const InterviewSimulatorPage: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleCodeSubmission = (challengeId: string, code: string, language: string) => {
-    console.log('Code submitted:', { challengeId, code, language });
-
-    // In a real implementation, this would:
-    // 1. Send the code to a backend service for execution
-    // 2. Run test cases and get results
-    // 3. Store the submission for review
-
-    // For now, we'll just log it and potentially move to next challenge
-    alert(`Code submitted successfully for ${challengeId} in ${language}!`);
-  };
-
   const downloadReport = () => {
     if (!results) return;
 
@@ -596,36 +580,21 @@ const InterviewSimulatorPage: React.FC = () => {
             )}
 
             {currentSession && !showFeedback && (
-              <>
-                {currentSession.interviewType === 'technical' && currentSession.codingChallenges ? (
-                  <TechnicalInterview
-                    challenges={currentSession.codingChallenges}
-                    onSubmitSolution={handleCodeSubmission}
-                    onFinishInterview={() => finishInterview(simulatorState.responses, simulatorState.confidence)}
-                    videoRef={videoRef}
-                    mediaStream={mediaStream}
-                    isRecording={simulatorState.isRecording}
-                    onToggleRecording={toggleRecording}
-                    formatTime={formatTime}
-                  />
-                ) : (
-                  <ActiveInterview
-                    session={currentSession}
-                    state={simulatorState}
-                    currentResponse={currentResponse}
-                    onResponseChange={setCurrentResponse}
-                    onNextQuestion={handleNextQuestion}
-                    onFinishInterview={() => finishInterview(simulatorState.responses, simulatorState.confidence)}
-                    onPauseInterview={pauseInterview}
-                    onResetInterview={resetInterview}
-                    videoRef={videoRef}
-                    mediaStream={mediaStream}
-                    isRecording={simulatorState.isRecording}
-                    onToggleRecording={toggleRecording}
-                    formatTime={formatTime}
-                  />
-                )}
-              </>
+              <ActiveInterview
+                session={currentSession}
+                state={simulatorState}
+                currentResponse={currentResponse}
+                onResponseChange={setCurrentResponse}
+                onNextQuestion={handleNextQuestion}
+                onFinishInterview={() => finishInterview(simulatorState.responses, simulatorState.confidence)}
+                onPauseInterview={pauseInterview}
+                onResetInterview={resetInterview}
+                videoRef={videoRef}
+                mediaStream={mediaStream}
+                isRecording={simulatorState.isRecording}
+                onToggleRecording={toggleRecording}
+                formatTime={formatTime}
+              />
             )}
 
             {showFeedback && results && (

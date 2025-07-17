@@ -89,6 +89,8 @@ export const cleanupSummaryDoc: DocumentationFile = {
 ├── tsconfig.json                  # TypeScript configuration
 ├── vite.config.ts                 # Vite build configuration
 ├── bun.lock                       # Dependency lock file
+
+
 │
 ├── src/                           # Main application source
 │   ├── client/                    # Frontend React app
