@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
+  FiArrowLeft,
   FiBriefcase,
   FiChevronDown,
   FiClock,
@@ -238,6 +239,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl shadow-2xl bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl ring-1 ring-black/5 dark:ring-white/10 z-50 border border-gray-200/50 dark:border-gray-700/50 animate-in slide-in-from-bottom-2 duration-200">
                   <div className="py-2">
                     <RouterLink
+                      to="/"
+                      className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-50 hover:to-blue-50 dark:hover:from-green-900/30 dark:hover:to-blue-900/30 hover:text-green-600 dark:hover:text-green-400 transition-all duration-200 group"
+                      onClick={handleMenuItemClick}
+                    >
+                      <div className="w-6 h-6 rounded-lg bg-green-100 dark:bg-green-900/50 flex items-center justify-center mr-3 group-hover:bg-green-200 dark:group-hover:bg-green-800/50 transition-colors duration-200">
+                        <FiArrowLeft className="h-3 w-3 text-green-600 dark:text-green-400" />
+                      </div>
+                      <span className="font-medium">Back to Home</span>
+                    </RouterLink>
+                    <div className="border-t border-gray-200/50 dark:border-gray-700/50 my-2"></div>
+                    <RouterLink
                       to="/subscription"
                       className="flex items-center px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-primary-50 hover:to-purple-50 dark:hover:from-primary-900/30 dark:hover:to-purple-900/30 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-200 group"
                       onClick={handleMenuItemClick}
@@ -297,7 +309,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <h1 className="text-lg font-bold bg-gradient-to-r from-primary-600 via-purple-600 to-secondary-600 bg-clip-text text-transparent tracking-tight">
               JobbyAI
             </h1>
-            <ThemeToggle />
+            <div className="flex items-center space-x-2">
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 
@@ -334,7 +348,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 })()}
               </div>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center space-x-3">
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 
