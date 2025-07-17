@@ -310,15 +310,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               JobbyAI
             </h1>
             <div className="flex items-center space-x-2">
-              {/* Back to Home button for mobile */}
-              <RouterLink
-                to="/"
-                className="group inline-flex items-center px-3 py-2 bg-gradient-to-r from-primary-50 to-purple-50 hover:from-primary-100 hover:to-purple-100 dark:from-primary-900/30 dark:to-purple-900/30 dark:hover:from-primary-900/50 dark:hover:to-purple-900/50 border border-primary-200/50 dark:border-primary-700/50 text-primary-700 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200 rounded-lg font-medium transform hover:scale-105 transition-all duration-200 shadow-sm hover:shadow-md"
-                title="Back to Landing Page"
-              >
-                <FiArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
-                <span className="text-xs ml-1 hidden sm:inline">Home</span>
-              </RouterLink>
               <ThemeToggle />
             </div>
           </div>
@@ -358,15 +349,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              {/* Back to Home button */}
-              <RouterLink
-                to="/"
-                className="group inline-flex items-center px-4 py-2 bg-gradient-to-r from-primary-50 to-purple-50 hover:from-primary-100 hover:to-purple-100 dark:from-primary-900/30 dark:to-purple-900/30 dark:hover:from-primary-900/50 dark:hover:to-purple-900/50 border border-primary-200/50 dark:border-primary-700/50 text-primary-700 dark:text-primary-300 hover:text-primary-800 dark:hover:text-primary-200 rounded-xl font-medium transform hover:scale-105 transition-all duration-200 shadow-sm hover:shadow-md"
-                title="Back to Landing Page"
-              >
-                <FiArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5" />
-                <span className="text-sm">Back to Home</span>
-              </RouterLink>
               <ThemeToggle />
             </div>
           </div>
