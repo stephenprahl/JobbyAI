@@ -1,33 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  FiAlertTriangle,
-  FiAward,
   FiBarChart,
-  FiBookOpen,
-  FiCheckCircle,
   FiClock,
-  FiMessageCircle,
-  FiMic,
   FiPlay,
-  FiStar,
-  FiTarget,
-  FiTrendingUp,
-  FiVideo,
-  FiVideoOff,
-  FiMicOff,
-  FiPause,
-  FiSquare,
-  FiSkipForward
+  FiVideo
 } from 'react-icons/fi';
-import { useAuth } from '../contexts/AuthContext';
-import { 
-  InterviewSetup, 
-  ActiveInterview, 
-  InterviewFeedback, 
-  PerformanceAnalytics, 
+import {
+  ActiveInterview,
+  InterviewFeedback,
+  InterviewSetup,
+  PerformanceAnalytics,
   SessionHistory,
-  type InterviewConfig 
+  type InterviewConfig
 } from '../components/interview';
+import { useAuth } from '../contexts/AuthContext';
 
 // Types
 interface InterviewSession {
@@ -120,10 +106,10 @@ const InterviewSimulatorPage: React.FC = () => {
     if (user) {
       fetchInterviewSessions();
     }
-    
+
     // Setup speech recognition
     setupSpeechRecognition();
-    
+
     return () => {
       cleanup();
     };
@@ -160,7 +146,7 @@ const InterviewSimulatorPage: React.FC = () => {
           .map((result: any) => result[0])
           .map((result) => result.transcript)
           .join('');
-        
+
         setCurrentResponse(transcript);
       };
 
@@ -514,13 +500,13 @@ const InterviewSimulatorPage: React.FC = () => {
 
   const downloadReport = () => {
     if (!results) return;
-    
+
     const reportData = {
       session: currentSession,
       results: results,
       generatedAt: new Date().toISOString()
     };
-    
+
     const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -574,11 +560,10 @@ const InterviewSimulatorPage: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === tab.id
+                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
                     ? 'border-purple-500 text-purple-600 dark:text-purple-400'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-                }`}
+                  }`}
               >
                 <tab.icon className="w-4 h-4 mr-2" />
                 {tab.label}
@@ -624,7 +609,7 @@ const InterviewSimulatorPage: React.FC = () => {
 
         {activeTab === 'sessions' && (
           <div className="space-y-6">
-            <SessionHistory 
+            <SessionHistory
               sessions={sessions.map(session => ({
                 ...session,
                 score: Math.floor(Math.random() * 40) + 60, // Mock scores
@@ -645,7 +630,7 @@ const InterviewSimulatorPage: React.FC = () => {
 
         {activeTab === 'analytics' && (
           <div className="space-y-6">
-            <PerformanceAnalytics 
+            <PerformanceAnalytics
               sessions={sessions.map((session, index) => ({
                 id: session.id,
                 date: session.createdAt,
