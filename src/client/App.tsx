@@ -17,6 +17,7 @@ import ProfilePage from './pages/ProfilePage'
 import ResumeBuilderPage from './pages/ResumeBuilderPage'
 import ResumePage from './pages/ResumePage'
 import SalaryNegotiationPage from './pages/SalaryNegotiationPage'
+import ScamTrackerPage from './pages/ScamTrackerPage'
 import SettingsPage from './pages/SettingsPage'
 
 import DocumentationPage from './pages/DocumentationPage'
@@ -233,6 +234,16 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <Layout>
                 <JobAnalysisPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/scam-tracker"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ScamTrackerPage />
               </Layout>
             </ProtectedRoute>
           }

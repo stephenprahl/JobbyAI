@@ -93,6 +93,9 @@ model User {
   payments          Payment[]
   paymentMethods    PaymentMethod[]
   usageRecords      UsageRecord[]
+  reportedScams     JobScam[]       @relation("ReportedScams")
+  verifiedScams     JobScam[]       @relation("VerifiedScams")
+  scamWarnings      UserScamWarning[]
 
   @@map("users")
 }
@@ -246,6 +249,66 @@ model JobListing {
   user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("job_listings")
+}
+
+enum ScamSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ScamStatus {
+  REPORTED
+  VERIFIED
+  DISMISSED
+  UNDER_REVIEW
+}
+
+model JobScam {
+  id              String         @id @default(uuid())
+  reportedById    String         @map("reported_by_id")
+  title           String
+  companyName     String         @map("company_name")
+  location        String?
+  description     String?        @db.Text
+  url             String?        @db.VarChar(512)
+  email           String?
+  phone           String?
+  salary          String?
+  employmentType  String?        @map("employment_type")
+  scamType        String         @map("scam_type") // e.g., "fake_company", "identity_theft", "payment_scam", "fake_position"
+  severity        ScamSeverity   @default(MEDIUM)
+  status          ScamStatus     @default(REPORTED)
+  evidenceUrls    String[]       @map("evidence_urls") // Screenshots, links, etc.
+  notes           String?        @db.Text
+  verifiedAt      DateTime?      @map("verified_at") @db.Timestamptz(6)
+  verifiedById    String?        @map("verified_by_id")
+  warningCount    Int            @default(0) @map("warning_count") // How many users have been warned
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  reportedBy      User           @relation("ReportedScams", fields: [reportedById], references: [id], onDelete: Cascade)
+  verifiedBy      User?          @relation("VerifiedScams", fields: [verifiedById], references: [id], onDelete: SetNull)
+  userWarnings    UserScamWarning[]
+
+  @@map("job_scams")
+}
+
+model UserScamWarning {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  scamId    String   @map("scam_id")
+  warnedAt  DateTime @default(now()) @map("warned_at") @db.Timestamptz(6)
+  dismissed Boolean  @default(false)
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scam      JobScam  @relation(fields: [scamId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, scamId])
+  @@map("user_scam_warnings")
 }
 
 model ResumeTemplate {
