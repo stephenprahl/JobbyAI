@@ -52,12 +52,14 @@
   },
   "include": [
     "src/**/*",
-    "scripts/**/*",
-    "extension/**/*"
+    "scripts/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "build"
+    "build",
+    "extension/**/*",
+    "**/*-old.ts",
+    "**/*-backup.ts"
   ]
 }
