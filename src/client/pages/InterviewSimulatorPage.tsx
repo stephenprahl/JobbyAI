@@ -1,33 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  FiAlertTriangle,
-  FiAward,
   FiBarChart,
-  FiBookOpen,
-  FiCheckCircle,
   FiClock,
-  FiMessageCircle,
-  FiMic,
   FiPlay,
-  FiStar,
-  FiTarget,
-  FiTrendingUp,
-  FiVideo,
-  FiVideoOff,
-  FiMicOff,
-  FiPause,
-  FiSquare,
-  FiSkipForward
+  FiVideo
 } from 'react-icons/fi';
-import { useAuth } from '../contexts/AuthContext';
-import { 
-  InterviewSetup, 
-  ActiveInterview, 
-  InterviewFeedback, 
-  PerformanceAnalytics, 
+import {
+  ActiveInterview,
+  InterviewFeedback,
+  InterviewSetup,
+  PerformanceAnalytics,
   SessionHistory,
-  type InterviewConfig 
+  TechnicalInterview,
+  type InterviewConfig
 } from '../components/interview';
+import { useAuth } from '../contexts/AuthContext';
+import { CodingChallenge, codingChallenges } from '../data/interviewData';
 
 // Types
 interface InterviewSession {
@@ -41,6 +29,7 @@ interface InterviewSession {
   createdAt: string;
   industry?: string;
   focusAreas?: string[];
+  codingChallenges?: CodingChallenge[];
 }
 
 interface Question {
@@ -120,10 +109,10 @@ const InterviewSimulatorPage: React.FC = () => {
     if (user) {
       fetchInterviewSessions();
     }
-    
+
     // Setup speech recognition
     setupSpeechRecognition();
-    
+
     return () => {
       cleanup();
     };
@@ -160,7 +149,7 @@ const InterviewSimulatorPage: React.FC = () => {
           .map((result: any) => result[0])
           .map((result) => result.transcript)
           .join('');
-        
+
         setCurrentResponse(transcript);
       };
 
@@ -339,7 +328,8 @@ const InterviewSimulatorPage: React.FC = () => {
         questions: generateMockQuestions(config.type),
         createdAt: new Date().toISOString(),
         industry: config.industry,
-        focusAreas: config.focusAreas
+        focusAreas: config.focusAreas,
+        codingChallenges: config.type === 'technical' ? codingChallenges.slice(0, 3) : undefined
       };
 
       setCurrentSession(newSession);
@@ -512,15 +502,27 @@ const InterviewSimulatorPage: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const handleCodeSubmission = (challengeId: string, code: string, language: string) => {
+    console.log('Code submitted:', { challengeId, code, language });
+
+    // In a real implementation, this would:
+    // 1. Send the code to a backend service for execution
+    // 2. Run test cases and get results
+    // 3. Store the submission for review
+
+    // For now, we'll just log it and potentially move to next challenge
+    alert(`Code submitted successfully for ${challengeId} in ${language}!`);
+  };
+
   const downloadReport = () => {
     if (!results) return;
-    
+
     const reportData = {
       session: currentSession,
       results: results,
       generatedAt: new Date().toISOString()
     };
-    
+
     const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -574,11 +576,10 @@ const InterviewSimulatorPage: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === tab.id
+                className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
                     ? 'border-purple-500 text-purple-600 dark:text-purple-400'
                     : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-                }`}
+                  }`}
               >
                 <tab.icon className="w-4 h-4 mr-2" />
                 {tab.label}
@@ -595,21 +596,36 @@ const InterviewSimulatorPage: React.FC = () => {
             )}
 
             {currentSession && !showFeedback && (
-              <ActiveInterview
-                session={currentSession}
-                state={simulatorState}
-                currentResponse={currentResponse}
-                onResponseChange={setCurrentResponse}
-                onNextQuestion={handleNextQuestion}
-                onFinishInterview={() => finishInterview(simulatorState.responses, simulatorState.confidence)}
-                onPauseInterview={pauseInterview}
-                onResetInterview={resetInterview}
-                videoRef={videoRef}
-                mediaStream={mediaStream}
-                isRecording={simulatorState.isRecording}
-                onToggleRecording={toggleRecording}
-                formatTime={formatTime}
-              />
+              <>
+                {currentSession.interviewType === 'technical' && currentSession.codingChallenges ? (
+                  <TechnicalInterview
+                    challenges={currentSession.codingChallenges}
+                    onSubmitSolution={handleCodeSubmission}
+                    onFinishInterview={() => finishInterview(simulatorState.responses, simulatorState.confidence)}
+                    videoRef={videoRef}
+                    mediaStream={mediaStream}
+                    isRecording={simulatorState.isRecording}
+                    onToggleRecording={toggleRecording}
+                    formatTime={formatTime}
+                  />
+                ) : (
+                  <ActiveInterview
+                    session={currentSession}
+                    state={simulatorState}
+                    currentResponse={currentResponse}
+                    onResponseChange={setCurrentResponse}
+                    onNextQuestion={handleNextQuestion}
+                    onFinishInterview={() => finishInterview(simulatorState.responses, simulatorState.confidence)}
+                    onPauseInterview={pauseInterview}
+                    onResetInterview={resetInterview}
+                    videoRef={videoRef}
+                    mediaStream={mediaStream}
+                    isRecording={simulatorState.isRecording}
+                    onToggleRecording={toggleRecording}
+                    formatTime={formatTime}
+                  />
+                )}
+              </>
             )}
 
             {showFeedback && results && (
@@ -624,7 +640,7 @@ const InterviewSimulatorPage: React.FC = () => {
 
         {activeTab === 'sessions' && (
           <div className="space-y-6">
-            <SessionHistory 
+            <SessionHistory
               sessions={sessions.map(session => ({
                 ...session,
                 score: Math.floor(Math.random() * 40) + 60, // Mock scores
@@ -645,7 +661,7 @@ const InterviewSimulatorPage: React.FC = () => {
 
         {activeTab === 'analytics' && (
           <div className="space-y-6">
-            <PerformanceAnalytics 
+            <PerformanceAnalytics
               sessions={sessions.map((session, index) => ({
                 id: session.id,
                 date: session.createdAt,

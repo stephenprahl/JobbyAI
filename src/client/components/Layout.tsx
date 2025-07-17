@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import {
   FiBriefcase,
   FiChevronDown,
+  FiClock,
   FiCreditCard,
   FiDollarSign,
   FiFileText,
@@ -73,6 +74,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Salary Negotiation', href: '/salary-negotiation', icon: FiDollarSign, color: 'text-emerald-600', description: 'Compensation tools' },
     { name: 'Interview Prep', href: '/interview-prep', icon: FiMessageSquare, color: 'text-blue-600', description: 'Practice & prepare' },
     { name: 'Interview Simulator', href: '/interview-simulator', icon: FiVideo, color: 'text-purple-600', description: 'Practice interviews' },
+    { name: 'Interview History', href: '/interview-history', icon: FiClock, color: 'text-indigo-600', description: 'Review past sessions' },
     { name: 'Resume Builder', href: '/resume/builder', icon: FiFileText, color: 'text-success-600', description: 'Create & edit resumes' },
     { name: 'My Resumes', href: '/resume', icon: FiFileText, color: 'text-warning-600', description: 'Manage documents' },
     { name: 'Job Analysis', href: '/jobs', icon: FiBriefcase, color: 'text-secondary-600', description: 'Market insights' },
