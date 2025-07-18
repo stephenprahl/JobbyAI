@@ -9,6 +9,7 @@ import { careerDevelopmentRoutes } from './routes/careerDevelopment.routes';
 import { interviewRoutes } from './routes/interview.routes';
 import { jobRecommendationsRoutes } from './routes/jobRecommendations.routes';
 import { resumeRoutes } from './routes/resume.routes';
+import { scamTrackerRoutes } from './routes/scamTracker.routes';
 // import { salaryNegotiationRoutes } from './routes/salaryNegotiation.routes';
 import { subscriptionRoutes } from './routes/subscription.routes';
 import { userRoutes } from './routes/user.routes';
@@ -82,6 +83,7 @@ const app = new Elysia()
       .use(jobRecommendationsRoutes)
       .use(interviewRoutes)
       .use(careerDevelopmentRoutes)
+      .use(scamTrackerRoutes)
       // .use(salaryNegotiationRoutes)
       .get('/health', () => ({
         status: 'ok',

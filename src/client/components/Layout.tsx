@@ -12,6 +12,7 @@ import {
   FiMenu,
   FiMessageSquare,
   FiSettings,
+  FiShield,
   FiTarget,
   FiUser,
   FiVideo,
@@ -79,6 +80,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Resume Builder', href: '/resume/builder', icon: FiFileText, color: 'text-success-600', description: 'Create & edit resumes' },
     { name: 'My Resumes', href: '/resume', icon: FiFileText, color: 'text-warning-600', description: 'Manage documents' },
     { name: 'Job Analysis', href: '/jobs', icon: FiBriefcase, color: 'text-secondary-600', description: 'Market insights' },
+    { name: 'Scam Tracker', href: '/scam-tracker', icon: FiShield, color: 'text-red-600', description: 'Report & track job scams' },
   ]
 
   const handleSidebarToggle = () => {

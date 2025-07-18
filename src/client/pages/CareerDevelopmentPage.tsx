@@ -26,6 +26,7 @@ import {
   FiRefreshCw,
   FiSearch,
   FiSend,
+  FiShield,
   FiStar,
   FiTarget,
   FiTrash2,
@@ -34,6 +35,7 @@ import {
   FiZap
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
+import api from '../services/auth';
 
 interface SkillGap {
   skill: string;
@@ -214,6 +216,7 @@ export default function CareerDevelopmentPage() {
   const [savedJobs, setSavedJobs] = useState<any[]>([]);
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
   const [isSearchingJobs, setIsSearchingJobs] = useState(false);
+  const [checkingScamJobIds, setCheckingScamJobIds] = useState<Set<string>>(new Set());
   const [jobSearchFilters, setJobSearchFilters] = useState({
     jobType: 'full-time' as 'full-time' | 'part-time' | 'contract' | 'temporary' | 'internship',
     remote: false,
@@ -1336,6 +1339,68 @@ export default function CareerDevelopmentPage() {
     }
   };
 
+  const checkJobForScam = async (job: any) => {
+    const jobId = job.id;
+
+    // Add job ID to the checking set
+    setCheckingScamJobIds(prev => new Set(prev).add(jobId));
+
+    try {
+      const response = await api.post('/scams/analyze-job', {
+        jobData: {
+          title: job.title,
+          company: job.company,
+          description: job.description || '',
+          location: job.location || '',
+          url: job.url || '',
+          contactEmail: job.contactEmail || '',
+          contactPhone: job.contactPhone || '',
+          salary: job.salary ? `${job.salary.min}-${job.salary.max} ${job.salary.currency}` : '',
+          jobType: job.jobType || '',
+          requirements: job.requirements || [],
+          benefits: job.benefits || []
+        }
+      });
+
+      if (response.data.success) {
+        const { analysis } = response.data.data;
+        const isScam = analysis.isScam;
+        const confidence = (analysis.confidence * 100).toFixed(1);
+
+        let alertMessage = `🛡️ Scam Analysis Results:\n\n`;
+        alertMessage += `Status: ${isScam ? '⚠️ POTENTIAL SCAM DETECTED' : '✅ Appears Safe'}\n`;
+        alertMessage += `Confidence: ${confidence}%\n`;
+        alertMessage += `Scam Type: ${analysis.scamType}\n`;
+        alertMessage += `Severity: ${analysis.severity}\n\n`;
+        alertMessage += `Reasoning: ${analysis.reasoning}\n\n`;
+
+        if (analysis.redFlags && analysis.redFlags.length > 0) {
+          alertMessage += `🚩 Red Flags Found:\n${analysis.redFlags.map(flag => `• ${flag}`).join('\n')}\n\n`;
+        }
+
+        if (isScam) {
+          alertMessage += `⚠️ RECOMMENDATION: Avoid this job posting. Consider reporting it if you believe it's fraudulent.`;
+        } else {
+          alertMessage += `✅ This job posting appears legitimate. Proceed with normal caution.`;
+        }
+
+        alert(alertMessage);
+      } else {
+        alert('❌ Unable to analyze job for scam indicators. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error checking job for scam:', error);
+      alert('❌ Error occurred while checking for scam indicators. Please try again later.');
+    } finally {
+      // Remove job ID from the checking set
+      setCheckingScamJobIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(jobId);
+        return newSet;
+      });
+    }
+  };
+
   const toggleMilestone = (goalId: string, milestoneId: string) => {
     setCareerGoals(goals =>
       goals.map(goal =>
@@ -1552,8 +1617,8 @@ export default function CareerDevelopmentPage() {
                   }
                 `}>
                   <tab.icon className={`w-6 h-6 transition-all duration-300 ${activeTab === tab.id
-                      ? 'text-white scale-110'
-                      : `text-${tab.color}-600 dark:text-${tab.color}-400 group-hover:scale-110`
+                    ? 'text-white scale-110'
+                    : `text-${tab.color}-600 dark:text-${tab.color}-400 group-hover:scale-110`
                     }`} />
 
                   {/* Active indicator dot */}
@@ -3129,6 +3194,23 @@ export default function CareerDevelopmentPage() {
                           >
                             <FiTrendingUp className="w-3 h-3 inline mr-1" />
                             Analyze Match
+                          </button>
+                          <button
+                            onClick={() => checkJobForScam(job)}
+                            disabled={checkingScamJobIds.has(job.id)}
+                            className="px-3 py-1 text-xs bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {checkingScamJobIds.has(job.id) ? (
+                              <>
+                                <div className="w-3 h-3 inline mr-1 animate-spin border border-red-600 border-t-transparent rounded-full"></div>
+                                Checking...
+                              </>
+                            ) : (
+                              <>
+                                <FiShield className="w-3 h-3 inline mr-1" />
+                                Check for Scam
+                              </>
+                            )}
                           </button>
                           <button
                             onClick={() => saveJob(job)}
