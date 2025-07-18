@@ -96,6 +96,8 @@ model User {
   reportedScams     JobScam[]       @relation("ReportedScams")
   verifiedScams     JobScam[]       @relation("VerifiedScams")
   scamWarnings      UserScamWarning[]
+  chatSessions      ChatSession[]
+  jobApplications   JobApplication[]
 
   @@map("users")
 }
@@ -343,6 +345,7 @@ model UserResume {
   // Relations
   user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   template    ResumeTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  jobApplications JobApplication[]
 
   @@map("user_resumes")
 }
@@ -492,4 +495,56 @@ model FlaggedJob {
   updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@map("flagged_jobs")
+}
+
+// Chat assistant models
+model ChatSession {
+  id          String        @id @default(uuid())
+  userId      String        @map("user_id")
+  title       String        @db.VarChar(200)
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages    ChatMessage[]
+
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id            String        @id @default(uuid())
+  sessionId     String        @map("session_id")
+  role          String        // 'user' or 'assistant'
+  content       String        @db.Text
+  attachments   Json?         @db.JsonB
+  timestamp     DateTime      @default(now()) @db.Timestamptz(6)
+  createdAt     DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  session       ChatSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+model JobApplication {
+  id              String        @id @default(uuid())
+  userId          String        @map("user_id")
+  jobTitle        String        @map("job_title")
+  companyName     String        @map("company_name")
+  jobUrl          String        @map("job_url") @db.VarChar(512)
+  platform        String        // 'linkedin', 'indeed', 'glassdoor', etc.
+  resumeId        String?       @map("resume_id")
+  status          String        @default("pending") // 'pending', 'applying', 'applied', 'failed'
+  appliedAt       DateTime?     @map("applied_at") @db.Timestamptz(6)
+  response        String?       @db.Text
+  notes           String?       @db.Text
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resume          UserResume?   @relation(fields: [resumeId], references: [id])
+
+  @@map("job_applications")
 }

@@ -8,6 +8,7 @@ import {
   FiHome,
   FiLogOut,
   FiMenu,
+  FiMessageCircle,
   FiSettings,
   FiShield,
   FiTarget,
@@ -68,6 +69,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: FiHome, color: 'text-primary-600', description: 'Overview & quick stats' },
+    { name: 'AI Chat', href: '/chat', icon: FiMessageCircle, color: 'text-indigo-600', description: 'Chat with AI for job applications & resumes' },
     { name: 'Profile', href: '/profile', icon: FiUser, color: 'text-purple-600', description: 'Personal information' },
     { name: 'Career Development', href: '/career-development', icon: FiTarget, color: 'text-green-600', description: 'Growth & planning' },
     { name: 'Salary Negotiation', href: '/salary-negotiation', icon: FiDollarSign, color: 'text-emerald-600', description: 'Compensation tools' },

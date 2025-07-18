@@ -5,6 +5,7 @@ import { useAutoLogin } from './hooks/useAutoLogin'
 
 // Import Tailwind pages
 import CareerDevelopmentPage from './pages/CareerDevelopmentPage'
+import ChatPage from './pages/ChatPage'
 import DashboardPage from './pages/DashboardPage'
 import InterviewHubPage from './pages/InterviewHubPage'
 import LandingPage from './pages/LandingPage'
@@ -120,6 +121,16 @@ const App: React.FC = () => {
             <ProtectedRoute>
               <Layout>
                 <DashboardPage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <ChatPage />
               </Layout>
             </ProtectedRoute>
           }
