@@ -435,3 +435,61 @@ model UsageRecord {
   @@unique([userId, subscriptionId, feature])
   @@map("usage_records")
 }
+
+// Models for AI scam detection and platform protection
+model BannedCompany {
+  id          String   @id @default(uuid())
+  companyName String   @unique @map("company_name")
+  reason      String   @db.Text
+  bannedAt    DateTime @default(now()) @map("banned_at") @db.Timestamptz(6)
+  bannedBy    String   @map("banned_by") // user ID or 'ai-system'
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("banned_companies")
+}
+
+model BannedUrl {
+  id        String   @id @default(uuid())
+  url       String   @unique @db.VarChar(512)
+  reason    String   @db.Text
+  bannedAt  DateTime @default(now()) @map("banned_at") @db.Timestamptz(6)
+  bannedBy  String   @map("banned_by") // user ID or 'ai-system'
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("banned_urls")
+}
+
+model BannedEmail {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  reason    String   @db.Text
+  bannedAt  DateTime @default(now()) @map("banned_at") @db.Timestamptz(6)
+  bannedBy  String   @map("banned_by") // user ID or 'ai-system'
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("banned_emails")
+}
+
+model FlaggedJob {
+  id            String   @id @default(uuid())
+  title         String
+  companyName   String   @map("company_name")
+  description   String?  @db.Text
+  url           String?  @db.VarChar(512)
+  contactEmail  String?  @map("contact_email")
+  flaggedReason String   @map("flagged_reason") @db.Text
+  aiConfidence  Float    @map("ai_confidence") // 0.0 to 1.0
+  reviewed      Boolean  @default(false)
+  reviewedAt    DateTime? @map("reviewed_at") @db.Timestamptz(6)
+  reviewedBy    String?  @map("reviewed_by")
+  reviewAction  String?  @map("review_action") // 'approved', 'banned', 'needs_more_review'
+  flaggedAt     DateTime @default(now()) @map("flagged_at") @db.Timestamptz(6)
+  flaggedBy     String   @map("flagged_by") // user ID or 'ai-system'
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@map("flagged_jobs")
+}
