@@ -1,16 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
   FiArrowLeft,
-  FiBriefcase,
   FiChevronDown,
-  FiClock,
   FiCreditCard,
   FiDollarSign,
   FiFileText,
   FiHome,
   FiLogOut,
   FiMenu,
-  FiMessageSquare,
+  FiMessageCircle,
   FiSettings,
   FiShield,
   FiTarget,
@@ -71,15 +69,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: FiHome, color: 'text-primary-600', description: 'Overview & quick stats' },
+    { name: 'AI Chat', href: '/chat', icon: FiMessageCircle, color: 'text-indigo-600', description: 'Chat with AI for job applications & resumes' },
     { name: 'Profile', href: '/profile', icon: FiUser, color: 'text-purple-600', description: 'Personal information' },
     { name: 'Career Development', href: '/career-development', icon: FiTarget, color: 'text-green-600', description: 'Growth & planning' },
     { name: 'Salary Negotiation', href: '/salary-negotiation', icon: FiDollarSign, color: 'text-emerald-600', description: 'Compensation tools' },
-    { name: 'Interview Prep', href: '/interview-prep', icon: FiMessageSquare, color: 'text-blue-600', description: 'Practice & prepare' },
-    { name: 'Interview Simulator', href: '/interview-simulator', icon: FiVideo, color: 'text-purple-600', description: 'Practice interviews' },
-    { name: 'Interview History', href: '/interview-history', icon: FiClock, color: 'text-indigo-600', description: 'Review past sessions' },
-    { name: 'Resume Builder', href: '/resume/builder', icon: FiFileText, color: 'text-success-600', description: 'Create & edit resumes' },
-    { name: 'My Resumes', href: '/resume', icon: FiFileText, color: 'text-warning-600', description: 'Manage documents' },
-    { name: 'Job Analysis', href: '/jobs', icon: FiBriefcase, color: 'text-secondary-600', description: 'Market insights' },
+    { name: 'Interview Hub', href: '/interview-prep', icon: FiVideo, color: 'text-blue-600', description: 'Practice, simulate & review interviews' },
+    { name: 'Resume Hub', href: '/resume', icon: FiFileText, color: 'text-success-600', description: 'Build, manage & analyze resumes' },
     { name: 'Scam Tracker', href: '/scam-tracker', icon: FiShield, color: 'text-red-600', description: 'Report & track job scams' },
   ]
 
@@ -120,15 +115,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       return true
     }
 
-    // Special handling for specific routes to avoid conflicts
-    if (path === '/resume' && location.pathname.startsWith('/resume/')) {
-      // Only match /resume for exact /resume path, not /resume/builder or other sub-paths
-      return location.pathname === '/resume'
+    // Special handling for Interview Hub (unified page)
+    if (path === '/interview-prep') {
+      // Match /interview-prep, /interview-simulator, and /interview-history (all now use the unified InterviewHubPage)
+      return location.pathname === '/interview-prep' ||
+        location.pathname === '/interview-simulator' ||
+        location.pathname === '/interview-history'
     }
 
-    if (path === '/resume/builder') {
-      // Match /resume/builder and any sub-paths of the builder
-      return location.pathname === '/resume/builder' || location.pathname.startsWith('/resume/builder/')
+    // Special handling for Resume Hub (unified page)
+    if (path === '/resume') {
+      // Match /resume, /resume/builder, and /jobs (all now use the unified ResumeHubPage)
+      return location.pathname === '/resume' ||
+        location.pathname.startsWith('/resume/') ||
+        location.pathname === '/jobs'
     }
 
     // For other paths, allow sub-path matching

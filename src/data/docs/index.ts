@@ -1,7 +1,5 @@
 import { DocumentationRepository } from '../../types/documentation.js';
 import { cleanupSummaryDoc } from './cleanupSummary.js';
-import { extensionEnhancementsDocumentation } from './extensionEnhancements.js';
-import { extensionTestingDocumentation } from './extensionTesting.js';
 import { migrationCompleteDoc } from './migrationComplete.js';
 import { projectCompleteDocumentation } from './projectComplete.js';
 import { readmeDocumentation } from './readme.js';
@@ -13,8 +11,6 @@ export const documentationRepository: DocumentationRepository = {
   documents: [
     readmeDocumentation,
     projectCompleteDocumentation,
-    extensionTestingDocumentation,
-    extensionEnhancementsDocumentation,
     migrationCompleteDoc,
     supabaseMigrationDoc,
     cleanupSummaryDoc
@@ -33,7 +29,6 @@ export const documentationRepository: DocumentationRepository = {
     'setup',
     'overview',
     'project-complete',
-    'chrome-extension',
     'accomplishments',
     'deployment',
     'testing',
@@ -113,5 +108,5 @@ export function markChecklistItemComplete(documentId: string, itemId: string, co
 
 // Export individual documents for direct import
 export {
-  cleanupSummaryDoc, extensionEnhancementsDocumentation, extensionTestingDocumentation, migrationCompleteDoc, projectCompleteDocumentation, readmeDocumentation, supabaseMigrationDoc
+  cleanupSummaryDoc, migrationCompleteDoc, projectCompleteDocumentation, readmeDocumentation, supabaseMigrationDoc
 };

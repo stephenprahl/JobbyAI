@@ -257,7 +257,7 @@ export const integrationConfig = {
     },
     cors: {
       development: ['http://localhost:5173'],
-      production: ['http://localhost:5173', 'chrome-extension://*']
+      production: ['http://localhost:5173']
     },
     database: {
       models: [

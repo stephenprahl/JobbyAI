@@ -6,6 +6,7 @@ import { analysisPrismaRoutes } from './routes/analysis.prisma';
 import { analyticsRoutes } from './routes/analytics.routes';
 import { authRoutes } from './routes/auth.routes';
 import { careerDevelopmentRoutes } from './routes/careerDevelopment.routes';
+import { chatRoutes } from './routes/chat.routes';
 import { interviewRoutes } from './routes/interview.routes';
 import { jobRecommendationsRoutes } from './routes/jobRecommendations.routes';
 import { resumeRoutes } from './routes/resume.routes';
@@ -84,6 +85,7 @@ const app = new Elysia()
       .use(interviewRoutes)
       .use(careerDevelopmentRoutes)
       .use(scamTrackerRoutes)
+      .use(chatRoutes)
       // .use(salaryNegotiationRoutes)
       .get('/health', () => ({
         status: 'ok',

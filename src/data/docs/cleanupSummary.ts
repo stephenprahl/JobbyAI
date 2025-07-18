@@ -22,10 +22,8 @@ export const cleanupSummaryDoc: DocumentationFile = {
       content: 'Files removed from the project root directory.',
       type: 'list',
       items: [
-        'test-job-page.html - Test HTML file for extension development',
-        'index.html - Unused root HTML file',
-        'extension.tar.gz - Old extension package (replaced with clean version)',
-        'EXTENSION-TESTING.md - Duplicate documentation file'
+        'test-job-page.html - Test HTML file for development',
+        'index.html - Unused root HTML file'
       ]
     },
     {
@@ -49,18 +47,6 @@ export const cleanupSummaryDoc: DocumentationFile = {
       items: [
         'tsconfig.node.json - Unused Node.js TypeScript config',
         'tsconfig.server.json - Unused server TypeScript config'
-      ]
-    },
-    {
-      id: 'extension-cleanup',
-      title: 'Extension Directory Cleanup',
-      content: 'Backup files and old configurations removed from extension directory.',
-      type: 'list',
-      items: [
-        'backup/ directory and all contents (background-new.ts, background-old.ts, content-new.ts, content-old.ts, content-original.ts)',
-        'vite.config.new.ts, vite.config.old.ts - Old Vite configurations',
-        'content/content-clean.ts - Temporary clean file',
-        'content/styles.css - Unused stylesheet'
       ]
     },
     {
@@ -96,15 +82,6 @@ export const cleanupSummaryDoc: DocumentationFile = {
 │   ├── client/                    # Frontend React app
 │   └── server/                    # Backend API (Elysia)
 │
-├── extension/                     # Chrome extension
-│   ├── dist/                      # Built extension (ready to install)
-│   ├── background/                # Service worker
-│   ├── content/                   # Content scripts
-│   ├── popup/                     # Extension popup UI
-│   ├── icons/                     # Extension icons
-│   ├── manifest.json              # Extension manifest
-│   └── package.json               # Extension dependencies
-│
 ├── prisma/                        # Database schema and migrations
 ├── scripts/                       # Migration and utility scripts
 ├── public/                        # Static assets
@@ -112,8 +89,6 @@ export const cleanupSummaryDoc: DocumentationFile = {
 ├── dist/                          # Built application
 │
 └── Documentation/
-    ├── EXTENSION_ENHANCEMENTS.md  # Technical implementation
-    ├── EXTENSION_TESTING.md       # Testing guide
     ├── MIGRATION_COMPLETE.md      # Migration summary
     ├── PROJECT_COMPLETE.md        # Project completion
     └── SUPABASE_MIGRATION.md      # Database migration`
@@ -159,17 +134,6 @@ export const cleanupSummaryDoc: DocumentationFile = {
       ]
     },
     {
-      id: 'updated-extension',
-      title: '📦 Updated Extension Package',
-      content: 'New clean extension package details.',
-      type: 'text',
-      metadata: {
-        package: 'extension-clean.tar.gz',
-        description: 'Contains only the production-ready extension',
-        optimization: 'No backup files or development artifacts, optimized for distribution'
-      }
-    },
-    {
       id: 'migration-impact',
       title: '🔄 Migration Impact',
       content: 'Impact of the Supabase migration on cleanup decisions.',
@@ -183,7 +147,6 @@ export const cleanupSummaryDoc: DocumentationFile = {
       items: [
         'All active source code and configurations',
         'Supabase-related configurations and scripts',
-        'Extension build artifacts and source',
         'Documentation files (consolidated)',
         'TypeScript definitions and build configs'
       ]
@@ -208,7 +171,6 @@ export const cleanupSummaryDoc: DocumentationFile = {
       type: 'checklist',
       checklistItems: [
         { id: 'builds', text: 'Builds successfully (bun run build)', completed: true },
-        { id: 'extension', text: 'Extension compiles without errors', completed: true },
         { id: 'functionality', text: 'All essential functionality preserved', completed: true },
         { id: 'structure', text: 'Clean, organized file structure', completed: true },
         { id: 'optimization', text: 'Reduced disk usage and complexity', completed: true }
@@ -222,7 +184,6 @@ export const cleanupSummaryDoc: DocumentationFile = {
       metadata: {
         status: '🧹 CLEANUP COMPLETE',
         result: 'Streamlined, production-ready codebase',
-        extensionStatus: 'Ready for testing and deployment',
         date: '2025-07-10'
       }
     }

@@ -3,9 +3,6 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./extension/popup/*.{js,ts,jsx,tsx,html}",
-    "./extension/content/*.{js,ts,jsx,tsx}",
-    "./extension/background/*.{js,ts,jsx,tsx}",
   ],
   darkMode: 'class',
   theme: {

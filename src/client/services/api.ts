@@ -24,6 +24,77 @@ export const deleteUserSkill = async (skillId: string): Promise<ApiResponse<any>
   return response.data
 }
 
+// Delete Certification
+export const deleteUserCertification = async (certId: string): Promise<ApiResponse<any>> => {
+  const response = await api.delete(`/users/me/certifications/${certId}`)
+  return response.data
+}
+
+// Chat API functions
+export const sendChatMessage = async (data: {
+  message: string
+  sessionId?: string
+}): Promise<ApiResponse<any>> => {
+  const response = await api.post('/chat/message', data)
+  return response.data
+}
+
+export const getChatSessions = async (): Promise<ApiResponse<any[]>> => {
+  const response = await api.get('/chat/sessions')
+  return response.data
+}
+
+export const getChatSession = async (sessionId: string): Promise<ApiResponse<any>> => {
+  const response = await api.get(`/chat/sessions/${sessionId}`)
+  return response.data
+}
+
+export const deleteChatSession = async (sessionId: string): Promise<ApiResponse<any>> => {
+  const response = await api.delete(`/chat/sessions/${sessionId}`)
+  return response.data
+}
+
+// Job application API functions
+export const applyToJobs = async (data: {
+  query: string
+  location?: string
+  count?: number
+  jobType?: string
+  experience?: string
+  salary?: {
+    min?: number
+    max?: number
+  }
+}): Promise<ApiResponse<any>> => {
+  const response = await api.post('/chat/apply-jobs', data)
+  return response.data
+}
+
+export const searchJobs = async (data: {
+  query: string
+  location?: string
+  count?: number
+  jobType?: string
+  experience?: string
+  salary?: {
+    min?: number
+    max?: number
+  }
+}): Promise<ApiResponse<any>> => {
+  const response = await api.post('/jobs/search', data)
+  return response.data
+}
+
+export const createTailoredResume = async (data: {
+  jobTitle: string
+  jobDescription?: string
+  companyName?: string
+  templateId?: string
+}): Promise<ApiResponse<any>> => {
+  const response = await api.post('/chat/create-resume', data)
+  return response.data
+}
+
 // Add Experience
 export const addUserExperience = async (exp: {
   title: string
