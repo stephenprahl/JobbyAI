@@ -2,14 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import {
   FiArrowLeft,
   FiChevronDown,
-  FiClock,
   FiCreditCard,
   FiDollarSign,
   FiFileText,
   FiHome,
   FiLogOut,
   FiMenu,
-  FiMessageSquare,
   FiSettings,
   FiShield,
   FiTarget,
@@ -73,9 +71,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: 'Profile', href: '/profile', icon: FiUser, color: 'text-purple-600', description: 'Personal information' },
     { name: 'Career Development', href: '/career-development', icon: FiTarget, color: 'text-green-600', description: 'Growth & planning' },
     { name: 'Salary Negotiation', href: '/salary-negotiation', icon: FiDollarSign, color: 'text-emerald-600', description: 'Compensation tools' },
-    { name: 'Interview Prep', href: '/interview-prep', icon: FiMessageSquare, color: 'text-blue-600', description: 'Practice & prepare' },
-    { name: 'Interview Simulator', href: '/interview-simulator', icon: FiVideo, color: 'text-purple-600', description: 'Practice interviews' },
-    { name: 'Interview History', href: '/interview-history', icon: FiClock, color: 'text-indigo-600', description: 'Review past sessions' },
+    { name: 'Interview Hub', href: '/interview-prep', icon: FiVideo, color: 'text-blue-600', description: 'Practice, simulate & review interviews' },
     { name: 'Resume Hub', href: '/resume', icon: FiFileText, color: 'text-success-600', description: 'Build, manage & analyze resumes' },
     { name: 'Scam Tracker', href: '/scam-tracker', icon: FiShield, color: 'text-red-600', description: 'Report & track job scams' },
   ]
@@ -115,6 +111,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     // Exact match first
     if (location.pathname === path) {
       return true
+    }
+
+    // Special handling for Interview Hub (unified page)
+    if (path === '/interview-prep') {
+      // Match /interview-prep, /interview-simulator, and /interview-history (all now use the unified InterviewHubPage)
+      return location.pathname === '/interview-prep' ||
+        location.pathname === '/interview-simulator' ||
+        location.pathname === '/interview-history'
     }
 
     // Special handling for Resume Hub (unified page)

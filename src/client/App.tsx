@@ -6,9 +6,7 @@ import { useAutoLogin } from './hooks/useAutoLogin'
 // Import Tailwind pages
 import CareerDevelopmentPage from './pages/CareerDevelopmentPage'
 import DashboardPage from './pages/DashboardPage'
-import InterviewHistoryPage from './pages/InterviewHistoryPage'
-import InterviewPrepPage from './pages/InterviewPrepPage'
-import InterviewSimulatorPage from './pages/InterviewSimulatorPage'
+import InterviewHubPage from './pages/InterviewHubPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -171,7 +169,7 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <Layout>
-                <InterviewSimulatorPage />
+                <InterviewHubPage />
               </Layout>
             </ProtectedRoute>
           }
@@ -181,7 +179,7 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <Layout>
-                <InterviewPrepPage />
+                <InterviewHubPage />
               </Layout>
             </ProtectedRoute>
           }
@@ -191,7 +189,7 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <Layout>
-                <InterviewHistoryPage />
+                <InterviewHubPage />
               </Layout>
             </ProtectedRoute>
           }
