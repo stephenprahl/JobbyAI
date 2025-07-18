@@ -182,6 +182,6 @@ CORS_ORIGIN=http://localhost:5173`,
     category: 'project-overview',
     importance: 'critical',
     audience: ['developers', 'contributors', 'users'],
-    relatedDocs: ['extension-enhancements', 'project-complete', 'migration-complete']
+    relatedDocs: ['project-complete', 'migration-complete']
   }
 };

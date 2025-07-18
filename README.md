@@ -79,7 +79,6 @@ jobbyai/
 <div align="center">
   <img src="public/vite.svg" alt="Vite" width="40"/>
   <img src="https://raw.githubusercontent.com/stephenprahl/jobbyai/main/public/vite.svg" alt="Vite" width="40"/>
-  <img src="https://raw.githubusercontent.com/stephenprahl/jobbyai/main/extension/icons/icon.svg" alt="JobbyAI" width="40"/>
 </div>
 
 - **Frontend:** React 18, TypeScript, Tailwind CSS, React Router, React Hook Form
@@ -149,6 +148,7 @@ CORS_ORIGIN=http://localhost:5173
 > 💡 **Tip:** For local development, ensure your PostgreSQL instance is running and accessible. You can use tools like [pgAdmin](https://www.pgadmin.org/) or [TablePlus](https://tableplus.com/) to manage your database visually.
 
 ---
+
 ## App Logic
 
 - **Subscription Info:**

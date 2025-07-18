@@ -66,7 +66,6 @@ export const migrationCompleteDoc: DocumentationFile = {
       checklistItems: [
         { id: 'backend', text: 'Backend server connects successfully to Supabase', completed: true },
         { id: 'frontend', text: 'Frontend application loads and works correctly', completed: true },
-        { id: 'extension', text: 'Chrome extension builds and functions properly', completed: true },
         { id: 'api', text: 'All API endpoints working (health check confirmed)', completed: true },
         { id: 'database', text: 'Database read/write operations verified', completed: true }
       ]
@@ -108,10 +107,7 @@ export const migrationCompleteDoc: DocumentationFile = {
         { id: 'database-ops', text: 'Database operations working correctly', completed: true },
         { id: 'react-app', text: 'React app running on http://localhost:5173', completed: true },
         { id: 'api-integration', text: 'API integration working', completed: true },
-        { id: 'ui-functional', text: 'User interface functional', completed: true },
-        { id: 'extension-built', text: 'Chrome extension built successfully in /extension/dist/', completed: true },
-        { id: 'extension-ready', text: 'Extension ready for loading in Chrome', completed: true },
-        { id: 'extension-api', text: 'Extension connects to the Supabase-backed API', completed: true }
+        { id: 'ui-functional', text: 'User interface functional', completed: true }
       ]
     },
     {

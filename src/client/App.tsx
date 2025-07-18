@@ -9,13 +9,11 @@ import DashboardPage from './pages/DashboardPage'
 import InterviewHistoryPage from './pages/InterviewHistoryPage'
 import InterviewPrepPage from './pages/InterviewPrepPage'
 import InterviewSimulatorPage from './pages/InterviewSimulatorPage'
-import JobAnalysisPage from './pages/JobAnalysisPage'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
-import ResumeBuilderPage from './pages/ResumeBuilderPage'
-import ResumePage from './pages/ResumePage'
+import ResumeHubPage from './pages/ResumeHubPage'
 import SalaryNegotiationPage from './pages/SalaryNegotiationPage'
 import ScamTrackerPage from './pages/ScamTrackerPage'
 import SettingsPage from './pages/SettingsPage'
@@ -213,7 +211,7 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <Layout>
-                <ResumePage />
+                <ResumeHubPage />
               </Layout>
             </ProtectedRoute>
           }
@@ -223,7 +221,7 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <Layout>
-                <ResumeBuilderPage />
+                <ResumeHubPage />
               </Layout>
             </ProtectedRoute>
           }
@@ -233,7 +231,7 @@ const App: React.FC = () => {
           element={
             <ProtectedRoute>
               <Layout>
-                <JobAnalysisPage />
+                <ResumeHubPage />
               </Layout>
             </ProtectedRoute>
           }

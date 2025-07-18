@@ -7,7 +7,7 @@ export const projectCompleteDocumentation: DocumentationFile = {
   version: '1.0.0',
   lastUpdated: '2025-07-10',
   authors: ['JobbyAI Team'],
-  tags: ['project-complete', 'chrome-extension', 'accomplishments', 'deployment'],
+  tags: ['project-complete', 'accomplishments', 'deployment'],
   status: 'approved',
   sections: [
     {
