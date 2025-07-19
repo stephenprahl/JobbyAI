@@ -6,7 +6,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.string().default('3001'),
   HOST: z.string().default('0.0.0.0'),
-  
+
   // Database
   DATABASE_URL: z.string().url(),
   DATABASE_HOST: z.string().default('postgres'),
@@ -14,22 +14,23 @@ const envSchema = z.object({
   DATABASE_NAME: z.string().default('resume_plan_ai'),
   DATABASE_USER: z.string().default('postgres'),
   DATABASE_PASSWORD: z.string().default('postgres'),
-  
-  // Ollama
-  OLLAMA_API_URL: z.string().url().default('http://localhost:11434/api/generate'),
-  OLLAMA_MODEL: z.string().default('llama3'),
-  OLLAMA_TEMPERATURE: z.string().default('0.3'),
-  
+
+  // Google Gemini
+  GOOGLE_GEMINI_API_KEY: z.string().default(''),
+  GEMINI_MODEL: z.string().default('gemini-1.5-flash'),
+  GEMINI_TEMPERATURE: z.string().default('0.7'),
+  GEMINI_MAX_TOKENS: z.string().default('2000'),
+
   // JWT (for future use)
   JWT_SECRET: z.string().default('your_jwt_secret_here'),
   JWT_EXPIRES_IN: z.string().default('7d'),
-  
+
   // CORS
   CORS_ORIGIN: z.string().default('*'),
-  
+
   // Logging
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly']).default('info'),
-  
+
   // Rate limiting
   RATE_LIMIT_WINDOW_MS: z.string().default('900000'), // 15 minutes
   RATE_LIMIT_MAX: z.string().default('100'),

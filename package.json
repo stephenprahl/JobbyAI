@@ -24,6 +24,7 @@
     "migrate:check": "bun run scripts/pre-migration-check.ts",
     "migrate:supabase": "bun run scripts/migrate-to-supabase.ts",
     "test:supabase": "bunx tsx scripts/test-supabase.ts",
+    "test:gemini": "bun run test-gemini-integration.js",
     "test": "bun test",
     "clean": "rm -rf dist"
   },
@@ -32,6 +33,7 @@
     "@elysiajs/jwt": "^0.7.0",
     "@elysiajs/static": "^0.2.0",
     "@elysiajs/swagger": "^0.7.0",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.11.1",
     "@stripe/stripe-js": "^7.4.0",
     "@supabase/supabase-js": "^2.50.4",
