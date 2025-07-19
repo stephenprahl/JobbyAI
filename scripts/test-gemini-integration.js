@@ -24,7 +24,7 @@ if (!GEMINI_API_KEY || GEMINI_API_KEY === 'your_google_gemini_api_key_here') {
 // Test 2: Try to import and initialize Gemini service
 console.log('\n2️⃣ Testing Gemini Service Import...');
 try {
-  const { chatCompletion, isGeminiConfigured } = await import('./src/server/services/gemini.js');
+  const { chatCompletion, isGeminiConfigured } = await import('../src/server/services/gemini.js');
 
   if (isGeminiConfigured()) {
     console.log('✅ Gemini service initialized successfully');
