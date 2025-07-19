@@ -14,6 +14,7 @@ import { scamTrackerRoutes } from './routes/scamTracker.routes';
 // import { salaryNegotiationRoutes } from './routes/salaryNegotiation.routes';
 import { subscriptionRoutes } from './routes/subscription.routes';
 import { userRoutes } from './routes/user.routes';
+import { isGeminiConfigured } from './services/gemini';
 import prisma, { connect, disconnect } from './services/prisma.service';
 
 
@@ -71,6 +72,10 @@ const app = new Elysia()
     status: 'ok',
     timestamp: new Date().toISOString(),
     environment: NODE_ENV,
+    services: {
+      database: 'connected',
+      ai: isGeminiConfigured() ? 'gemini-connected' : 'gemini-not-configured'
+    }
   }))
   // Group all API routes under /api prefix
   .group('/api', (api) =>
@@ -91,6 +96,10 @@ const app = new Elysia()
         status: 'ok',
         timestamp: new Date().toISOString(),
         environment: NODE_ENV,
+        services: {
+          database: 'connected',
+          ai: isGeminiConfigured() ? 'gemini-connected' : 'gemini-not-configured'
+        }
       }))
   )
   .all('*', () => ({

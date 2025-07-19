@@ -1,14 +1,13 @@
-import { UserProfile } from '../schemas/analysis';
-import { JobListing } from '../schemas/analysis';
+import { JobListing, UserProfile } from '../schemas/analysis';
 import { logger } from '../utils/logger';
-import { chatCompletion } from './ollama';
+import { chatCompletion } from './gemini';
 
 /**
- * Makes a request to the LLM API
+ * Makes a request to the Gemini API
  */
 async function llmRequest(
   messages: Array<{ role: string; content: string }>,
-  model: string = 'llama3',
+  model: string = 'gemini-1.5-flash',
   temperature: number = 0.7,
   maxTokens: number = 2000
 ): Promise<string> {
@@ -19,7 +18,7 @@ async function llmRequest(
       maxTokens,
     });
   } catch (error) {
-    logger.error('LLM API request failed:', error);
+    logger.error('Gemini API request failed:', error);
     throw error;
   }
 }
@@ -77,7 +76,7 @@ export async function generateResume(
           content: prompt,
         },
       ],
-      'llama3',
+      'gemini-1.5-flash',
       0.7,
       2000
     ) || '';
@@ -172,9 +171,9 @@ function formatResume(content: string, format: string = 'markdown'): string {
       return content;
     case 'text':
       return content.replace(/^#+\s*/gm, '') // Remove markdown headers
-                   .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
-                   .replace(/\*(.*?)\*/g, '$1') // Remove italics
-                   .replace(/\n\s*\n/g, '\n\n'); // Normalize newlines
+        .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+        .replace(/\*(.*?)\*/g, '$1') // Remove italics
+        .replace(/\n\s*\n/g, '\n\n'); // Normalize newlines
     case 'markdown':
     default:
       return content;

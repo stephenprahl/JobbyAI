@@ -1,7 +1,7 @@
 const { Elysia, t } = require('elysia');
 import { authService } from '../services/auth.service';
+import { chatCompletion } from '../services/gemini';
 import { searchJobs } from '../services/jobSearch.service';
-import { chatCompletion } from '../services/ollama';
 import prisma from '../services/prisma.service';
 import { logger } from '../utils/logger';
 

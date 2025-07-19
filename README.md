@@ -123,6 +123,7 @@ jobbyai/
 - `bun run db:seed` — Seed the database
 - `bun run db:reset` — Reset and reseed database
 - `bun run db:studio` — Open Prisma Studio
+- `bun run test:gemini` — Test Google Gemini AI integration
 - `bun run lint` — Lint code
 - `bun run format` — Format code
 - `bun run clean` — Clean build artifacts
@@ -143,7 +144,35 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/jobbyai
 
 # CORS
 CORS_ORIGIN=http://localhost:5173
+
+# Google Gemini AI (Required for AI features)
+GOOGLE_GEMINI_API_KEY=your_google_gemini_api_key_here
+GEMINI_MODEL=gemini-1.5-flash-latest
+GEMINI_TEMPERATURE=0.7
+GEMINI_MAX_TOKENS=2000
 ```
+
+### 🤖 AI Configuration
+
+JobbyAI uses **Google Gemini** for all AI-powered features:
+
+1. **Get a Gemini API Key:**
+   - Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Create a new project or select an existing one
+   - Generate an API key
+
+2. **Configure the API Key:**
+
+   ```bash
+   # Add to your .env file
+   GOOGLE_GEMINI_API_KEY=your_actual_api_key_here
+   ```
+
+3. **Test the Integration:**
+
+   ```bash
+   bun run test:gemini
+   ```
 
 > 💡 **Tip:** For local development, ensure your PostgreSQL instance is running and accessible. You can use tools like [pgAdmin](https://www.pgadmin.org/) or [TablePlus](https://tableplus.com/) to manage your database visually.
 
