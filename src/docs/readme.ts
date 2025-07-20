@@ -1,4 +1,4 @@
-import { DocumentationFile } from '../../types/documentation.js';
+import { DocumentationFile } from '../types/documentation.js';
 
 export const readmeDocumentation: DocumentationFile = {
   id: 'readme',

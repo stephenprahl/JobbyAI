@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
-import { useAutoLogin } from './hooks/useAutoLogin'
+import { useAutoLogin } from './shared/hooks/useAutoLogin'
 
 // Import Tailwind pages
 import CareerDevelopmentPage from './pages/CareerDevelopmentPage'

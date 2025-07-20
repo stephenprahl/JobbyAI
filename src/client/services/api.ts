@@ -128,7 +128,7 @@ export const deleteUserExperience = async (expId: string): Promise<ApiResponse<a
   const response = await api.delete(`/users/me/experiences/${expId}`)
   return response.data
 }
-import { ApiResponse, GeneratedResume, JobAnalysis, User } from '../types'
+import { ApiResponse, GeneratedResume, JobAnalysis, User } from '../shared/types/userTypes'
 import api from './auth'
 
 // User profile functions

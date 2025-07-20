@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import { ApiResponse, AuthTokens, LoginRequest, RegisterRequest, User } from '../types'
+import { ApiResponse, AuthTokens, LoginRequest, RegisterRequest, User } from '../shared/types/userTypes'
 
 // Create axios instance
 const api = axios.create({

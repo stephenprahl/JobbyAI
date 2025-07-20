@@ -43,7 +43,7 @@
         "src/client/services/*"
       ],
       "@/types/*": [
-        "src/client/types/*"
+        "src/client/shared/types/*"
       ],
       "@/utils/*": [
         "src/client/utils/*"

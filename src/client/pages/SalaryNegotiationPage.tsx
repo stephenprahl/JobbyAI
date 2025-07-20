@@ -1,3 +1,4 @@
+import { CompensationPackage, MarketData, NegotiationScript, NegotiationTip, SalaryData } from '@/shared/types/salaryTypes';
 import { useEffect, useState } from 'react';
 import {
   FiAlertTriangle,
@@ -15,60 +16,7 @@ import {
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 
-interface SalaryData {
-  currentSalary?: number;
-  targetSalary: number;
-  position: string;
-  location: string;
-  experience: number;
-  skills: string[];
-  companySize: 'startup' | 'medium' | 'large' | 'enterprise';
-  industry: string;
-}
 
-interface MarketData {
-  percentile25: number;
-  percentile50: number;
-  percentile75: number;
-  percentile90: number;
-  averageSalary: number;
-  location: string;
-  sampleSize: number;
-  lastUpdated: string;
-}
-
-interface NegotiationTip {
-  id: string;
-  category: 'preparation' | 'strategy' | 'communication' | 'alternatives';
-  title: string;
-  description: string;
-  importance: 'high' | 'medium' | 'low';
-  actionItems: string[];
-}
-
-interface CompensationPackage {
-  baseSalary: number;
-  bonus: number;
-  equity: number;
-  benefits: {
-    healthcare: number;
-    retirement: number;
-    vacation: number;
-    other: number;
-  };
-  totalCompensation: number;
-}
-
-interface NegotiationScript {
-  scenario: string;
-  opener: string;
-  keyPoints: string[];
-  responses: {
-    objection: string;
-    response: string;
-  }[];
-  closingStatement: string;
-}
 
 export default function SalaryNegotiationPage() {
   const { user, token } = useAuth();
@@ -287,8 +235,8 @@ export default function SalaryNegotiationPage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
-                    ? 'border-green-500 text-green-600 dark:text-green-400'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                  ? 'border-green-500 text-green-600 dark:text-green-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                   }`}
               >
                 <tab.icon className="w-4 h-4 mr-2" />
@@ -405,8 +353,8 @@ export default function SalaryNegotiationPage() {
                 {/* Recommendation */}
                 {getSalaryRecommendation() && (
                   <div className={`mt-6 p-4 rounded-lg ${getSalaryRecommendation()?.isReasonable
-                      ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                      : 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
+                    ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+                    : 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
                     }`}>
                     <div className="flex items-center">
                       {getSalaryRecommendation()?.isReasonable ? (
@@ -415,15 +363,15 @@ export default function SalaryNegotiationPage() {
                         <FiAlertTriangle className="w-5 h-5 text-yellow-500 mr-2" />
                       )}
                       <p className={`font-medium ${getSalaryRecommendation()?.isReasonable
-                          ? 'text-green-800 dark:text-green-300'
-                          : 'text-yellow-800 dark:text-yellow-300'
+                        ? 'text-green-800 dark:text-green-300'
+                        : 'text-yellow-800 dark:text-yellow-300'
                         }`}>
                         Your target salary is at the {getSalaryRecommendation()?.percentile}th percentile
                       </p>
                     </div>
                     <p className={`mt-1 text-sm ${getSalaryRecommendation()?.isReasonable
-                        ? 'text-green-700 dark:text-green-400'
-                        : 'text-yellow-700 dark:text-yellow-400'
+                      ? 'text-green-700 dark:text-green-400'
+                      : 'text-yellow-700 dark:text-yellow-400'
                       }`}>
                       {getSalaryRecommendation()?.recommendation}
                     </p>
@@ -446,9 +394,9 @@ export default function SalaryNegotiationPage() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center">
                       <div className={`p-2 rounded-lg mr-3 ${tip.category === 'preparation' ? 'bg-blue-100 dark:bg-blue-900/20' :
-                          tip.category === 'strategy' ? 'bg-green-100 dark:bg-green-900/20' :
-                            tip.category === 'communication' ? 'bg-purple-100 dark:bg-purple-900/20' :
-                              'bg-orange-100 dark:bg-orange-900/20'
+                        tip.category === 'strategy' ? 'bg-green-100 dark:bg-green-900/20' :
+                          tip.category === 'communication' ? 'bg-purple-100 dark:bg-purple-900/20' :
+                            'bg-orange-100 dark:bg-orange-900/20'
                         }`}>
                         {tip.category === 'preparation' && <FiBookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
                         {tip.category === 'strategy' && <FiTarget className="w-5 h-5 text-green-600 dark:text-green-400" />}
@@ -465,8 +413,8 @@ export default function SalaryNegotiationPage() {
                       </div>
                     </div>
                     <div className={`px-2 py-1 rounded text-xs font-medium ${tip.importance === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300' :
-                        tip.importance === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300' :
-                          'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                      tip.importance === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300' :
+                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
                       }`}>
                       {tip.importance}
                     </div>

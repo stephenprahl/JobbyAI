@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import * as authService from '../services/auth'
-import { AuthTokens, LoginRequest, RegisterRequest, User } from '../types'
+import { AuthTokens, LoginRequest, RegisterRequest, User } from '../shared/types/userTypes'
 
 interface AuthContextType {
   user: User | null

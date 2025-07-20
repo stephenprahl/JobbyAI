@@ -1,4 +1,4 @@
-import { DocumentationRepository } from '../../types/documentation.js';
+import { DocumentationRepository } from '../types/documentation.js';
 import { cleanupSummaryDoc } from './cleanupSummary.js';
 import { migrationCompleteDoc } from './migrationComplete.js';
 import { projectCompleteDocumentation } from './projectComplete.js';
