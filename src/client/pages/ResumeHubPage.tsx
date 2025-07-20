@@ -32,7 +32,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSubscription } from '../contexts/SubscriptionContext';
 import * as apiService from '../services/api';
 import { saveResume } from '../services/api';
-import { JobAnalysis } from '../types';
+import { JobAnalysis } from '../shared/types/userTypes';
 
 // Resume Builder Types
 interface PersonalInfo {
@@ -1167,8 +1167,8 @@ export default function ResumeHubPage() {
         {/* Toast Notification */}
         {showToast && (
           <div className={`fixed top-8 right-8 z-50 p-6 rounded-2xl shadow-2xl transition-all duration-500 transform backdrop-blur-sm ${showToast.type === 'success'
-              ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border border-emerald-300/30'
-              : 'bg-gradient-to-r from-red-500 to-rose-600 text-white border border-red-300/30'
+            ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border border-emerald-300/30'
+            : 'bg-gradient-to-r from-red-500 to-rose-600 text-white border border-red-300/30'
             } animate-in slide-in-from-right-5`}>
             <div className="flex items-center space-x-3">
               {showToast.type === 'success' ? (
@@ -1207,8 +1207,8 @@ export default function ResumeHubPage() {
                 data-tab={tab.id}
                 onClick={() => selectTab(tab.id)}
                 className={`tab-button flex items-center px-6 py-3 rounded-xl transition-all duration-300 ${activeTab === tab.id
-                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700'
+                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg transform scale-105'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700'
                   }`}
               >
                 <tab.icon className={`w-6 h-6 transition-all duration-300 ${activeTab === tab.id ? 'text-white' : 'text-gray-400'

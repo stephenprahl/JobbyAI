@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { FiAlertTriangle, FiBriefcase, FiCheckCircle, FiClock, FiDollarSign, FiMapPin, FiTrendingUp, FiXCircle } from 'react-icons/fi'
 import * as apiService from '../services/api'
-import { JobAnalysis } from '../types'
+import { JobAnalysis } from '../shared/types/userTypes'
 
 const JobAnalysisPage: React.FC = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -89,8 +89,8 @@ const JobAnalysisPage: React.FC = () => {
         {/* Toast Notification */}
         {showToast && (
           <div className={`fixed top-8 right-8 z-50 p-6 rounded-2xl shadow-2xl transition-all duration-500 transform backdrop-blur-sm ${showToast.type === 'success'
-              ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border border-emerald-300/30'
-              : 'bg-gradient-to-r from-red-500 to-rose-600 text-white border border-red-300/30'
+            ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border border-emerald-300/30'
+            : 'bg-gradient-to-r from-red-500 to-rose-600 text-white border border-red-300/30'
             } animate-in slide-in-from-right-5`}>
             <div className="flex items-center space-x-3">
               {showToast.type === 'success' ? (
@@ -156,30 +156,30 @@ const JobAnalysisPage: React.FC = () => {
                     key={tab}
                     onClick={() => setActiveTab(index)}
                     className={`flex-1 relative py-4 px-8 rounded-xl font-bold text-lg tracking-wide transition-all duration-300 ${activeTab === index
-                        ? 'bg-gradient-to-r from-primary-500 to-blue-600 text-white shadow-xl transform scale-[1.02] z-10'
-                        : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-50/50 dark:hover:bg-gray-700/30'
+                      ? 'bg-gradient-to-r from-primary-500 to-blue-600 text-white shadow-xl transform scale-[1.02] z-10'
+                      : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-50/50 dark:hover:bg-gray-700/30'
                       }`}
                   >
                     <span className="flex items-center justify-center space-x-3">
                       {index === 0 && (
                         <div className={`p-2 rounded-lg ${activeTab === index
-                            ? 'bg-white/20'
-                            : 'bg-primary-100 dark:bg-primary-900/30'
+                          ? 'bg-white/20'
+                          : 'bg-primary-100 dark:bg-primary-900/30'
                           }`}>
                           <FiBriefcase className={`w-5 h-5 ${activeTab === index
-                              ? 'text-white'
-                              : 'text-primary-600 dark:text-primary-400'
+                            ? 'text-white'
+                            : 'text-primary-600 dark:text-primary-400'
                             }`} />
                         </div>
                       )}
                       {index === 1 && (
                         <div className={`p-2 rounded-lg ${activeTab === index
-                            ? 'bg-white/20'
-                            : 'bg-primary-100 dark:bg-primary-900/30'
+                          ? 'bg-white/20'
+                          : 'bg-primary-100 dark:bg-primary-900/30'
                           }`}>
                           <FiTrendingUp className={`w-5 h-5 ${activeTab === index
-                              ? 'text-white'
-                              : 'text-primary-600 dark:text-primary-400'
+                            ? 'text-white'
+                            : 'text-primary-600 dark:text-primary-400'
                             }`} />
                         </div>
                       )}

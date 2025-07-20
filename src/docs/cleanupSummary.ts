@@ -1,4 +1,4 @@
-import { DocumentationFile } from '../../types/documentation';
+import { DocumentationFile } from '../types/documentation';
 
 export const cleanupSummaryDoc: DocumentationFile = {
   id: 'cleanup-summary',

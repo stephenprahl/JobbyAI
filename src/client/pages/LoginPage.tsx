@@ -3,21 +3,7 @@ import { FiBriefcase, FiChevronRight, FiEye, FiEyeOff, FiLock, FiMail, FiShield,
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { clearCredentials, isRememberMeEnabled, loadCredentials, saveCredentials } from '../utils/encryption'
-
-interface LoginPageTailwindProps {
-  mode?: 'login' | 'register'
-}
-
-interface ValidationErrors {
-  [key: string]: string
-}
-
-interface PasswordStrength {
-  score: number
-  label: string
-  color: string
-  suggestions: string[]
-}
+import { LoginPageTailwindProps, ValidationErrors, PasswordStrength } from '@/shared/types/loginTypes';
 
 const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' }) => {
   const [isLogin, setIsLogin] = useState(mode === 'login')

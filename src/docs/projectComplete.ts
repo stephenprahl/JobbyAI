@@ -1,4 +1,4 @@
-import { DocumentationFile } from '../../types/documentation.js';
+import { DocumentationFile } from '../types/documentation.js';
 
 export const projectCompleteDocumentation: DocumentationFile = {
   id: 'project-complete',

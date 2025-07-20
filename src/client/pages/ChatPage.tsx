@@ -20,58 +20,8 @@ import {
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 import * as apiService from '../services/api';
+import { Message, Attachment, JobApplication, ResumeData, ChatSession, SuggestedPrompt } from '../shared/types/chatTypes';
 
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-  attachments?: Attachment[];
-  jobApplications?: JobApplication[];
-  resumeData?: ResumeData;
-}
-
-interface Attachment {
-  id: string;
-  name: string;
-  type: 'resume' | 'job' | 'document';
-  url?: string;
-  data?: any;
-}
-
-interface JobApplication {
-  id: string;
-  title: string;
-  company: string;
-  platform: string;
-  url: string;
-  status: 'pending' | 'applying' | 'applied' | 'failed';
-  appliedAt?: Date;
-  resumeUsed?: string;
-}
-
-interface ResumeData {
-  id: string;
-  title: string;
-  content: any;
-  createdAt: Date;
-  matchScore?: number;
-}
-
-interface ChatSession {
-  id: string;
-  title: string;
-  messages: Message[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface SuggestedPrompt {
-  id: string;
-  text: string;
-  icon: React.ComponentType<any>;
-  category: 'resume' | 'job' | 'career' | 'interview';
-}
 
 const ChatPage: React.FC = () => {
   const { user } = useAuth();
