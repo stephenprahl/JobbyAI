@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
-import { isRememberMeEnabled, loadCredentials } from '../utils/encryption'
+import { useAuth } from '../../contexts/AuthContext'
+import { isRememberMeEnabled, loadCredentials } from '../../utils/encryption'
 
 export const useAutoLogin = () => {
   const { login, isAuthenticated, isLoading } = useAuth()
