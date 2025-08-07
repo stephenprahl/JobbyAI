@@ -61,22 +61,30 @@ console.log('Starting full Elysia server...');
 const app = new Elysia()
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
-  // Handle CORS manually
-  .onBeforeHandle(({ request, set }) => {
+  // Handle preflight OPTIONS requests first
+  .options('*', ({ request, set }) => {
     const origin = request.headers.get('origin');
-    console.log('🔍 CORS Check - Origin:', origin);
+    console.log('🔍 OPTIONS Request - Origin:', origin);
     
-    // Set CORS headers
-    set.headers['Access-Control-Allow-Origin'] = origin || 'https://jobby-ai-lovat.vercel.app';
+    // Always allow the frontend origin
+    set.headers['Access-Control-Allow-Origin'] = 'https://jobby-ai-lovat.vercel.app';
     set.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS';
     set.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
     set.headers['Access-Control-Allow-Credentials'] = 'true';
     set.headers['Access-Control-Max-Age'] = '86400';
-  })
-  // Handle preflight OPTIONS requests
-  .options('*', ({ set }) => {
     set.status = 204;
     return '';
+  })
+  // Handle CORS for all other requests
+  .onBeforeHandle(({ request, set }) => {
+    const origin = request.headers.get('origin');
+    console.log('🔍 Regular Request - Origin:', origin);
+    
+    // Always allow the frontend origin
+    set.headers['Access-Control-Allow-Origin'] = 'https://jobby-ai-lovat.vercel.app';
+    set.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS';
+    set.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
+    set.headers['Access-Control-Allow-Credentials'] = 'true';
   })
   .get('/health', () => ({
     status: 'ok',
