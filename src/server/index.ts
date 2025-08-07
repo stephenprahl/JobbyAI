@@ -63,13 +63,12 @@ const app = new Elysia()
   .state('version', '1.0.0')
   // Handle all CORS completely manually with transform hook
   .onTransform(({ set }) => {
-    // Set CORS headers on ALL responses
+    // Set CORS headers on ALL responses - try wildcard origin
     set.headers = {
       ...set.headers,
-      'Access-Control-Allow-Origin': 'https://jobby-ai-lovat.vercel.app',
+      'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Allow-Credentials': 'true',
       'Access-Control-Max-Age': '86400',
     };
   })
