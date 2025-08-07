@@ -63,7 +63,7 @@ const app = new Elysia()
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
   .use(cors({
-    origin: isProduction ? CORS_ORIGIN : true, // Strict in production, permissive in development
+    origin: true, // Temporarily permissive for testing
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true,
