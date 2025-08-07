@@ -63,7 +63,7 @@ const app = new Elysia()
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
   .use(cors({
-    origin: ['https://jobby-ai-lovat.vercel.app/', 'http://localhost:5173'],
+    origin: ['https://jobby-ai-lovat.vercel.app', 'http://localhost:5173'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true,
