@@ -137,8 +137,15 @@ async function getAvailableModels(): Promise<string[]> {
   }
 
   try {
-    const models = await genAI.listModels();
-    return models.map(model => model.name);
+    // Note: The Google Generative AI SDK doesn't currently provide a listModels method
+    // For now, return the known available models
+    return [
+      'gemini-1.5-flash',
+      'gemini-1.5-pro',
+      'gemini-1.0-pro',
+      'gemini-pro',
+      'gemini-pro-vision'
+    ];
   } catch (error) {
     logger.error('Failed to get available models:', error);
     return [GEMINI_MODEL]; // Return default model
