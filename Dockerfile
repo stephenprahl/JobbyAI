@@ -23,5 +23,5 @@ EXPOSE 10000
 # Set environment variable for port
 ENV PORT=10000
 
-# Start the server
-CMD ["bun", "run", "src/server/index.ts"]
+# Start the server directly from TypeScript
+CMD ["bun", "run", "start"]
