@@ -13,7 +13,7 @@ export default function handler(req, res) {
 
   if (req.method === 'POST') {
     const { email, password } = req.body || {};
-    
+
     if (!email || !password) {
       res.status(400).json({
         success: false,
@@ -27,9 +27,9 @@ export default function handler(req, res) {
       success: true,
       message: 'Login successful',
       data: {
-        user: { 
+        user: {
           id: 'demo-user-123',
-          email, 
+          email,
           firstName: 'Demo',
           lastName: 'User',
           role: 'user'

@@ -13,7 +13,7 @@ export default function handler(req, res) {
 
   if (req.method === 'POST') {
     const { email, password, firstName, lastName } = req.body || {};
-    
+
     if (!email || !password) {
       res.status(400).json({
         success: false,
@@ -27,9 +27,9 @@ export default function handler(req, res) {
       success: true,
       message: 'Registration successful',
       data: {
-        user: { 
+        user: {
           id: 'demo-' + Date.now(),
-          email, 
+          email,
           firstName: firstName || 'Demo',
           lastName: lastName || 'User',
           role: 'user'

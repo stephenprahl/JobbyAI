@@ -65,7 +65,7 @@ const app = new Elysia()
   .options('*', ({ request }) => {
     const origin = request.headers.get('origin') || 'https://jobby-ai-lovat.vercel.app';
     console.log('🔍 OPTIONS preflight from origin:', origin);
-    
+
     return new Response(null, {
       status: 204,
       headers: {
