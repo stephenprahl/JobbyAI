@@ -1,30 +1,46 @@
-import { connect } from '../src/server/services/prisma.service';
-import { authRoutes } from '../src/server/routes/auth.routes';
-import { resumeRoutes } from '../src/server/routes/resume.routes';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-const { Elysia } = require('elysia');
+// Simple CORS-enabled health check for Vercel
+export default function handler(req: VercelRequest, res: VercelResponse) {
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
 
-// Create simple Elysia app for Vercel
-const app = new Elysia()
-  .onRequest(({ set }) => {
-    // Set CORS headers for all requests
-    set.headers['Access-Control-Allow-Origin'] = '*';
-    set.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS';
-    set.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
-    set.headers['Access-Control-Allow-Credentials'] = 'true';
-  })
-  .options('*', () => {
-    return new Response(null, { status: 204 });
-  })
-  .get('/health', () => ({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    platform: 'vercel'
-  }))
-  .use(authRoutes)
-  .use(resumeRoutes);
+  if (req.method === 'OPTIONS') {
+    res.status(204).end();
+    return;
+  }
 
-// Initialize database connection
-connect().catch(console.error);
+  if (req.method === 'GET') {
+    res.status(200).json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      platform: 'vercel-serverless',
+      path: req.url,
+      message: 'JobbyAI backend API running on Vercel'
+    });
+  } else if (req.method === 'POST') {
+    // Handle basic auth registration for testing
+    const { email, password } = req.body || {};
+    
+    if (!email || !password) {
+      res.status(400).json({
+        success: false,
+        error: 'Email and password required'
+      });
+      return;
+    }
 
-export default app.handle;
+    res.status(200).json({
+      success: true,
+      message: 'Registration successful (demo)',
+      user: { email, id: 'demo-' + Date.now() },
+      token: 'demo-token-' + Date.now()
+    });
+  } else {
+    res.setHeader('Allow', ['GET', 'POST', 'OPTIONS']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}
