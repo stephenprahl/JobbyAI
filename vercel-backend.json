@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "name": "jobbyai-backend",
+  "builds": [
+    {
+      "src": "src/server/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "runtime": "nodejs18.x",
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/health",
+      "dest": "/src/server/index.ts"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/src/server/index.ts"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "src/server/index.ts": {
+      "maxDuration": 30
+    }
+  }
+}
