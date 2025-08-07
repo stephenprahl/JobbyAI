@@ -3,7 +3,6 @@ import { cleanupSummaryDoc } from './cleanupSummary.js';
 import { migrationCompleteDoc } from './migrationComplete.js';
 import { projectCompleteDocumentation } from './projectComplete.js';
 import { readmeDocumentation } from './readme.js';
-import { supabaseMigrationDoc } from './supabaseMigration.js';
 
 export const documentationRepository: DocumentationRepository = {
   version: '1.0.0',
@@ -12,7 +11,6 @@ export const documentationRepository: DocumentationRepository = {
     readmeDocumentation,
     projectCompleteDocumentation,
     migrationCompleteDoc,
-    supabaseMigrationDoc,
     cleanupSummaryDoc
   ],
   categories: [
@@ -108,5 +106,5 @@ export function markChecklistItemComplete(documentId: string, itemId: string, co
 
 // Export individual documents for direct import
 export {
-  cleanupSummaryDoc, migrationCompleteDoc, projectCompleteDocumentation, readmeDocumentation, supabaseMigrationDoc
+  cleanupSummaryDoc, migrationCompleteDoc, projectCompleteDocumentation, readmeDocumentation
 };

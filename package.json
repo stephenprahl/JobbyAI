@@ -21,9 +21,7 @@
     "db:studio": "bunx prisma studio",
     "docker:up": "docker compose up -d postgres",
     "docker:down": "docker compose down",
-    "migrate:check": "bun run scripts/pre-migration-check.ts",
-    "migrate:supabase": "bun run scripts/migrate-to-supabase.ts",
-    "test:supabase": "bunx tsx scripts/test-supabase.ts",
+    "migrate:check": "echo 'Migration completed - now using Prisma Postgres'",
     "test:gemini": "bun run test-gemini-integration.js",
     "test": "bun test",
     "clean": "rm -rf dist"
@@ -36,7 +34,6 @@
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.11.1",
     "@stripe/stripe-js": "^7.4.0",
-    "@supabase/supabase-js": "^2.50.4",
     "@types/bcryptjs": "^3.0.0",
     "@types/gsap": "^3.0.0",
     "@types/jsonwebtoken": "^9.0.10",

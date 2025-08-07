@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
 }
 
 // This is your Prisma schema file,
@@ -13,10 +12,8 @@ generator client {
 // The seed script is defined in prisma/seed.ts
 
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
-  directUrl  = env("DIRECT_URL")
-  extensions = [pgcrypto, citext]
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum UserRole {
@@ -67,7 +64,7 @@ enum PaymentStatus {
 
 model User {
   id            String         @id @default(uuid())
-  email         String         @unique @db.Citext
+  email         String         @unique
   passwordHash  String
   firstName     String?
   lastName      String?
@@ -148,7 +145,7 @@ model UserProfile {
 
 model Skill {
   id        String      @id @default(uuid())
-  name      String      @unique @db.Citext
+  name      String      @unique
   createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
 
   // Relations
