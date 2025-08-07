@@ -57,25 +57,51 @@ const logger = createLogger({
 
 console.log('Starting full Elysia server...');
 
-// Create Elysia app with CORS handling
+// Create Elysia app with raw Response-based CORS handling
 const app = new Elysia()
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
-  // Handle all CORS completely manually with transform hook
-  .onTransform(({ set }) => {
-    // Set CORS headers on ALL responses - try wildcard origin
-    set.headers = {
-      ...set.headers,
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-      'Access-Control-Max-Age': '86400',
-    };
+  // Handle preflight OPTIONS requests with raw Response
+  .options('*', ({ request }) => {
+    const origin = request.headers.get('origin') || 'https://jobby-ai-lovat.vercel.app';
+    console.log('🔍 OPTIONS preflight from origin:', origin);
+    
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        'Access-Control-Allow-Credentials': 'false',
+        'Access-Control-Max-Age': '86400',
+      }
+    });
   })
-  // Handle preflight OPTIONS requests
-  .options('*', ({ set }) => {
-    set.status = 204;
-    return '';
+  // Wrap ALL other routes with CORS headers using onAfterHandle
+  .onAfterHandle(({ request, response, set }) => {
+    const origin = request.headers.get('origin') || 'https://jobby-ai-lovat.vercel.app';
+    console.log('🔍 Request from origin:', origin);
+    
+    // If response is already a Response object, create new one with CORS headers
+    if (response instanceof Response) {
+      const newHeaders = new Headers(response.headers);
+      newHeaders.set('Access-Control-Allow-Origin', '*');
+      newHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+      newHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+      
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders
+      });
+    }
+    
+    // For non-Response objects, set headers on the context
+    set.headers['Access-Control-Allow-Origin'] = '*';
+    set.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS';
+    set.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
+    
+    return response;
   })
   .get('/health', () => ({
     status: 'ok',
