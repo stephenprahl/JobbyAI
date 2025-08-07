@@ -4,14 +4,13 @@
  * Pre-migration checklist script
  *
  * This script will:
- * 1. Check if Supabase credentials are configured
+ * 1. Check if database credentials are configured
  * 2. Test database connections
- * 3. Check if Prisma schema is compatible with Supabase
+ * 3. Check if Prisma schema is compatible
  * 4. Provide migration instructions
  */
 
 import { PrismaClient } from '@prisma/client'
-import { isSupabaseConfigured } from '../src/server/lib/supabase.ts'
 
 const localPrisma = new PrismaClient({
   datasources: {
@@ -51,9 +50,7 @@ function checkEnvironmentVariables() {
   console.log('🔍 Checking environment variables...')
 
   const requiredVars = [
-    'SUPABASE_URL',
-    'SUPABASE_ANON_KEY',
-    'SUPABASE_SERVICE_ROLE_KEY'
+    'DATABASE_URL'
   ]
 
   const missing = requiredVars.filter(varName => !process.env[varName])
@@ -68,25 +65,25 @@ function checkEnvironmentVariables() {
   return true
 }
 
-async function checkSupabaseConnection() {
-  console.log('🔍 Checking Supabase connection...')
+async function checkDatabaseConnection() {
+  console.log('🔍 Checking database connection...')
 
-  if (!isSupabaseConfigured()) {
-    console.error('❌ Supabase is not properly configured')
+  if (!process.env.DATABASE_URL) {
+    console.error('❌ DATABASE_URL is not configured')
     return false
   }
 
   try {
-    // Test with the DATABASE_URL pointing to Supabase
+    // Test with the DATABASE_URL
     const testPrisma = new PrismaClient()
     await testPrisma.$connect()
     await testPrisma.$disconnect()
 
-    console.log('✅ Supabase database connection successful')
+    console.log('✅ Database connection successful')
     return true
   } catch (error) {
-    console.error('❌ Supabase database connection failed:', error)
-    console.error('   Make sure DATABASE_URL points to your Supabase database')
+    console.error('❌ Database connection failed:', error)
+    console.error('   Make sure DATABASE_URL points to your database')
     return false
   }
 }
@@ -134,19 +131,19 @@ async function main() {
     // Check environment variables
     const envVarsOk = checkEnvironmentVariables()
 
-    // Check Supabase connection (only if env vars are set)
-    let supabaseOk = false
+    // Check database connection (only if env vars are set)
+    let databaseOk = false
     if (envVarsOk) {
-      supabaseOk = await checkSupabaseConnection()
+      databaseOk = await checkDatabaseConnection()
     }
 
     console.log('\n📊 Checklist Summary:')
     console.log('='.repeat(25))
     console.log(`Local Database: ${localData ? '✅' : '❌'}`)
     console.log(`Environment Variables: ${envVarsOk ? '✅' : '❌'}`)
-    console.log(`Supabase Connection: ${supabaseOk ? '✅' : '❌'}`)
+    console.log(`Database Connection: ${databaseOk ? '✅' : '❌'}`)
 
-    if (localData && envVarsOk && supabaseOk) {
+    if (localData && envVarsOk && databaseOk) {
       console.log('\n🎉 All checks passed! You\'re ready to migrate.')
       console.log('   Run: bun run scripts/migrate-to-supabase.ts')
     } else {
