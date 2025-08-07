@@ -1,4 +1,3 @@
-import { cors } from '@elysiajs/cors';
 import { config } from 'dotenv';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
@@ -58,16 +57,36 @@ const logger = createLogger({
 
 console.log('Starting full Elysia server...');
 
-// Create Elysia app with minimal middleware first
+// Create Elysia app with raw Response-based CORS handling
 const app = new Elysia()
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
-  .use(cors({
-    origin: isProduction ? CORS_ORIGIN : true, // Strict in production, permissive in development
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    credentials: true,
-  }))
+  // Handle preflight OPTIONS requests with raw Response
+  .options('*', ({ request }) => {
+    const origin = request.headers.get('origin') || 'https://jobby-ai-lovat.vercel.app';
+    console.log('🔍 OPTIONS preflight from origin:', origin);
+
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+        'Access-Control-Max-Age': '86400',
+        'X-Debug-CORS': 'Manually-Set-By-Server',
+        'Cache-Control': 'no-cache',
+        'X-Robots-Tag': 'noindex',
+      }
+    });
+  })
+  // Add CORS to regular requests too
+  .onRequest(({ request, set }) => {
+    // Try setting a bypass header
+    set.headers['X-Render-Bypass-CORS'] = 'true';
+    set.headers['Access-Control-Allow-Origin'] = '*';
+    set.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS';
+    set.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
+  })
   .get('/health', () => ({
     status: 'ok',
     timestamp: new Date().toISOString(),
