@@ -5,15 +5,10 @@
   "installCommand": "bun install",
   "devCommand": "bun run dev:client",
   "framework": "vite",
-  "functions": {
-    "api/index.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index"
+      "destination": "/api/$1"
     },
     {
       "source": "/(.*)",
