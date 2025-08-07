@@ -63,17 +63,11 @@ const app = new Elysia()
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
   .use(cors({
-    origin: ['https://jobby-ai-lovat.vercel.app', 'http://localhost:5173'],
+    origin: true, // Allow all origins for now to debug
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true,
   }))
-  .onBeforeHandle(({ set }) => {
-    // Add CORS headers manually as backup
-    set.headers['Access-Control-Allow-Origin'] = '*'
-    set.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS'
-    set.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
-  })
   .get('/health', () => ({
     status: 'ok',
     timestamp: new Date().toISOString(),
