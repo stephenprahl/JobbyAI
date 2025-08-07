@@ -1,0 +1,11 @@
+version: "1"
+services:
+  - type: web
+    name: jobby-ai-backend
+    runtime: docker
+    dockerCommand: bun run src/server/index.ts
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
