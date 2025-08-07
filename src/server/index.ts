@@ -1,4 +1,3 @@
-import { cors } from '@elysiajs/cors';
 import { config } from 'dotenv';
 import path from 'path';
 import { createLogger, format, transports } from 'winston';
@@ -58,16 +57,27 @@ const logger = createLogger({
 
 console.log('Starting full Elysia server...');
 
-// Create Elysia app with minimal middleware first
+// Create Elysia app with CORS handling
 const app = new Elysia()
   .decorate('prisma', prisma)
   .state('version', '1.0.0')
-  .use(cors({
-    origin: true, // Allow all origins for now to debug
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-    credentials: true,
-  }))
+  // Handle CORS manually
+  .onBeforeHandle(({ request, set }) => {
+    const origin = request.headers.get('origin');
+    console.log('🔍 CORS Check - Origin:', origin);
+    
+    // Set CORS headers
+    set.headers['Access-Control-Allow-Origin'] = origin || 'https://jobby-ai-lovat.vercel.app';
+    set.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS';
+    set.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
+    set.headers['Access-Control-Allow-Credentials'] = 'true';
+    set.headers['Access-Control-Max-Age'] = '86400';
+  })
+  // Handle preflight OPTIONS requests
+  .options('*', ({ set }) => {
+    set.status = 204;
+    return '';
+  })
   .get('/health', () => ({
     status: 'ok',
     timestamp: new Date().toISOString(),
