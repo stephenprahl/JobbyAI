@@ -72,36 +72,20 @@ const app = new Elysia()
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
-        'Access-Control-Allow-Credentials': 'false',
         'Access-Control-Max-Age': '86400',
+        'X-Debug-CORS': 'Manually-Set-By-Server',
+        'Cache-Control': 'no-cache',
+        'X-Robots-Tag': 'noindex',
       }
     });
   })
-  // Wrap ALL other routes with CORS headers using onAfterHandle
-  .onAfterHandle(({ request, response, set }) => {
-    const origin = request.headers.get('origin') || 'https://jobby-ai-lovat.vercel.app';
-    console.log('🔍 Request from origin:', origin);
-    
-    // If response is already a Response object, create new one with CORS headers
-    if (response instanceof Response) {
-      const newHeaders = new Headers(response.headers);
-      newHeaders.set('Access-Control-Allow-Origin', '*');
-      newHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-      newHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-      
-      return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: newHeaders
-      });
-    }
-    
-    // For non-Response objects, set headers on the context
+  // Add CORS to regular requests too
+  .onRequest(({ request, set }) => {
+    // Try setting a bypass header
+    set.headers['X-Render-Bypass-CORS'] = 'true';
     set.headers['Access-Control-Allow-Origin'] = '*';
     set.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, PATCH, OPTIONS';
     set.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With';
-    
-    return response;
   })
   .get('/health', () => ({
     status: 'ok',
