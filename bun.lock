@@ -19,6 +19,7 @@
         "@vercel/node": "^5.3.11",
         "axios": "^1.6.2",
         "bcryptjs": "^3.0.2",
+        "bun.lock": "^0.0.0",
         "date-fns": "^4.1.0",
         "dotenv": "^16.3.1",
         "dotenv-expand": "^10.0.0",
@@ -501,6 +502,8 @@
     "buffer-equal-constant-time": ["buffer-equal-constant-time@1.0.1", "", {}, "sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA=="],
 
     "bun-types": ["bun-types@1.2.18", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-04+Eha5NP7Z0A9YgDAzMk5PHR16ZuLVa83b26kH5+cp1qZW4F6FmAURngE7INf4tKOvCE69vYvDEwoNl1tGiWw=="],
+
+    "bun.lock": ["bun.lock@0.0.0", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-oLtVECqgbomqUMZRtSUrjD3IqtrrMir3OBaErHPwrNo7NlQ8Otre2s+zlv7D3+c+k4OvDVo2buHwdWgPiH5R2g=="],
 
     "bytes": ["bytes@3.1.0", "", {}, "sha512-zauLjrfCG+xvoyaqLoV8bLVXXNGC4JqlxFCutSDWA6fJrTo2ZuvLYTqZ7aHBLZSMOopbzwv8f+wZcVzfVTI2Dg=="],
 
