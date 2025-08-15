@@ -1,5 +1,7 @@
-// Simple JavaScript API handler for Vercel
-export default function handler(req, res) {
+// Simple TypeScript API handler for Vercel
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');

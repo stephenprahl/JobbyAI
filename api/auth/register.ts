@@ -1,5 +1,7 @@
 // Simple auth registration endpoint for Vercel
-export default function handler(req, res) {
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -12,7 +14,7 @@ export default function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    const { email, password, firstName, lastName } = req.body || {};
+    const { email, password, firstName, lastName } = (req.body as any) || {};
 
     if (!email || !password) {
       res.status(400).json({
