@@ -1,5 +1,5 @@
 ## Use official Bun image
-FROM jarredsumner/bun:edge
+FROM ghcr.io/oven-sh/bun:edge
 
 WORKDIR /app
 
@@ -7,8 +7,9 @@ WORKDIR /app
 COPY package.json bun.lock ./
 COPY tsconfig.json .
 
-# Install dependencies
-RUN bun install
+# Install dependencies; try a normal install and fall back to --no-lockfile on failure
+RUN set -ex; \
+	bun install || bun install --no-lockfile || (echo "bun install failed" && exit 1)
 
 # Copy the rest of the source
 COPY . .
