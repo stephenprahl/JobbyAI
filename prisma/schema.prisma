@@ -66,8 +66,7 @@ model User {
   id            String         @id @default(uuid())
   email         String         @unique
   passwordHash  String
-  firstName     String?
-  lastName      String?
+  // firstName and lastName removed — no longer collected at registration
   role          UserRole       @default(USER)
   createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   resetTokens   PasswordResetToken[]

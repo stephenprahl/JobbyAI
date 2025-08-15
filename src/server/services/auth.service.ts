@@ -28,7 +28,7 @@ export class AuthService {
     return AuthService.instance;
   }
 
-  public async register(email: string, password: string, firstName?: string, lastName?: string) {
+  public async register(email: string, password: string) {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new Error('Email already in use');
@@ -39,8 +39,6 @@ export class AuthService {
       data: {
         email,
         passwordHash,
-        firstName,
-        lastName,
         role: 'USER',
         isActive: true,
         emailVerified: false,
@@ -54,8 +52,7 @@ export class AuthService {
     try {
       await emailService.sendVerificationEmail(
         user.email,
-        verificationToken.token,
-        user.firstName || undefined
+        verificationToken.token
       );
     } catch (error) {
       logger.error('Failed to send verification email:', error);
@@ -78,8 +75,6 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
         role: user.role,
         emailVerified: user.emailVerified,
         isActive: user.isActive,

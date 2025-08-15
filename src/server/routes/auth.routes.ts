@@ -7,8 +7,8 @@ export const authRoutes = new Elysia({ prefix: '/auth' })
     '/register',
     async ({ body, set }) => {
       try {
-        const { email, password, firstName, lastName } = body;
-        const result = await authService.register(email, password, firstName, lastName);
+        const { email, password } = body;
+        const result = await authService.register(email, password);
         return result;
       } catch (error: any) {
         logger.error('Registration failed:', error);
@@ -23,8 +23,6 @@ export const authRoutes = new Elysia({ prefix: '/auth' })
       body: t.Object({
         email: t.String({ format: 'email' }),
         password: t.String({ minLength: 8 }),
-        firstName: t.Optional(t.String()),
-        lastName: t.Optional(t.String()),
       }),
       detail: {
         tags: ['Authentication'],
@@ -42,8 +40,7 @@ export const authRoutes = new Elysia({ prefix: '/auth' })
                       properties: {
                         id: { type: 'string' },
                         email: { type: 'string' },
-                        firstName: { type: 'string', nullable: true },
-                        lastName: { type: 'string', nullable: true },
+                        // firstName/lastName removed from registration response
                         role: { type: 'string' },
                       },
                     },

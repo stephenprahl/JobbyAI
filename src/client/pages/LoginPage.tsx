@@ -1,9 +1,9 @@
+import { LoginPageTailwindProps, PasswordStrength, ValidationErrors } from '@/shared/types/loginTypes'
 import React, { useEffect, useState } from 'react'
 import { FiBriefcase, FiChevronRight, FiEye, FiEyeOff, FiLock, FiMail, FiShield, FiStar, FiTrendingUp } from 'react-icons/fi'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { clearCredentials, isRememberMeEnabled, loadCredentials, saveCredentials } from '../utils/encryption'
-import { LoginPageTailwindProps, ValidationErrors, PasswordStrength } from '@/shared/types/loginTypes';
 
 const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' }) => {
   const [isLogin, setIsLogin] = useState(mode === 'login')
@@ -16,8 +16,6 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
     return {
       email: savedCredentials?.email || '',
       password: savedCredentials?.password || '',
-      firstName: '',
-      lastName: '',
       confirmPassword: ''
     }
   })
@@ -152,14 +150,6 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
 
     // Registration-specific validations
     if (!isLogin) {
-      if (!formData.firstName.trim()) {
-        newErrors.firstName = 'First name is required'
-      }
-
-      if (!formData.lastName.trim()) {
-        newErrors.lastName = 'Last name is required'
-      }
-
       if (!formData.confirmPassword) {
         newErrors.confirmPassword = 'Please confirm your password'
       } else if (formData.password !== formData.confirmPassword) {
@@ -203,8 +193,6 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
         await register({
           email: formData.email,
           password: formData.password,
-          firstName: formData.firstName,
-          lastName: formData.lastName
         })
         // Navigation will be handled by the auth context and route protection
       }
@@ -232,8 +220,6 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
       setFormData({
         email: savedCredentials?.email || '',
         password: savedCredentials?.password || '',
-        firstName: '',
-        lastName: '',
         confirmPassword: ''
       })
       setRememberMe(isRememberMeEnabled())
@@ -242,8 +228,6 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
       setFormData({
         email: '',
         password: '',
-        firstName: '',
-        lastName: '',
         confirmPassword: ''
       })
       setRememberMe(false)
@@ -385,47 +369,7 @@ const LoginPageTailwind: React.FC<LoginPageTailwindProps> = ({ mode = 'login' })
             {/* Form */}
             <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
               <form className="space-y-6" onSubmit={handleSubmit} noValidate>
-                {!isLogin && (
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* First Name */}
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        First Name *
-                      </label>
-                      <input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        required
-                        value={formData.firstName}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ${errors.firstName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
-                          }`}
-                        placeholder="Enter your first name"
-                      />
-                      {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
-                    </div>
-
-                    {/* Last Name */}
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Last Name *
-                      </label>
-                      <input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
-                        required
-                        value={formData.lastName}
-                        onChange={handleInputChange}
-                        className={`w-full px-4 py-3 border rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 ${errors.lastName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
-                          }`}
-                        placeholder="Enter your last name"
-                      />
-                      {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
-                    </div>
-                  </div>
-                )}
+                {/* firstName/lastName removed from registration form */}
 
                 {/* Email */}
                 <div>

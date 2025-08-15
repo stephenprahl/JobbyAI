@@ -14,7 +14,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'POST') {
-    const { email, password, firstName, lastName } = (req.body as any) || {};
+    const { email, password } = (req.body as any) || {};
 
     if (!email || !password) {
       res.status(400).json({
@@ -32,8 +32,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
         user: {
           id: 'demo-' + Date.now(),
           email,
-          firstName: firstName || 'Demo',
-          lastName: lastName || 'User',
           role: 'user'
         },
         token: 'demo-jwt-' + Date.now(),

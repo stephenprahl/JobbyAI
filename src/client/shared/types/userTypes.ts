@@ -193,8 +193,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string
   password: string
-  firstName?: string
-  lastName?: string
+  // firstName and lastName removed from registration payload
 }
 
 export interface ForgotPasswordRequest {
