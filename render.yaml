@@ -1,0 +1,36 @@
+services:
+  - type: web
+    runtime: docker
+    name: jobbyai-backend
+    repo: "https://github.com/stephenprahl/JobbyAI"
+    branch: main
+    plan: starter
+    autoDeploy: true
+    buildCommand: "bunx prisma generate && bunx tsc && bunx vite build"
+    startCommand: "bunx prisma migrate deploy && bun run src/server/index.ts"
+    healthCheckPath: "/api/health"
+    envVars:
+      - key: DATABASE_URL
+        value: ""
+      - key: JWT_SECRET
+        value: ""
+      - key: FRONTEND_URL
+        value: "https://jobby-ai-lovat.vercel.app"
+      - key: CORS_ORIGIN
+        value: "https://jobby-ai-lovat.vercel.app"
+      - key: EMAIL_HOST
+        value: ""
+      - key: EMAIL_PORT
+        value: ""
+      - key: EMAIL_USER
+        value: ""
+      - key: EMAIL_PASSWORD
+        value: ""
+      - key: EMAIL_FROM
+        value: ""
+      - key: GOOGLE_GEMINI_API_KEY
+        value: ""
+
+# Notes:
+# - If you prefer Render to build a Docker image (recommended for Bun), include the Dockerfile in the repo; Render will use it automatically.
+# - Set sensitive values (DATABASE_URL, JWT_SECRET, etc.) in the Render dashboard or via the Render CLI rather than committing them here.

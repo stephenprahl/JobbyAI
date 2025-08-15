@@ -1,0 +1,25 @@
+{
+  "project": {
+    "name": "jobby-ai-backend"
+  },
+  "services": [
+    {
+      "name": "backend",
+      "type": "docker",
+      "dockerfile": "./Dockerfile",
+      "start": "bun run src/server/index.ts",
+      "env": {
+        "DATABASE_URL": "<RAILWAY_DATABASE_URL>",
+        "JWT_SECRET": "<JWT_SECRET>",
+        "FRONTEND_URL": "https://jobby-ai-lovat.vercel.app",
+        "CORS_ORIGIN": "https://jobby-ai-lovat.vercel.app",
+        "EMAIL_HOST": "<EMAIL_HOST>",
+        "EMAIL_PORT": "<EMAIL_PORT>",
+        "EMAIL_USER": "<EMAIL_USER>",
+        "EMAIL_PASSWORD": "<EMAIL_PASSWORD>",
+        "EMAIL_FROM": "<EMAIL_FROM>",
+        "GOOGLE_GEMINI_API_KEY": "<GOOGLE_GEMINI_API_KEY>"
+      }
+    }
+  ]
+}
