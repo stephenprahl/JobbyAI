@@ -153,6 +153,9 @@ async function startServer() {
       logger.info(`📋 Resume API: http://${app.server?.hostname}:${app.server?.port}/api/resume`);
       logger.info(`🔐 Auth API: http://${app.server?.hostname}:${app.server?.port}/api/auth`);
     });
+
+    // Start background attempts to connect to DB without blocking server startup
+    attemptDbConnect();
   } catch (error) {
     logger.error('❌ Failed to start server:', error);
     console.error('Full error details:', error);
@@ -162,17 +165,44 @@ async function startServer() {
 
 startServer();
 
-// Global error handlers
+// Background DB connection attempts with retry/backoff
+async function attemptDbConnect(retries = 5, initialDelayMs = 2000) {
+  let attempt = 0;
+  let delay = initialDelayMs;
+
+  while (attempt < retries && !dbConnected) {
+    try {
+      attempt += 1;
+      logger.info(`🔁 DB connect attempt ${attempt}/${retries}...`);
+      await connect();
+      dbConnected = true;
+      logger.info('✅ Connected to database (background)');
+      break;
+    } catch (error) {
+      logger.warn(`⚠️ DB connect attempt ${attempt} failed: ${error}`);
+      console.error('DB connect error details:', error);
+      if (attempt >= retries) {
+        logger.error('❌ All DB connection attempts failed');
+        break;
+      }
+      // exponential backoff
+      await new Promise((res) => setTimeout(res, delay));
+      delay *= 2;
+    }
+  }
+}
+
+// Global error handlers (log but do not exit to avoid crash loops on transient issues)
 process.on('uncaughtException', (error) => {
   logger.error('Uncaught Exception:', error);
   console.error('Uncaught Exception details:', error);
-  process.exit(1);
+  // Do not exit the process; keep running to expose health endpoints for diagnostics
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
   console.error('Unhandled Rejection details:', reason);
-  process.exit(1);
+  // Do not exit the process; keep running to expose health endpoints for diagnostics
 });
 
 // Handle graceful shutdown
