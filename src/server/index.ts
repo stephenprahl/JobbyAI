@@ -57,6 +57,9 @@ const logger = createLogger({
 
 console.log('Starting full Elysia server...');
 
+// Track DB connectivity for health endpoints
+let dbConnected = false;
+
 // Create Elysia app with raw Response-based CORS handling
 const app = new Elysia()
   .decorate('prisma', prisma)
@@ -92,7 +95,7 @@ const app = new Elysia()
     timestamp: new Date().toISOString(),
     environment: NODE_ENV,
     services: {
-      database: 'connected',
+      database: dbConnected ? 'connected' : 'disconnected',
       ai: isGeminiConfigured() ? 'gemini-connected' : 'gemini-not-configured'
     }
   }))
@@ -116,7 +119,7 @@ const app = new Elysia()
         timestamp: new Date().toISOString(),
         environment: NODE_ENV,
         services: {
-          database: 'connected',
+          database: dbConnected ? 'connected' : 'disconnected',
           ai: isGeminiConfigured() ? 'gemini-connected' : 'gemini-not-configured'
         }
       }))
@@ -127,13 +130,22 @@ const app = new Elysia()
     message: 'The requested resource was not found',
   }));
 
-// Connect to database and start server
+// Connect to database and start server (do not crash if DB is temporarily unavailable)
 async function startServer() {
   try {
     logger.info('🔄 Attempting to connect to database...');
     await connect();
+    dbConnected = true;
     logger.info('✅ Connected to database');
+  } catch (error) {
+    dbConnected = false;
+    logger.error('❌ Database connection failed:', error);
+    // Print full error details for Render logs
+    console.error('Full DB connection error details:', error);
+    // continue to start the server so health endpoints return status
+  }
 
+  try {
     app.listen(PORT, () => {
       logger.info(`🚀 Server is running on http://${app.server?.hostname}:${app.server?.port}`);
       logger.info(`📚 API Documentation available at http://${app.server?.hostname}:${app.server?.port}/api/docs`);
