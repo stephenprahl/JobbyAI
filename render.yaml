@@ -1,13 +1,15 @@
 services:
   - type: web
-    runtime: docker
+    runtime: node
     name: jobbyai-backend
     repo: "https://github.com/stephenprahl/JobbyAI"
     branch: main
     plan: starter
     autoDeploy: true
-    buildCommand: "bunx prisma generate && bunx tsc && bunx vite build"
-    startCommand: "bunx prisma migrate deploy && bun run src/server/index.ts"
+    # Install Bun, ensure it's on PATH, install deps, generate Prisma client, build TS and client
+    buildCommand: "/bin/sh -lc 'curl -fsSL https://bun.sh/install | bash -s -- --no-confirm && export PATH=\"$HOME/.bun/bin:$PATH\" && bun -v && bun install && bunx prisma generate && bunx tsc && bunx vite build'"
+    # Ensure Bun is available at runtime, run migrations then start the server
+    startCommand: "/bin/sh -lc 'export PATH=\"$HOME/.bun/bin:$PATH\" && bunx prisma migrate deploy && bun run src/server/index.ts'"
     healthCheckPath: "/api/health"
     envVars:
       - key: DATABASE_URL
