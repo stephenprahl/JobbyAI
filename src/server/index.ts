@@ -146,13 +146,21 @@ async function startServer() {
   }
 
   try {
-    app.listen(PORT, () => {
-      logger.info(`🚀 Server is running on http://${app.server?.hostname}:${app.server?.port}`);
-      logger.info(`📚 API Documentation available at http://${app.server?.hostname}:${app.server?.port}/api/docs`);
-      logger.info(`🏥 Health check: http://${app.server?.hostname}:${app.server?.port}/api/health`);
-      logger.info(`📋 Resume API: http://${app.server?.hostname}:${app.server?.port}/api/resume`);
-      logger.info(`🔐 Auth API: http://${app.server?.hostname}:${app.server?.port}/api/auth`);
-    });
+    logger.info('➡️ Calling app.listen now...');
+    try {
+      app.listen(PORT, () => {
+        logger.info('⬅️ app.listen callback triggered');
+        logger.info(`🚀 Server is running on http://${app.server?.hostname}:${app.server?.port}`);
+        logger.info(`📚 API Documentation available at http://${app.server?.hostname}:${app.server?.port}/api/docs`);
+        logger.info(`🏥 Health check: http://${app.server?.hostname}:${app.server?.port}/api/health`);
+        logger.info(`📋 Resume API: http://${app.server?.hostname}:${app.server?.port}/api/resume`);
+        logger.info(`🔐 Auth API: http://${app.server?.hostname}:${app.server?.port}/api/auth`);
+      });
+      logger.info('✅ app.listen invoked (no immediate throw)');
+    } catch (listenError) {
+      logger.error('❌ app.listen threw an error:', listenError);
+      console.error('app.listen error details:', listenError);
+    }
 
     // Start background attempts to connect to DB without blocking server startup
     attemptDbConnect();
@@ -222,5 +230,16 @@ const shutdown = async () => {
 
 process.on('SIGTERM', shutdown);
 process.on('SIGINT', shutdown);
+
+// Log process exit reasons to assist with Render 'Application exited early' diagnostics
+process.on('beforeExit', (code) => {
+  logger.warn('Process beforeExit with code:', code);
+  console.warn('Process beforeExit with code:', code);
+});
+
+process.on('exit', (code) => {
+  logger.warn('Process exit with code:', code);
+  console.warn('Process exit with code:', code);
+});
 
 export { app };
